@@ -243,7 +243,7 @@ int CheckStackEmpty(LinkStack ls)
 
 int GetStackDepenth(LinkStack ls) 
 {
-    return  ls == NULL ? 0 : ls->top;
+    return  ls == NULL ? 0 : ls->top + 1;
 }
 
 /***
@@ -514,8 +514,8 @@ int **zigzagLevelOrder(struct TreeNode *root, int *returnSize, int **returnColum
         {
             if (order)
             {
-				(*returnColumnSizes)[*returnSize] = 1 + GetStackDepenth(slFirst);
-                returnArray[*returnSize] = (int* )malloc((1 + GetStackDepenth(slFirst)) * sizeof(int));
+				(*returnColumnSizes)[*returnSize] = GetStackDepenth(slFirst);
+                returnArray[*returnSize] = (int* )malloc((GetStackDepenth(slFirst)) * sizeof(int));
                 while (!CheckStackEmpty(slFirst))
                 {
                     PopStack(&slFirst, &a);
@@ -532,8 +532,8 @@ int **zigzagLevelOrder(struct TreeNode *root, int *returnSize, int **returnColum
             }
             else
             {
-				(*returnColumnSizes)[*returnSize] = 1 + GetStackDepenth(slSecond);
-                returnArray[*returnSize] = (int* )malloc((1 + GetStackDepenth(slSecond)) * sizeof(int));
+				(*returnColumnSizes)[*returnSize] = GetStackDepenth(slSecond);
+                returnArray[*returnSize] = (int* )malloc((GetStackDepenth(slSecond)) * sizeof(int));
                 while (!CheckStackEmpty(slSecond))
                 {
                     PopStack(&slSecond, &a);
