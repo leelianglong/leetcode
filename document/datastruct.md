@@ -31,3 +31,43 @@ int Method(int[] nums, int low, int high, int target) {
 
 ```
 
+# 3、典型算法举例
+## 3.1、滑动窗口
+```
+滑动窗口就是在少数问题中将嵌套for循环变成单层for循环，降低时间复杂度。
+```
+```
+经典问题：给定长度为n的数组，计算长度为k的子数组的最大和。
+* 我们使用线性循环计算n个项中前k个元素的总和，并将总和存储在变量window_sum中
+* 然后，我们将在阵列上线性滑动直至达到最终并同时追踪最大和
+* 要获得k个元素块的当前总和，只需从前一个块中减去第一个元素并添加当前块的最后一个元素即可。 下面的表示将清楚说明窗口如何在阵列上滑动
+```
+```
+int maxSum(int arr[], int n, int k)
+{
+    if (n < k)
+    {
+        printf("Invaild");
+        return -1;
+    }
+    int max_sum = 0;
+    for (int i=0; i<k; i++)
+    {
+        max_sum += arr[i];
+    }
+    int windows_sum = max_sum;
+    for (int i=k; i<n; i++)
+    {
+        windows_sum += arr[i] - arr[i - k];
+        max_sum = max(max_sum, windows_sum);
+    }
+    return max_sum;
+}
+```
+```
+经典问题：求一个字符串不重复的子串的最大的长度：
+例如:  abcabcbb, the answer is "abc", which the length is 3
+```
+```
+
+```
