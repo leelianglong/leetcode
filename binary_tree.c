@@ -14,7 +14,7 @@ typedef struct BTNode {
 #define  STATCK_LENGTH           1000
 typedef struct {
     int top;
-    BinaryTree data;
+    BinaryTree* data; /* 这里需要使用二叉树指针的指针 */
 }Stack;
 /****************** 栈的结构定义 ****************/
 /***************************************栈基本操作**************************************/
@@ -23,11 +23,11 @@ bool InitStack(Stack* para)
     if (para == NULL) {
         return false;
     }
-    para->data = (BinaryTree)malloc(STATCK_LENGTH * sizeof(BinaryNode));
+    para->data = (BinaryTree*)malloc(STATCK_LENGTH * sizeof(BinaryTree));
     if (para->data == NULL) {
         return false;
     }
-    memset(para->data, 0, STATCK_LENGTH * sizeof(BinaryNode));
+    memset(para->data, 0, STATCK_LENGTH * sizeof(BinaryTree));
     para->top = -1;
     return true;
 }
