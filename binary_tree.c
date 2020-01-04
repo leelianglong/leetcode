@@ -195,45 +195,50 @@ int GetLeafCounter(BinaryTree bt) {
 }
 
 /*
-二叉树的前序遍历(递归版本)
+二叉树的后序遍历(递归版本)
 */
-void PreOrderTraverse(BinaryTree bt, int* saveData, int* counter)
+void PostOrderTraverse(BinaryTree bt, int* saveData, int* counter)
 {
     if (bt == NULL) {
         return ;
     }
-    saveData[(*counter)++] = bt->data;
     PreOrderTraverse(bt->lchild, saveData, counter);
     PreOrderTraverse(bt->rchild, saveData, counter);
+    saveData[(*counter)++] = bt->data;
 }
 
 /*
-二叉树的前序遍历(非递归版本，栈实现)
+二叉树的前序遍历(非递归版本，栈实现)，先把栈顶元素入栈，然后出栈，再把右子树入栈，再把左子树入栈，然后再出栈，一直循环到栈为空。
 */
-void PreOrderTraverseByStack(BinaryTree bt, int* saveData, int* counter)
+int* PreOrderTraverseByStack(BinaryTree bt, int* counter)
 {
     Stack binaryTree = {0};
-    BinaryTree tmp = bt;
-
+    int* saveData = (int*)malloc(STATCK_LENGTH * sizeof(int));
+    if (saveData == NULL) {
+        return NULL;
+    }
+    memset(saveData, 0, STATCK_LENGTH * sizeof(int));
     InitStack(&binaryTree);
-    while(tmp || !CheckStackIsEmpty(&binaryTree)) {
-        if (tmp) {
-            saveData[(*counter)++] = bt->data;
-            PushStack(&binaryTree, *tmp);
-            tmp = tmp->lchild;
-        } else {
-            BinaryTree tmp1 = NULL;
-            PopStack(&binaryTree, tmp1);
-            tmp = tmp1->rchild;
+    PushStack(&binaryTree, bt);
+
+    while (!CheckStackIsEmpty(&binaryTree)) {
+        PopStack(&binaryTree, &bt);
+        saveData[(*counter)++] = bt->data;
+        if (bt->rchild) {
+            PushStack(&binaryTree, bt->rchild);
+        }
+        if (bt->lchild) {
+            PushStack(&binaryTree, bt->lchild);
         }
     }
+    return saveData;
 }
 
 
 /*
 二叉树的中序遍历(递归版本)
 */
-void PreOrderTraverse(BinaryTree bt, int* saveData, int* counter)
+void MiddleOrderTraverse(BinaryTree bt, int* saveData, int* counter)
 {
     if (bt == NULL) {
         return ;
@@ -243,10 +248,37 @@ void PreOrderTraverse(BinaryTree bt, int* saveData, int* counter)
     PreOrderTraverse(bt->rchild, saveData, counter);
 }
 
+/**
+ * 中序非递归遍历，（左子树，根节点，右子树），要首先找到左子树的左叶子节点，所以要把所有左子树入栈，等所有的左子树入栈后，取栈顶元素，
+ * 遍历右子树
+ * */
+int* MiddleOrderTraverseByStack(BinaryTree bt, int* counter)
+{
+    Stack binaryTree = {0};
+    int* saveData = (int*)malloc(STATCK_LENGTH * sizeof(int));
+    if (saveData == NULL) {
+        return NULL;
+    }
+    memset(saveData, 0, STATCK_LENGTH * sizeof(int));
+    InitStack(&binaryTree);
+    while (bt != NULL || binaryTree.top != -1) {
+        while (bt != NULL) { // 先把左子树全部入栈
+            PushStack(&binaryTree, bt);
+            bt = bt->lchild;
+        }
+        if (binaryTree.top != -1) { // 左子树入栈结束后，取栈顶元素，输出栈顶元素，遍历右子树
+            PopStack(&binaryTree, &bt);
+            saveData[(*counter)++] = bt->data;
+            bt = bt->rchild;
+        }
+    }
+    return saveData;
+}
+
 /*
 二叉树的后序遍历(递归版本)
 */
-void PreOrderTraverse(BinaryTree bt, int* saveData, int* counter)
+void PostOrderTraverse(BinaryTree bt, int* saveData, int* counter)
 {
     if (bt == NULL) {
         return ;
@@ -254,15 +286,60 @@ void PreOrderTraverse(BinaryTree bt, int* saveData, int* counter)
     PreOrderTraverse(bt->lchild, saveData, counter);
     PreOrderTraverse(bt->rchild, saveData, counter);
     saveData[(*counter)++] = bt->data;
+}
+
+/*******************************************************************************
+思路：
+1、在进行后序遍历的时候是先要遍历左子树，然后在遍历右子树，最后才遍历根节点。所以在非递归的实现中要先把根节点入栈
+2、再把左子树入栈直到左子树为空，此时停止入栈。此时栈顶就是需要访问的元素，所以直接取出访问p。在访问结束后，还要判断被访
+   问的节点p是否为栈顶节点的左子树
+3、如果是的话那么还需要访问栈顶节点的右子树，所以将栈顶节点的右子树取出赋值给p
+4、如果不是的话则说明栈顶节点的右子树已经访问完了，那么现在可以访问栈顶节点了，所以此时将p赋值为null
+https://blog.csdn.net/YEYUANGEN/article/details/26363235
+*******************************************************************************/
+int* PostOrderTraversByStack(BinaryTree bt, int* counter)
+{
+    Stack binaryTree = {0};
+    BinaryTree haveAccess = NULL;
+    int* saveData = (int*)malloc(STATCK_LENGTH * sizeof(int));
+    if (saveData == NULL) {
+        return NULL;
+    }
+    memset(saveData, 0, STATCK_LENGTH * sizeof(int));
+    InitStack(&binaryTree);
+    while (bt != NULL || binaryTree.top != -1)
+    {
+        while (bt != NULL) { // 遍历完所有左子树
+            PushStack(&binaryTree,bt);
+            bt = bt->lchild;
+        }
+        PopStack(&binaryTree, &bt);
+        if (bt->rchild == NULL || haveAccess == bt->rchild) {
+            saveData[(*counter)++] = bt->data;
+            haveAccess = bt;
+            bt = NULL;
+        } else {
+            bt = bt->rchild;
+        }
+    }
+    return saveData;
 }
 
 int main(void)
 {
     int data[] = {1,2,4,999,999,5,999,999,3,6,999,999,7,999,999,999,999,999,999,999};
     int counter = 0;
+    int saveData[10] = {0};
     BinaryTree root = NULL;
+    int accessCounter = 0;
+    int* result = NULL;
+
     CreatBinary(&root, data, &counter);
     int deepth = GetBinaryTreeDeepth(root);
     int leafCount = GetLeafCounter(root);
+    result = PostOrderTraversByStack(root, &accessCounter);
+    for (int i = 0; i < accessCounter; ++i) {
+        printf("%4d", result[i]);
+    }
     system("pause");
 }
