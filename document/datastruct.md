@@ -30,6 +30,20 @@ int Method(int[] nums, int low, int high, int target) {
         }
 
 ```
+### 2.1.2 数组的使用
+a、二级指针的内存分配
+```
+    int** test1 = (int**) malloc(4 * sizeof(int));
+    for (int i = 0; i < 4; i++) {
+        *(test1 + i) = (int*)malloc(2 * sizeof(int));
+    }
+    for (int j = 0; j < 4; j++) {
+        for (int k = 0; k < 2; k++) {
+            *(*(test1 + j) + k) = j * k;
+        }
+    }
+```
+这里注意，在分配内存时，要写成这种指针形式*(test1 + i) = (int*)malloc(2 * sizeof(int));如果写成*test1[i] 就是错误了 
 
 # 3、典型算法举例
 ## 3.1、滑动窗口
