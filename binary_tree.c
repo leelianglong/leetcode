@@ -237,9 +237,9 @@ int dfs_deepth(BinaryTree bt)
     if (bt == NULL) {
         return 0;
     }
-    int leftDeepth = dfs_deepth(bt->lchild);
-    int rightDeepth = dfs_deepth(bt->rchild);
-    return (leftDeepth > rightDeepth ? leftDeepth : rightDeepth) + 1;
+    int leftDeepth = dfs_deepth(bt->lchild) + 1;
+    int rightDeepth = dfs_deepth(bt->rchild) + 1;
+    return (leftDeepth > rightDeepth ? leftDeepth : rightDeepth);
 }
 
 int GetBinaryTreeDeepthV1(BinaryTree bt)
