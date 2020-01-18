@@ -41,7 +41,7 @@ int main(void)
     int **result = ReturnTwoDimensionArray(&returnSize, &colArra);
     for (i = 0; i < returnSize; i++) {
         printf("\r\ncol = %4d\r\n", (*colArra)[i]);
-        for (j = 0; j < (*colArra)[i]; j++) {
+        for (j = 0; j < (*colArra)[i]; j++) { //这里在访问时要注意 (*colArra)[i]  和 *colArra[i] 的区别，前者指向该数组中的第一个元素，后者指向的地址是 （基地址 + ALLOC * i）
             printf("%4d", *(*(result + i) + j));
         }
         printf("\r\n");
