@@ -4,19 +4,23 @@
 #include <stdbool.h>
 #include <math.h>
 
-/****************** 二叉树结构定义 ****************/
+/*
+* ��ʶ��
+* ������������ʲô��ı��������Ƿ��ʸ��ڵ�����ݣ��Ѹ��ڵ������ȡ������
+*/
+/****************** 二叉树结构定乄1�7 ****************/
 typedef struct BTNode {
     int data;
     struct BTNode* lchild;
     struct BTNode* rchild;
 } BinaryNode, *BinaryTree;
-/****************** 二叉树结构定义 ****************/
+/****************** 二叉树结构定乄1�7 ****************/
 
 /****************** 栈的结构定义 *****************/
 #define  STATCK_LENGTH           1000
 typedef struct {
     int top;
-    BinaryTree* data; /* 这里需要使用二叉树指针的指针 */
+    BinaryTree* data; /* 这里霢�要使用二叉树指针的指钄1�7 */
 } Stack;
 /****************** 栈的结构定义 *****************/
 
@@ -27,11 +31,11 @@ typedef struct QNode {
 } QueueNode,*QueueList;
 
 typedef struct LQ {
-    QueueList front, rear; // 对头插入，队尾删除
+    QueueList front, rear; // 对头插入，队尾删附1�7
 } LinkQueue;
 /****************** 队列结构定义 *****************/
 
-/***************************************栈基本操作**************************************/
+/***************************************栈基本操佄1�7**************************************/
 bool InitStack(Stack* para)
 {
     if (para == NULL) {
@@ -48,8 +52,8 @@ bool InitStack(Stack* para)
 
 /*
 下面实现的栈是向上增长：
-一开始top在最底段，每次入栈，top先增加，把元素放到栈顶。
-出栈时，先从栈顶拿出元素，然后栈顶指针top再减减。
+丢�弢�始top在最底段，每次入栈，top先增加，把元素放到栈顶��1�7
+出栈时，先从栈顶拿出元素，然后栈顶指针top再减减��1�7
 */
 bool PushStack(Stack* para, BinaryTree data)
 {
@@ -79,7 +83,7 @@ bool CheckStackIsEmpty(Stack* para)
 {
     return para->top == -1 ? true : false;
 }
-/***************************************栈基本操作**************************************/
+/***************************************栈基本操佄1�7**************************************/
 
 /**************************************队列基本操作**************************************/
 bool InitQueue(LinkQueue* lq)
@@ -126,8 +130,8 @@ bool InsertQueue(LinkQueue* lq, BinaryTree data)
     }
     p->data = data;
     p->next = NULL;
-    lq->rear->next = p; //起初队尾节点的下一个是null，这里新创建一个节点就接上。
-    lq->rear = p; //新创建的节点变成队尾。
+    lq->rear->next = p; //起初队尾节点的下丢�个是null，这里新创建丢�个节点就接上〄1�7
+    lq->rear = p; //新创建的节点变成队尾〄1�7
     return true;
 }
 
@@ -152,12 +156,12 @@ bool DelQueue(LinkQueue* lq, BinaryTree* data)
 
 
 /* 
-创建二二叉树：
-这种是以前序方式来创建二叉树，在构造数据时，一定要把叶子节点的左子树和右子树都设置成结束符。
-才能按照预期生成二叉树。就是把二叉树构造成满二叉树，所有的叶子阶段的都是 结束符。
-注意：递归调用也是函数每次重入一次，该函数中的局部变量也会在重入的时候消失，如果需要在整个
-函数退出之前都需要保持的变量，要设置成全局变量，或者静态局部变量，或者使用指针传入。
-当前函数在多次调用时，要记得把counter清零。
+创建二二叉树＄1�7
+这种是以前序方式来创建二叉树，在构��数据时，一定要把叶子节点的左子树和右子树都设置成结束符〄1�7
+才能按照预期生成二叉树��就是把二叉树构造成满二叉树，所有的叶子阶段的都昄1�7 结束符��1�7
+注意：��归调用也是函数每次重入丢�次，该函数中的局部变量也会在重入的时候消失，如果霢�要在整个
+函数逢�出之前都霢�要保持的变量，要设置成全屢�变量，或者静态局部变量，或��使用指针传入��1�7
+当前函数在多次调用时，要记得把counter清零〄1�7
 */
 void CreatBinary(BinaryTree* bt, int* data, int* counter)
 {
@@ -177,7 +181,7 @@ void CreatBinary(BinaryTree* bt, int* data, int* counter)
 }
 
 /*
-二叉树销毁
+二叉树销毄1�7
 */
 int DestoryBinaryTree(BinaryTree bt)
 {
@@ -194,7 +198,7 @@ int DestoryBinaryTree(BinaryTree bt)
 }
 
 /*
-二叉树判空
+二叉树判穄1�7
 */
 bool BinaryTreeIsEmpety(BinaryTree bt)
 {
@@ -229,8 +233,8 @@ int GetBinaryTreeDeepth(BinaryTree bt)
 }
 
 /*
-获取树深度的另一种简单递归版本写法,先计算左子树的深度，再计算右子树的深度，然后取其中较大的，最后
-再加上根节点的深度1，就是整个二叉树的深度
+获取树深度的另一种简单��归版本写法,先计算左子树的深度，再计算右子树的深度，然后取其中较大的，最各1�7
+再加上根节点的深庄1�71，就是整个二叉树的深庄1�7
 */
 int dfs_deepth(BinaryTree bt) 
 {
@@ -251,7 +255,7 @@ int GetBinaryTreeDeepthV1(BinaryTree bt)
 }
 
 /*
-统计叶子节点的个数
+统计叶子节点的个敄1�7
 */
 int dfs_leaf_count(BinaryTree bt, int* counter)
 {
@@ -279,7 +283,7 @@ int GetLeafCounter(BinaryTree bt) {
 }
 
 /*
-统计二叉树所有节点个数
+统计二叉树所有节点个敄1�7
 */
 int GetNodeCounter(BinaryTree bt)
 {
@@ -301,13 +305,13 @@ int GetNodeCounter(BinaryTree bt)
     }
 
     if (leftHigh == rightHigh) {
-        return (int)(1 << rightHigh) - 1; // 左右子树一样高，是满二叉树，节点个数 = 2^n - 1;
+        return (int)(1 << rightHigh) - 1; // 左右子树丢�样高，是满二叉树，节点个敄1�7 = 2^n - 1;
     } 
     return 1 + GetNodeCounter(bt->lchild) + GetNodeCounter(bt->rchild);
 }
 
 /*
-前序遍历，递归版本
+前序遍历，��归版本
 */
 void PreOrderTraverse(BinaryTree bt, int* saveData, int* counter)
 {
@@ -315,12 +319,16 @@ void PreOrderTraverse(BinaryTree bt, int* saveData, int* counter)
         return ;
     }
     saveData[(*counter)++] = bt->data;   
-    PreOrderTraverse(bt->lchild, saveData, counter);
-    PreOrderTraverse(bt->rchild, saveData, counter);
+    if (bt->lchild) {
+        PreOrderTraverse(bt->lchild, saveData, counter);    
+    }
+    if (bt->rchild) {
+        PreOrderTraverse(bt->rchild, saveData, counter);
+    }
 }
 
 /*
-二叉树的前序遍历(非递归版本，栈实现)，先把栈顶元素入栈，然后出栈，再把右子树入栈，再把左子树入栈，然后再出栈，一直循环到栈为空。
+二叉树的前序遍历(非��归版本，栈实现)，先把栈顶元素入栈，然后出栈，再把右子树入栈，再把左子树入栈，然后再出栈，一直循环到栈为空��1�7
 */
 int* PreOrderTraverseByStack(BinaryTree bt, int* counter)
 {
@@ -354,14 +362,18 @@ void MiddleOrderTraverse(BinaryTree bt, int* saveData, int* counter)
     if (bt == NULL) {
         return ;
     }
-    MiddleOrderTraverse(bt->lchild, saveData, counter);
+    if (bt->lchild) {
+        MiddleOrderTraverse(bt->lchild, saveData, counter);        
+    }
     saveData[(*counter)++] = bt->data;
-    MiddleOrderTraverse(bt->rchild, saveData, counter);
+    if (bt->rchild) {
+        MiddleOrderTraverse(bt->rchild, saveData, counter);        
+    }
 }
 
 /**
- * 中序非递归遍历，（左子树，根节点，右子树），要首先找到左子树的左叶子节点，所以要把所有左子树入栈，等所有的左子树入栈后，取栈顶元素，
- * 遍历右子树
+ * 中序非��归遍历，（左子树，根节点，右子树），要首先找到左子树的左叶子节点，扢�以要把所有左子树入栈，等扢�有的左子树入栈后，取栈顶元素＄1�7
+ * 遍历右子栄1�7
  * */
 int* MiddleOrderTraverseByStack(BinaryTree bt, int* counter)
 {
@@ -373,11 +385,11 @@ int* MiddleOrderTraverseByStack(BinaryTree bt, int* counter)
     memset(saveData, 0, STATCK_LENGTH * sizeof(int));
     InitStack(&binaryTree);
     while (bt != NULL || binaryTree.top != -1) {
-        while (bt != NULL) { // 先把左子树全部入栈
+        while (bt != NULL) { // 先把左子树全部入栄1�7
             PushStack(&binaryTree, bt);
             bt = bt->lchild;
         }
-        if (binaryTree.top != -1) { // 左子树入栈结束后，取栈顶元素，输出栈顶元素，遍历右子树
+        if (binaryTree.top != -1) { // 左子树入栈结束后，取栈顶元素，输出栈顶元素，遍历右子栄1�7
             PopStack(&binaryTree, &bt);
             saveData[(*counter)++] = bt->data;
             bt = bt->rchild;
@@ -400,17 +412,17 @@ void PostOrderTraverse(BinaryTree bt, int* saveData, int* counter)
 }
 
 /*******************************************************************************
-思路：
-1、在进行后序遍历的时候是先要遍历左子树，然后在遍历右子树，最后才遍历根节点。所以在非递归的实现中要先把根节点入栈
+思路＄1�7
+1、在进行后序遍历的时候是先要遍历左子树，然后在遍历右子树，最后才遍历根节点��所以在非��归的实现中要先把根节点入栈
 2、再把左子树入栈直到左子树为空，此时停止入栈。此时栈顶就是需要访问的元素，所以直接取出访问p。在访问结束后，还要判断被访
-   问的节点p是否为栈顶节点的左子树
-3、如果是的话那么还需要访问栈顶节点的右子树，所以将栈顶节点的右子树取出赋值给p
-4、如果不是的话则说明栈顶节点的右子树已经访问完了，那么现在可以访问栈顶节点了，所以此时将p赋值为null
+   问的节点p是否为栈顶节点的左子栄1�7
+3、如果是的话那么还需要访问栈顶节点的右子树，扢�以将栈顶节点的右子树取出赋��给p
+4、如果不是的话则说明栈顶节点的右子树已经访问完了，那么现在可以访问栈顶节点了，所以此时将p赋��为null
 *******************************************************************************/
 int* PostOrderTraversByStack(BinaryTree bt, int* counter)
 {
     Stack binaryTree = {0};
-    BinaryTree haveAccess = NULL; // 用来标记右子树是否访问到了，在访问到的情况下，才能访问根节点。
+    BinaryTree haveAccess = NULL; // 用来标记右子树是否访问到了，在访问到的情况下，才能访问根节点〄1�7
     int* saveData = (int*)malloc(STATCK_LENGTH * sizeof(int));
     if (saveData == NULL) {
         return NULL;
@@ -464,7 +476,7 @@ int* LevelTraverse(BinaryTree bt, int* counter)
 
 int main(void)
 {
-    int data[] = {1,2,4,999,999,5,999,999,3,6,999,999,7,999,999,999,999,999,999,999}; // 使用这种方法创建二叉树，需要在最后一个节点数据后面右足够的999.
+    int data[] = {1,2,4,999,999,5,999,999,3,6,999,999,7,999,999,999,999,999,999,999}; // 使用这种方法创建二叉树，霢�要在朢�后一个节点数据后面右足够的1�7999.
     int counter = 0;
     int i;
     int saveData[10] = {0};
@@ -474,7 +486,7 @@ int main(void)
 
     CreatBinary(&root, data, &counter);
     PreOrderTraverse(root, saveData, &accessCounter);
-    printf("\r\n前序遍历：递归\r\n");
+    printf("\r\n前序遍历：��归\r\n");
     for(i = 0; i < accessCounter; i++) {
         printf("%4d", saveData[i]);
     }
