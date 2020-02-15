@@ -1,3 +1,9 @@
+/*
+该解答参考了下面的帖子：https://blog.csdn.net/softwarex4/article/details/95868231
+                      https://www.cnblogs.com/grandyang/p/4322653.html
+*/
+
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdbool.h>
