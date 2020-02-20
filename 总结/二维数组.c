@@ -12,7 +12,7 @@ int** ReturnTwoDimensionArray(int* returnSize, int** returnColSize)
     *returnColSize = (int*)malloc(ALLOC_SIZE * sizeof(int));
 
     for (i = 0; i < ALLOC_SIZE; i++) {
-        #if 1   //ÕâÀï2ÖÖ·ÖÅäÄÚ´æµÄ²¢¸³ÖµµÄ·½·¨¶¼ÕýÈ·¡£
+        #if 1   //è¿™é‡Œ2ç§åˆ†é…å†…å­˜çš„å¹¶èµ‹å€¼çš„æ–¹æ³•éƒ½æ­£ç¡®ã€‚
         res[(*returnSize)++] = (int*)malloc((i + 1) * sizeof(int));
         (*returnColSize)[i] = (i + 1);
         #else
@@ -37,15 +37,49 @@ int main(void)
     int num = 0;
 #if 1  
     int returnSize = 0;
-    int (*colArra)[ALLOC_SIZE] = NULL; //¹Ø¼üÊÇÕâÀï£¬¶¨Òå³ÉÒ»¸öÖ¸Õë£¬Ö¸ÏòÒ»¸öÊý×é£¬ÕâÀïÈ¡µØÖ·´«Èë£¬ÔÚÏÂÃæµÄº¯ÊýÖÐ»á·ÖÅäÄÚ´æ¸øÕâ¸öÖ¸Õë¡£
+    int (*colArra)[ALLOC_SIZE] = NULL; //å…³é”®æ˜¯è¿™é‡Œï¼Œå®šä¹‰æˆä¸€ä¸ªæŒ‡é’ˆï¼ŒæŒ‡å‘ä¸€ä¸ªæ•°ç»„ï¼Œè¿™é‡Œå–åœ°å€ä¼ å…¥ï¼Œåœ¨ä¸‹é¢çš„å‡½æ•°ä¸­ä¼šåˆ†é…å†…å­˜ç»™è¿™ä¸ªæŒ‡é’ˆã€‚
     int **result = ReturnTwoDimensionArray(&returnSize, &colArra);
     for (i = 0; i < returnSize; i++) {
         printf("\r\ncol = %4d\r\n", (*colArra)[i]);
-        for (j = 0; j < (*colArra)[i]; j++) { //ÕâÀïÔÚ·ÃÎÊÊ±Òª×¢Òâ (*colArra)[i]  ºÍ *colArra[i] µÄÇø±ð£¬Ç°ÕßÖ¸Ïò¸ÃÊý×éÖÐµÄµÚÒ»¸öÔªËØ£¬ºóÕßÖ¸ÏòµÄµØÖ·ÊÇ £¨»ùµØÖ· + ALLOC * i£©
+        for (j = 0; j < (*colArra)[i]; j++) { //è¿™é‡Œåœ¨è®¿é—®æ—¶è¦æ³¨æ„ (*colArra)[i]  å’Œ *colArra[i] çš„åŒºåˆ«ï¼Œå‰è€…æŒ‡å‘è¯¥æ•°ç»„ä¸­çš„ç¬¬ä¸€ä¸ªå…ƒç´ ï¼ŒåŽè€…æŒ‡å‘çš„åœ°å€æ˜¯ ï¼ˆåŸºåœ°å€ + ALLOC * iï¼‰
             printf("%4d", *(*(result + i) + j));
         }
         printf("\r\n");
     }
 #endif
     system("pause");
+}
+
+/*
+ä¸‹é¢ä»‹ç»ä¸€ç§äºŒç»´æ•°ç»„å¯ä»¥é¿å…è¾¹ç•Œç‚¹çš„ç®—æ³•ï¼Œé€šè¿‡å®šä¹‰directionæ¥å¤„ç†ã€‚
+ä¸‹é¢çš„é¢˜ç›®æ˜¯ç”Ÿå‘½çš„æ¸¸æˆ
+*/
+int** gameoflife(int** board, int boardSize, int* boardColumSize)
+{
+    int row;
+    int column;
+    int cnt;
+    for (row = 0; row < boardSize; row++) {
+        for (column = 0; column < *boardColumnSize; column++) {
+            int direction[8][2] = {{-1,-1}, {-1,0}, {-1,1}, {0, 1},
+                                   {1, 1}, {1, 0}, {1, -1}, {0, -1}
+                                  };
+            for (int k = 0; k < 8; k++) {
+                int x = row + direction[k][0];
+                int y = column + direction[1];
+                if (x >= 0 && x < row   &&  y >= 0 && y < column && board[row][column] == 1) {
+                    cnt++;
+                }
+            }
+            if((board[row][column] & 0x1 == 1) && (cnt == 2 || cnt == 3) ||
+                board[row][column] & 0x1 == 0) && (cnt == 3)) {
+                board[row][column] += 2; // è¿™é‡ŒåŠ 2çš„åŽŸå› å°±æ˜¯æŠŠé«˜ä½ç”¨ä½œå˜åŒ–åŽçš„ä½ç½®ï¼Œä½Žä½ä¿æŒä¸å˜ç”¨æ¥è®¡ç®—
+            }
+        }
+    }
+    for (row = 0; row < boardSize; row++) {
+        for(column = 0; column < *boardSize; column++) {
+            board[row][column] >>= 1;
+        }
+    }
 }
