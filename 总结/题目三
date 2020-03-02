@@ -1,0 +1,294 @@
+办公室只有一人，单灯全部亮着，他一方面想关更多的灯，有要赶时间，请计算不耽误赶班车的时间，最多能关几站灯
+
+0 ： 空位，可以通过
+1 ： 表示桌子，不能通过
+2 ： 表示一盏灯，可以通过，灯 <= 11
+3 : 工位 可以通过
+4 ： 办公室门口，可以通过
+
+输入： 
+第一行为一个整数 n (2 <= n <= 50)房间长宽均为n
+第二行为一个整数m (1<=m<=20000),表示人要在m秒内（小于等于）走道门口（可以多次经过不出去）
+随后n行，每行有n个数，表示房间布局
+
+输出：
+最多能关几盏灯
+无论如何都赶不上车，输出-1
+
+样例：
+输入 
+5
+8
+0 0 0 0 0
+0 3 0 2 0
+0 0 2 0 0
+0 0 0 0 0
+0 0 0 0 4
+输出：2
+
+输入：
+4
+3
+0 0 0 0
+0 0 0 2
+0 0 4 0
+0 0 0 3
+输出：0
+
+
+输入：
+3 
+10
+3 1 2
+0 1 0
+0 1 4
+输出： -1
+
+1）样例1解释：小明可以把两盏灯都关掉，用时刚好8秒（其中一条可行路径为：右 - 右 - 下 - 左 - 下 - 下 - 右 - 右
+
+2）样例2解释：小明来不及关灯，但可以走到门口，故返回0
+
+3）样例3解释：小明给3张桌子挡着过不去，无论如何都赶不上班车，故输出-1
+
+
+参考解法：
+#include <iostream>
+
+using namespace std;
+
+const int INVALID_LIGHT_NUM = -1;
+
+// midData用来保存中间计算得到结果，避免同一路径反复计算多次，提升递归性能。
+// midData[x][y][timeLimit]中保存的是:
+// 从[x,y]到[门口x,门口y]，在timeLimit时间内，能够关闭的最大灯数。
+// -2表示这条路径没有计算过，-1表示该路径不可达，正数表示该路径可达，保存的是能够关闭的最大灯数。
+short midData[50][50][20000]; // 这个全局变量需要100M的内存，题目要求的内存是<256M，满足要求。
+
+int g_totoalCallDepth = 0; // 记录当前递归的深度（调试用）。
+int g_maxCallDepth = 0; // 记录最大的递归深度。（调试用，确保我们的算法没有超过栈的最大深度）
+
+#if 0 // leetcode用例
+char arr[50][50];
+int g_srcX = 0;
+int g_srcY = 0;
+int g_dstX = 0;
+int g_dstY = 0;
+int g_num = 0;
+int g_timeLimit = 0;
+#endif
+
+#if 1 // 自带用例1
+char arr[5][5]={{0,0,0,0,0},
+                {0,3,0,2,0},
+                {0,0,2,0,0},
+                {0,0,0,0,0},
+                {0,0,0,0,4}};
+int g_srcX = 1;
+int g_srcY = 1;
+int g_dstX = 4;
+int g_dstY = 4;
+int g_num = 5;
+int g_timeLimit = 8;
+#endif
+
+#if 0 // 自带用例2
+char arr[4][4]={{0,0,0,0},
+                {0,0,0,2},
+                {0,0,4,0},
+                {0,0,0,3}};
+int g_srcX = 3;
+int g_srcY = 3;
+int g_dstX = 2;
+int g_dstY = 2;
+int g_num = 4;
+int g_timeLimit = 3;
+#endif
+
+#if 0 // 自带用例3
+char arr[3][3]={{3,1,2},
+                {0,1,0},
+                {0,1,4}};
+int g_srcX = 0;
+int g_srcY = 0;
+int g_dstX = 2;
+int g_dstY = 2;
+int g_num = 3;
+int g_timeLimit = 10;
+#endif
+
+int GetLightNumHere(int x, int y)
+{
+    if (arr[x][y] == 2) {
+        return 1;
+    }
+    return 0;
+}
+
+int GetMaxLight(int timeLimit, int x, int y)
+{
+    int maxLightNum = 0;
+    int canReached = 0;
+    int neigborMaxLight = 0;
+
+    int lightNumInCurPos = 0;
+
+    g_totoalCallDepth++;
+
+    // 调试用，可以忽略，计算递归调用的最大深度。
+    if (g_totoalCallDepth > g_maxCallDepth) {
+        g_maxCallDepth = g_totoalCallDepth;
+    }
+
+    // 如果这条路径已经计算过了，则直接返回结果，可以提升递归的性能。
+    if (midData[x][y][timeLimit] != -2) {
+        g_totoalCallDepth--;
+        return midData[x][y][timeLimit];
+    }
+
+    // 退出递归的条件
+    if (timeLimit == 1) {
+        // 只剩下一秒，如果当前位置的上下左右就是门口，或者当前位置就是门口，则路径可达，返回当前位置的灯数目。
+        if ((((x - 1) == g_dstX) && (y == g_dstY))
+             || (((x + 1) == g_dstX) && (y == g_dstY))
+             || ((x == g_dstX) && ((y - 1) == g_dstY))
+             || ((x == g_dstX) && ((y + 1) == g_dstY))
+             || ((x == g_dstX) && (y == g_dstY))) {
+
+            midData[x][y][timeLimit] = GetLightNumHere(x, y);
+            g_totoalCallDepth--;
+            return GetLightNumHere(x, y);
+        }
+
+        // 没门，路径不可达，返回-1
+        midData[x][y][timeLimit] = INVALID_LIGHT_NUM;
+        g_totoalCallDepth--;
+        return INVALID_LIGHT_NUM;
+    }
+
+    /*
+     * 递归的中间处理：判断当前节点的上下左右节点，看哪个节点在timeLimit-1时间内能关闭的灯最多
+     * 该最大值加上当前节点的灯数目，就是我们要的结果了。
+     */
+    lightNumInCurPos = GetLightNumHere(x, y);
+
+    if ((x - 1) >= 0) {
+        if (arr[x - 1][y] != 1) {
+            neigborMaxLight = GetMaxLight(timeLimit - 1, x - 1, y);
+            if (neigborMaxLight != INVALID_LIGHT_NUM){
+                if (neigborMaxLight + lightNumInCurPos >= maxLightNum){
+                    maxLightNum = neigborMaxLight + lightNumInCurPos;
+                    canReached = 1;
+                }
+            }
+        }
+    }
+
+    if ((x + 1) < g_num) {
+        if (arr[x + 1][y] != 1) {
+            neigborMaxLight = GetMaxLight(timeLimit - 1, x + 1, y);
+            if (neigborMaxLight != INVALID_LIGHT_NUM){
+                if (neigborMaxLight + lightNumInCurPos >= maxLightNum){
+                    maxLightNum = neigborMaxLight + lightNumInCurPos;
+                    canReached = 1;
+                }
+            }
+        }
+    }
+
+    if ((y - 1) >= 0) {
+        if (arr[x][y - 1] != 1) {
+            neigborMaxLight = GetMaxLight(timeLimit - 1, x, y - 1);
+            if (neigborMaxLight != INVALID_LIGHT_NUM){
+                if (neigborMaxLight + lightNumInCurPos >= maxLightNum){
+                    maxLightNum = neigborMaxLight + lightNumInCurPos;
+                    canReached = 1;
+                }
+            }
+        }
+    }
+
+    if ((y + 1) < g_num) {
+        if (arr[x][y + 1] != 1) {
+            neigborMaxLight = GetMaxLight(timeLimit - 1, x, y + 1);
+            if (neigborMaxLight != INVALID_LIGHT_NUM){
+                if (neigborMaxLight + lightNumInCurPos >= maxLightNum){
+                    maxLightNum = neigborMaxLight + lightNumInCurPos;
+                    canReached = 1;
+                }
+            }
+        }
+    }
+
+    // 如果不可到达，则返回-1
+    if (canReached == 0){
+        midData[x][y][timeLimit] = INVALID_LIGHT_NUM;
+        g_totoalCallDepth--;
+        return INVALID_LIGHT_NUM;
+    }
+
+    // 可以到达，则返回最大灯数。
+    midData[x][y][timeLimit] = maxLightNum;
+    g_totoalCallDepth--;
+    return maxLightNum;
+}
+
+
+int main(void)
+{
+#if 0 // 本地调试开关
+
+    int num;
+    int timeLimit;
+
+    cin >> num >> timeLimit;
+    for (int loop1 = 0; loop1 < num; loop1++) {
+        for (int loop2 = 0; loop2 < num; loop2++) {
+            int val;
+            cin >> val;
+
+            arr[loop1][loop2] = val;
+            if (val == 3) {
+                g_srcX = loop1;
+                g_srcY = loop2;
+            }
+            if (val == 4) {
+                g_dstX = loop1;
+                g_dstY = loop2;
+            }
+        }
+    }
+    g_num = num;
+    g_timeLimit = timeLimit;
+
+    for (int i = 0; i < 50; i++) {
+        for (int j = 0; j < 50; j++) {
+            for (int n = 0; n < 20000; n++) {
+                midData[i][j][n] = -2; // -2表示这条路径没有计算过
+            }
+        }
+    }
+
+    int maxLight = GetMaxLight(g_num, g_timeLimit, g_srcX, g_srcY);
+
+    return maxLight;
+
+#else
+
+    for (int i = 0; i < 50; i++) {
+        for (int j = 0; j < 50; j++) {
+            for (int n = 0; n < 20000; n++) {
+                midData[i][j][n] = -2;
+            }
+        }
+    }
+
+    int maxLight = GetMaxLight(g_timeLimit, g_srcX, g_srcY);
+
+    printf("Result is = %d. MaxCallDepths = %d.", maxLight, g_maxCallDepth);
+
+    return maxLight;
+
+#endif
+}
+
+
