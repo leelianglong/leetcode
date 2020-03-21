@@ -12,3 +12,7 @@ https://blog.csdn.net/qq_32424059/article/details/99712397?depth_1.utm_source=di
 
 算法第四版的网上资源：https://algs4.cs.princeton.edu/code/
 
+uthash的使用方法：
+https://leetcode-cn.com/circle/article/y7G2Gq/
+https://blog.csdn.net/houjixin/article/details/15809825
+
