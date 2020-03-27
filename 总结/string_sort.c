@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <string.h>
 
+// 下面2种cmp的方法都是正确的，
 int cmp(const void* a, const void* b)
 {
     char* aa = *(char**)a;
