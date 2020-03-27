@@ -1,0 +1,142 @@
+#include "securec.h"
+#include "stdio.h"
+#include "stdlib.h"
+#include "string.h"
+
+#define MAXN 50
+#define KEY_BUF_LEN 16
+#define LOG_BUF_LEN 256
+
+    char keys[] = {"IMSI", "CellID", "UserIP", "CID", "UID"};//ReadVector<string>(count);
+    //ReadLine();
+    char logs[][16] = {{"Apn", "cmnet"}, {"Qos", "121212121212"}, {"CellID", "4600112345"},
+        {"Imsi", "460011234567890"}, {"GWIP", "1.1.1.1"}, {"UserIp", "2.2.2.2"}, {"CID", "112233-334455-667"},
+        {"UID", "1-2-3-4"}, {"pwd", "huawei1234"}};
+                                         
+typedef struct {
+    char keys[16];
+    char value[200];
+} LogStruct;
+
+LogStruct arr[100] = {0};
+
+void LogAnonymize(char *keys[], int keyCnt, char *input, char *outBuf, int outBufLen)
+{
+    
+}
+
+
+void AnalyseLog(char* log, char* key, char* value)
+{
+    int i = 0;
+    int keyCounter = 0;
+    int valueCounter = 0;
+    while (log[i] != ':') {
+        key[keyCounter++] = log[i++];
+    }
+    i++;
+    while (log[i] != '\0') {
+        value[valueCounter++] = log[i++];
+    }    
+}
+
+int CreateLog(char* logBuf)
+{
+   int i;
+   int pair = 0;
+   int j = 0;
+   char tmp[100] = {0}; 
+   char length = 0;
+    for (i = 0; i < strlen(logBuf); i++) {
+        if (strlen(tmp) > 0) {
+            AnalyseLog(tmp, arr[pair].keys, arr[pair].value);
+            pair++;
+            memset_s(tmp, 100, 0 ,100);
+            i += (length);
+        }
+        length = 0;
+        for (j = i; j < strlen(logBuf); j++) {
+            if (logBuf[j] != ',') {
+                tmp[length++] = logBuf[j];
+                continue;
+            }
+            tmp[length] = '\0';
+            printf("%s\r\n", tmp);
+            AnalyseLog(tmp, arr[pair].keys, arr[pair].value);
+            memset_s(tmp, 100, 0 ,100);
+            pair++;
+            i += (length);
+            break;
+        }
+    }
+    return pair;
+}
+
+// 计算连续数字
+int CaluContinueNumbers(char* data)
+{
+    int i;
+    int counter = 0;
+    int max = 0;
+    for (i = 0; i < strlen(data); i++) {
+        if (data[i] >= '0' && data[i] <= '9') {
+            counter++;
+            max = max > counter ? max : counter;
+        } else {
+            counter = 0;
+        }
+    }
+
+    if (counter >= 4) {
+       
+    }
+}
+
+// 
+void RuleOne(char* keys, LogStruct* tmp, int logPair)
+{
+    int i;
+    int j;
+    int length = strlen(keys);
+
+    for (i = 0; i < logPair; i++) {
+        for (j = 0; j <length; j++) {
+            if (abs(keys[j] - tmp[i].value[j]) == abs('a' - 'b')) {
+                continue;
+            }
+        }
+        if (j == length) {
+            // 说明key存在
+            CaluContinueNumbers(tmp[i].value);
+           
+        } else {
+
+        }
+    }
+}
+
+
+int main(void)
+{
+    #if 1
+    int keysCounter = 0; // 表示关键词个数
+    if (scanf_s("%d", &keysCounter) != 1) { return -1; }
+
+    static char keysBuf[MAXN][KEY_BUF_LEN];
+    static char *keys[MAXN];
+    int i;
+    for (i = 0; i < keysCounter; i++) {
+        if (scanf_s("%s", keysBuf[i], KEY_BUF_LEN) != 1) { return -1; }
+        keys[i] = keysBuf[i];
+    }
+
+    static char buf[LOG_BUF_LEN];
+    if (scanf_s("%s", buf, LOG_BUF_LEN) != 1) { return -1; }
+
+    static char outBuf[LOG_BUF_LEN];
+    LogAnonymize(keys, keysCounter, buf, outBuf, sizeof(outBuf));
+
+    (void)printf("%s", outBuf);
+    return 0;
+    #endif
+}
