@@ -1,5 +1,5 @@
-1、 ctype.h   头文件中有数字、字符的判断。
-
+### 1、 ctype.h   头文件中有数字、字符的判断。
+```
 isalnum
 Check if character is alphanumeric (function )
 isalpha
@@ -24,3 +24,4 @@ isupper
 Check if character is uppercase letter (function )
 isxdigit
 Check if character is hexadecimal digit (function )
+```
