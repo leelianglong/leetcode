@@ -1,3 +1,5 @@
+// qsort 是不稳定的排序
+
 #include <stdio.h>
 #include <stdlib.h>
 
