@@ -1,5 +1,6 @@
 /*
 * 看到频率一般使用hash存储
+* 这里2点需要注意，使用max 和 returnMax 来表示。 得到max，可以在下面遍历hash数组时，少些时间； returnMax,是题目中要求的多个幸运数存在时，返回最大的
 */
 
 int findLucky(int* arr, int arrSize){
