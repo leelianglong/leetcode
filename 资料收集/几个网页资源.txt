@@ -16,3 +16,6 @@ uthash的使用方法：
 https://leetcode-cn.com/circle/article/y7G2Gq/
 https://blog.csdn.net/houjixin/article/details/15809825
 
+C语言实现的HashMap
+https://leetcode-cn.com/problems/shortest-supersequence-lcci/solution/java-by-liangbin/
+
