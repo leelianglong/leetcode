@@ -1,22 +1,59 @@
-void sortColors(int* nums, int numsSize){
-    if (nums == NULL || numsSize <= 0) {
-        return;
-    }
-    int hashColor[3] = {0};
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <stdbool.h>
 
-    for (int i = 0; i < numsSize; i++) {
-        hashColor[nums[i]]++;
+int direct[4][2] = {
+    {1, 0},
+    {0, 1},
+    {-1, 0},
+    {0, -1}
+};
+
+int row = 0;
+int column = 0;
+int length = 0;
+bool step(char** board, int x, int y, char* target, int* couter)
+{
+    if (*couter == length) {
+        return true;
     }
 
-    for (int red = 0; red < hashColor[0]; red++) {
-        nums[red] = 0;
+    if ((x == row - 1) && (y == column - 1)) {
+        return false;
     }
 
-    for (int white = hashColor[0]; white < hashColor[1] + hashColor[0]; white++) {
-        nums[white] = 1;
+    if (board[x][y] != target[*couter]) {
+        return false;
     }
 
-    for (int blue = hashColor[0] + hashColor[1]; blue < numsSize; blue++) {
-        nums[blue] = 2;
+    for (int i = 0; i < 4; i++) {
+        int xx = x + direct[i][0];
+        int yy = y + direct[i][1];
+
+        if (xx < 0 || yy < 0 || xx > row - 1 || yy > column - 1) {
+            continue;
+        }
+        step(board, xx, yy, target, couter);
+        (*couter)++;
     }
+    return false;
+}
+
+
+bool exist(char** board, int boardSize, int* boardColSize, char * word){
+    if (board == NULL || boardColSize == NULL || word == NULL) {
+        return false;
+    }
+    row = boardSize;
+    column = *boardColSize;
+    int couter = 0;
+    length = strlen(word);
+    return step(board, 0, 0, word, &couter);
+}
+
+int main(void)
+{
+
+    system("pause");
 }
