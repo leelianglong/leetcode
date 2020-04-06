@@ -1,3 +1,9 @@
+/*
+* 基因的每一次变换都要求是合法的，所以是在基因库中的。
+* 所以每次在基因库中找一个和当前基因序列相差一个的，使其入队，然后再出队，再在基因库中找相差一个的，每找到一个，步数加1。
+* 如此循环直到队列为空。
+*/
+
 typedef struct {
     char* str;
     int changeSteps;
@@ -12,16 +18,6 @@ bool isOneStepChange(char* src, char* dst, int len)
         }
     }
     return changeCounter == 1;
-}
-
-bool  isValidChange(char** bank, int bankSize, char* src)
-{
-    for (int i = 0; i < bankSize; i++) {
-        if (strcmp(bank[i], src) == 0) {
-            return true;
-        }
-    }
-    return false;
 }
 
 int minMutation(char * start, char * end, char ** bank, int bankSize){
