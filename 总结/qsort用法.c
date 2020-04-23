@@ -25,7 +25,7 @@ int CmpStrArray(const void*a, const void* b)
 // 对字符串指针数组排序 *s[]
 int CmpStrPointArray(const void* a, const void* b)
 {
-	char*aa = *(char**)a;
+	char*aa = *(char**)a; // 注意如果要排序的是字符串指针数组的话，这里要先转换成*(char**)a
 	char*bb = *(char**)b;
 	
 	return strcmp(aa, bb);
