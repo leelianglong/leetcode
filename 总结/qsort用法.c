@@ -71,7 +71,7 @@ void main()
 		{"th"},
 		{"op"},
 	};
-	char *strPointArray[10] = {
+	char *strPointArray[10] = { // 注意，如果这里没有定义10个字符串，下面在使用排序时会出现段错误。
 		"hwteg",
 		"dfh",
 		"qe",
@@ -111,7 +111,7 @@ void main()
 	}
 	
 	
-	printf("\r\nstring point array sort:\r\n");
+	printf("\r\nstring point array sort:\r\n"); //  注意 strPointArray数组一定要定义和初始化大小为 sizeof(strPointArray) / sizeof(char*)。
 	qsort(strPointArray, sizeof(strPointArray) / sizeof(char*), sizeof(char*), CmpStrPointArray);
 	for (i = 0; i < 10; i++) {
 		printf("%s  ", strPointArray[i]);
