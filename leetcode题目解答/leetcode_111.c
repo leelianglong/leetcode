@@ -28,7 +28,7 @@ int dfs_deepth(struct TreeNode* bt)
     if (bt->left == NULL || bt->right == NULL) {
         return leftDeepth + rightDeepth + 1; // 这里 bt->left 或者 bt->right为空的时候，他们的深度会是0，所以尽管这里是2个深度相加 再加1，实际上也就仅仅是子节点不为空的深度
     }
-    return (leftDeepth > rightDeepth ? rightDeepth : leftDeepth) + 1; //如果左右子树都不为空，则返回二者较大深度
+    return (leftDeepth > rightDeepth ? rightDeepth : leftDeepth) + 1; //如果左右子树都不为空，则返回二者较小深度
 }
 int minDepth(struct TreeNode* root){
     return dfs_deepth(root);
