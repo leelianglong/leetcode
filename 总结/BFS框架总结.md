@@ -12,6 +12,7 @@ BFS使用的核心数据结构是队列，即先进先出的线性存储结构�
 BFS的框架：
 
 void BFS (root) {
+
   1、申请队列，用例存储元素  
   
   2、如果是树，具有明显的前后顺序关系，这里就不用设置访问标记，否则，设置一个visited[MAX] = {0} 的标记
@@ -28,5 +29,39 @@ void BFS (root) {
     
     4.5、进行步数更新。（要在出队的for循环外面）
   }
+  
 }
+
+下面以LeetCode：559，N叉树的最小高度。
+
+```
+int bfs(struct Node* root)
+{
+    if (root == NULL) {
+        return 0;
+    }
+    struct Node** queue = (struct Node**)malloc(sizeof(struct Node*) * 10000);
+    int front = 0; 
+    int rear = 0;
+    int max = 0;
+    queue[rear++] = root; // 根节点入队
+    while (front != rear) {
+        int queueSize = rear - front;
+        for (int k = 0; k < queueSize; k++) {
+            struct Node* curNode = queue[front]; // 获取对头元素
+            front++; // 出队
+            int childNum = curNode->numChildren;
+            for (int m = 0; m < childNum; m++) {
+                queue[rear++] = curNode->children[m];
+            }
+        }
+        max++;
+    }
+    return max;
+}
+
+int* maxDepth(struct Node* root) {
+    return bfs(root);    
+}
+```
 
