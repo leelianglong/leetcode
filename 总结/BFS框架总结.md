@@ -28,11 +28,13 @@ void BFS (root) {
     4.3、每出队一个元素，就把和它相邻的元素依次入队。（注意这里相邻的意义）
     
     4.5、进行步数更新。（要在出队的for循环外面）
-  }
+    }
   
 }
 
 下面以LeetCode：559，N叉树的最小高度。
+
+这里就是判断这个N叉树有多少层，
 
 ```
 int bfs(struct Node* root)
@@ -55,7 +57,7 @@ int bfs(struct Node* root)
                 queue[rear++] = curNode->children[m];
             }
         }
-        max++;
+        max++; // 一层结束了，高度加1.
     }
     return max;
 }
