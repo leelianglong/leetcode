@@ -67,3 +67,106 @@ int* maxDepth(struct Node* root) {
 }
 ```
 
+leetcode 752 :
+
+BFS中比较关键的一点是:
+
+1、如何找相邻的元素? 对于本题，相邻元素的定义是： “每次旋转都只能旋转一个拨轮的一位数字”
+
+对于一个状态，比如“0000”， 有4个轮子，每次只能拨1个，拨的方向有2种，向上，向下；所以一个初始状态有8种相邻的状态。
+
+因此对于出队的一个元素，把8种相邻的元素入队。
+
+2、入队时，要检测一下元素是否被访问过，访问过了，就不在入队了，所以需要一个全局的数组来记录每一个元素是否被访问
+
+3、在求相邻状态时，由于对同一个状态既要求向上转，也要求下下转，所以这个初始状态在求相邻状态时，不能修改这个初始状态，否则有问题。
+
+```
+char* UpWheelChangeStr(char* str, char wheelPos)
+{
+    char tmpSave[5] = {0};
+    strcpy(tmpSave, str);
+    char* res = (char*)malloc(sizeof(char) * (strlen(str) + 1));
+    memset(res, 0, sizeof(char) * (strlen(str) + 1));
+    if (tmpSave[wheelPos] == '9') {
+        tmpSave[wheelPos] = '0';
+    } else {
+        tmpSave[wheelPos] += 1;
+    }
+    strcpy(res, tmpSave);
+    return res;
+}
+
+char* DownWheelChangeStr(char* str, char wheelPos)
+{
+    char tmpSave[5] = {0};
+    strcpy(tmpSave, str);
+    char* res = (char*)malloc(sizeof(char) * (strlen(str) + 1));
+    memset(res, 0, sizeof(char) * (strlen(str) + 1));
+    if (tmpSave[wheelPos] == '0') {
+        tmpSave[wheelPos] = '9';
+    } else {
+        tmpSave[wheelPos] -= 1;
+    }
+    strcpy(res, tmpSave); 
+    return res;
+}
+
+int openLock(char ** deadends, int deadendsSize, char * target){
+    int queue[10000][5] = {0};
+    int front = 0;
+    int rear = 0;
+    strcpy(queue[rear++], "0000");
+    bool visited[10000] = {0};
+    visited[atoi("0000")] = true;
+    int step = 0;
+    bool isDeadFlg = false;
+    
+    while (front != rear){
+        int curSize = rear - front;
+        for (int i = 0; i < curSize; i++) {
+            char* curNode = queue[front];
+            front++;
+            //printf("\n F: %s", curNode);
+            for (int j = 0; j < deadendsSize; j++) {
+                if (strcmp(curNode, deadends[j]) == 0) {
+                    isDeadFlg = true;
+                    //printf("\nfind dead: %s", deadends[j]);
+                    break;
+                }
+            }
+            if (isDeadFlg) {
+                isDeadFlg = false;
+               // printf("\nfind dead1");
+                continue;
+            }
+            if (strcmp(curNode, target) == 0) {
+                return step;
+            }
+            for (int k = 0; k < 4; k++) {
+                //printf("\n T: %s", curNode);
+                char* up = UpWheelChangeStr(curNode, k);
+                //printf("\n U:%s", up);
+                if (!visited[atoi(up)]) {
+                    //printf("\nU: %s", up);
+                    strcpy(queue[rear++], up);
+                    visited[atoi(up)] = true;
+                }
+                char* down = DownWheelChangeStr(curNode, k);
+                //printf("\n D:%s", down);
+                if (!visited[atoi(down)]) {
+                   // printf("\nD: %s", down);
+                    strcpy(queue[rear++], down);
+                    visited[atoi(down)] = true;
+                }
+            }
+        }
+        step++;
+    }
+    return -1;
+}
+```
+
+
+
+
