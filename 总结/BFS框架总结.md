@@ -28,7 +28,7 @@ void BFS (root) {
     4.3、每出队一个元素，就把和它相邻的元素依次入队。（注意这里相邻的意义）
     
     4.5、进行步数更新。（要在出队的for循环外面）
-    }
+  }
   
 }
 
@@ -167,6 +167,107 @@ int openLock(char ** deadends, int deadendsSize, char * target){
 }
 ```
 
+leetcode 542 (01矩阵，给定一个由0 和 1 组成的矩阵，找到每个元素到最近的0的距离，2个相邻元素的距离是1)
 
+分析：看到最近距离，要朝BFS方向思考，为什么说BFS就能找最近的距离？ 因为从BFS的本质就能够看出，BFS解决的是从某个起点到target的最短距离。它的搜索是
+
+从起点开始向四周扩散，遇到target就停止。
+
+本题的关键点：
+1、找到相邻元素，这里的相邻元素是指上下左右4个元素，题目也给出提示了
+
+2、确定队列要存储什么？本题矩阵只有0 和 1，要求某点到最近0的距离，所以不能把元素存储到队列中，要存储的是每次访问元素的坐标。另外对于坐标，是以（x，y）的形式，还是一维的一个数字？ 对于矩阵来说，可以直接存储一个数字，通过数字对每列元素个数取余和取模，换算成坐标。
+
+3、出队后查找其相邻的元素再入队时要注意：使用访问标记，另外出队的元素要和再次入队的元素要有联系，例如本题，再次入队的坐标要在出队的坐标基础上进行4个方向偏移。
+
+4、使用另外一个数据区来存储，修改后的矩阵，搜索时，在原矩阵中搜索，避免在原矩阵中修改了，影响后续的搜索。
+
+```
+int visited[10000] = {false};
+int queue[10000] = {-1};
+int fixColum = 0;
+int fixRow = 0;
+int direct[4][2] = {
+    {1,0}, {0,1},{-1,0},{0,-1}
+};
+
+int bfs(int** matrix, int curRow, int curColumn)
+{
+    for (int i = 0; i < 10000; i++) {
+        queue[i] = -1;
+        visited[i] = false;
+    }
+    int front = 0;
+    int rear = 0;
+    int step = 0;
+    queue[rear++] = curRow * fixColum + curColumn;//matrix[curRow][curColumn];
+    visited[curRow * fixColum + curColumn] = true;
+    //printf("\nenter %d %d", curRow, curColumn);
+    while (front != rear) {
+        int curSize = rear - front;
+        //printf("\nqueue %d %d\n", front, rear);
+      //  for(int i = front; i <= rear; i++) {
+            //printf("%d ", queue[i]);
+      //  }
+        for (int i = 0; i < curSize; i++) {
+            int head = queue[front++];
+            if (matrix[head / fixColum][head % fixColum] == 0) { // 找到最近的0了
+                //printf("\n Bfs find");
+                return step;
+            }
+            for (int k = 0; k < 4; k++) {
+                int dx = head / fixColum + direct[k][0]; // 这里是关键点：下次搜索要以上次出队的坐标为基础，在此之上进行偏移。
+                int dy = head % fixColum + direct[k][1];
+                if (dx < 0 || dx > fixRow - 1 || dy < 0 || dy > fixColum - 1) {
+                    continue;
+                }
+                //printf("\n pos (%d %d)", dx, dy);
+                //printf("element (%d) visit (%d)",  matrix[dx][dy], visited[dx * fixColum + dy]);
+                if (!visited[dx * fixColum + dy]) {
+                    queue[rear++] = dx * fixColum + dy;//matrix[dx][dy];
+                    visited[dx * fixColum + dy] = true;
+                }
+            }
+        }
+        //printf("\n step++");
+        step++;
+    }
+    return -1;
+} 
+
+int** updateMatrix(int** matrix, int matrixSize, int* matrixColSize, int* returnSize, int** returnColumnSizes){
+    fixColum = *matrixColSize;
+    fixRow = matrixSize;
+    *returnSize = 0;
+
+    int** res = (int**)malloc(sizeof(int*) * matrixSize);
+    for (int i = 0; i < matrixSize; i++) {
+        res[i] = (int*)malloc(sizeof(int) * fixColum);
+    }
+    for (int i = 0; i < matrixSize; i++) {
+        for (int j = 0; j < fixColum; j++) {
+            res[i][j] = matrix[i][j];
+        }
+    }
+    //res = matrix;
+    for (int i = 0; i < fixRow; i++) {
+        for (int j = 0; j < fixColum; j++) {
+            if (matrix[i][j] == 1) {
+                int pos = bfs(matrix, i, j);
+                if (pos > -1) {
+                    res[i][j] = pos;
+                    //printf("\nfind pos(%d)", pos);
+                }
+            }
+        }
+    }
+    *returnSize = matrixSize;
+    *returnColumnSizes = (int*)malloc(sizeof(int) * matrixSize);
+    for (int k = 0; k < matrixSize; k++) {
+        (*returnColumnSizes)[k] = fixColum;
+    }
+    return res;
+}
+```
 
 
