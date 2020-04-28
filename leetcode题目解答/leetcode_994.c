@@ -21,7 +21,7 @@ int bfs(int** grid, int row, int colum)
         for (int i = 0; i < curSize; i++) {
             int curNode = queue[front++];
             int curRow = curNode / fixColum;
-            int curColum = curRow % fixColum;
+            int curColum = curNode % fixColum;
             printf("\nout(%d %d)", curRow, curColum);
             for (int k = 0; k < 4; k++) {
                 int dx = curRow + direct[k][0];
