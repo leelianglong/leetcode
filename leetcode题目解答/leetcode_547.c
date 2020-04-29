@@ -48,7 +48,7 @@ int findCircleNum(int** M, int MSize, int* MColSize){
     for (int i = 0; i < row; i++) {
         for (int j = 0; j < row; j++) {
             if (M[i][j] == 1) {
-                UFUnion(save, i, j);
+                UFUnion(save, i, j); // 这里 i,j 既是坐标，有表示第i，第j个同学，所以只要M[i][j] = 1就表示这2个同学是在一个朋友圈。
             }
         }
     }
