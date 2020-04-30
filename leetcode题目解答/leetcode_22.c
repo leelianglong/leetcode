@@ -1,8 +1,14 @@
+/*
+* 大致思路就是，从左向右一次放左右括号。
+* 回溯法，主要是再一次调用之后，要恢复在调用自身之前设置的数据
+* 合法的括号一定是1、左括号数和右括号数相等， 2任意时刻左括号的数量都要大于右括号
+*/
+
 char** result = NULL;
 void step(int left, int right, char* res, int* top, int* returnSize, int n)
 {
-    if (left < 0 || right < 0 || left > right) {
-        return; // 异常情况要结束
+    if (left < 0 || right < 0 || left > right) { 
+        return; // 异常情况要结束 left > right 表示，左括号剩的比右括号还多，不合法
     }
     if (left == 0 && right == 0) { // 找到完整的括号要结束
         result[(*returnSize)] = (char*)malloc(sizeof(char) * (2 * n + 1));
