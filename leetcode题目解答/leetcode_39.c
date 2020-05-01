@@ -3,11 +3,11 @@
 #include <string.h>
 
 /*
-* Õû¸ö½âÌâË¼Â·:
-* 1¡¢ÉèÖÃÒ»¸ö´óÑ­»·£¬ÒòÎªÊý×Ö¿ÉÒÔÖØ¸´£¬ËùÒÔ´Ó0¿ªÊ¼¡£´óÑ­»·ÖÐ×öµÄÊÂÇéÈçÏÂ:
-* 2¡¢±éÀúÐòÁÐÖÐµÄÃ¿¸öÊý×Ö£¬Ã¿±éÀúÒ»¸ö£¬¾Í°ÑÕâ¸öÊý×Ö·Åµ½¶ÑÕ»ÖÐ£¬²¢ÇÒ´ÓtargetÖÐ°ÑÕâ¸öÊý×Ö¼õÈ¥
-* 3¡¢È»ºó¾Í»ØËÝ£¬ÖØÐÂ´Ó0¿ªÊ¼±éÀúÐòÁÐ£¬Ö´ÐÐ2µÄ¶¯×÷
-* 4¡¢Èç¹ûtargetµÈÓÚ0ÁË£¬»òÕßÊÇ¸ºÊýÁË£¬¾ÍÍË³ö»ØËÝ£¬°ÑÕ»¶¥ÔªËØPOP³öÀ´£¬¼Óµ½targetÖÐ£¬È»ºó½øÐÐ´óÑ­»·µÄÏÂÒ»´ÎÑ­»·¡£
+* æ•´ä¸ªè§£é¢˜æ€è·¯:
+* 1ã€è®¾ç½®ä¸€ä¸ªå¤§å¾ªçŽ¯ï¼Œå› ä¸ºæ•°å­—å¯ä»¥é‡å¤ï¼Œæ‰€ä»¥ä»Ž0å¼€å§‹ã€‚å¤§å¾ªçŽ¯ä¸­åšçš„äº‹æƒ…å¦‚ä¸‹:
+* 2ã€éåŽ†åºåˆ—ä¸­çš„æ¯ä¸ªæ•°å­—ï¼Œæ¯éåŽ†ä¸€ä¸ªï¼Œå°±æŠŠè¿™ä¸ªæ•°å­—æ”¾åˆ°å †æ ˆä¸­ï¼Œå¹¶ä¸”ä»Žtargetä¸­æŠŠè¿™ä¸ªæ•°å­—å‡åŽ»
+* 3ã€ç„¶åŽå°±å›žæº¯ï¼Œé‡æ–°ä»Ž0å¼€å§‹éåŽ†åºåˆ—ï¼Œæ‰§è¡Œ2çš„åŠ¨ä½œ
+* 4ã€å¦‚æžœtargetç­‰äºŽ0äº†ï¼Œæˆ–è€…æ˜¯è´Ÿæ•°äº†ï¼Œå°±é€€å‡ºå›žæº¯ï¼ŒæŠŠæ ˆé¡¶å…ƒç´ POPå‡ºæ¥ï¼ŒåŠ åˆ°targetä¸­ï¼Œç„¶åŽè¿›è¡Œå¤§å¾ªçŽ¯çš„ä¸‹ä¸€æ¬¡å¾ªçŽ¯ã€‚
 *
 */
 void rec(int *arr, int len, int index, int *stack, int *stack_index,
@@ -16,7 +16,7 @@ void rec(int *arr, int len, int index, int *stack, int *stack_index,
     if (index >= len || target < 0)
         return;
 
-    /* ·ûºÏÌõ¼þ£¬Ìí¼Óµ½´ð°¸ÖÐ */
+    /* ç¬¦åˆæ¡ä»¶ï¼Œæ·»åŠ åˆ°ç­”æ¡ˆä¸­ */
     if (target == 0)
     {
         ret[(*ret_index)] = (int *)malloc(sizeof(int) * (*stack_index));
@@ -27,7 +27,7 @@ void rec(int *arr, int len, int index, int *stack, int *stack_index,
         return;
     }
 
-    /* »ØËÝÑ­»·£¬×¢Òâ´Óindex¿ªÊ¼£¬ÒòÎª¿ÉÒÔÖØ¸´Ê¹ÓÃÏàÍ¬µÄÔªËØ */
+    /* å›žæº¯å¾ªçŽ¯ï¼Œæ³¨æ„ä»Žindexå¼€å§‹ï¼Œå› ä¸ºå¯ä»¥é‡å¤ä½¿ç”¨ç›¸åŒçš„å…ƒç´  */
     for (; index < len; index++)
     {
         target -= arr[index];
@@ -35,8 +35,8 @@ void rec(int *arr, int len, int index, int *stack, int *stack_index,
 
         rec(arr, len, index, stack, stack_index, target, ret, ret_index, ret_size);
 
-        (*stack_index)--; // ÒªÖ´ÐÐµ½ÕâÀï£¬Ò»¶¨ÊÇ´ÓtargetÍË³ö²Å»áÀ´¡£·ñÔòÒ»Ö±ÔÙµ÷ÓÃrec.
-        target += arr[index]; // ÕâÀïÊÇ°ÑÉÏ´ÎÌí¼Óµ½¶ÑÕ»ÖÐ£¬µ«ÊÇ×îÖÕÖ®ºÍ²»Âú×ãtargetµÄÄÇ¸öÊý¾ÝÖØÐÂËãµ½targetÉÏ¡£½ÓÏÂÀ´½øÐÐÑ­»·£¬indexÔö¼Ó1¡£
+        (*stack_index)--; // è¦æ‰§è¡Œåˆ°è¿™é‡Œï¼Œä¸€å®šæ˜¯ä»Žtargeté€€å‡ºæ‰ä¼šæ¥ã€‚å¦åˆ™ä¸€ç›´å†è°ƒç”¨rec.
+        target += arr[index]; // è¿™é‡Œæ˜¯æŠŠä¸Šæ¬¡æ·»åŠ åˆ°å †æ ˆä¸­ï¼Œä½†æ˜¯æœ€ç»ˆä¹‹å’Œä¸æ»¡è¶³targetçš„é‚£ä¸ªæ•°æ®é‡æ–°ç®—åˆ°targetä¸Šã€‚æŽ¥ä¸‹æ¥è¿›è¡Œå¾ªçŽ¯ï¼Œindexå¢žåŠ 1ã€‚
     }
 }
 
@@ -44,13 +44,13 @@ void rec(int *arr, int len, int index, int *stack, int *stack_index,
 
 int **combinationSum(int *arr, int len, int target, int *returnSize, int **returnColumnSizes)
 {
-    int *stack = (int *)malloc(sizeof(int) * LEN); // Õâ¸öÕ»µÄ×÷ÓÃ¾ÍÊÇ±£Áô±éÀúµÄ·ûºÏtargetµÄÔªËØ¡£
+    int *stack = (int *)malloc(sizeof(int) * LEN); // è¿™ä¸ªæ ˆçš„ä½œç”¨å°±æ˜¯ä¿ç•™éåŽ†çš„ç¬¦åˆtargetçš„å…ƒç´ ã€‚
     int stack_index = 0;
     int **ret = (int **)malloc(sizeof(int *) * LEN);
     int ret_index = 0;
     int *ret_size = (int *)malloc(sizeof(int) * LEN);
 	memset(ret_size, 0, sizeof(int) * LEN);
-    *returnColumnSizes = ret_size; // ËüÖ¸ÏòÒ»¶ÎÄÚ´æ¡£
+    *returnColumnSizes = ret_size; // å®ƒæŒ‡å‘ä¸€æ®µå†…å­˜ã€‚
 
     rec(arr, len, 0, stack, &stack_index, target, ret, &ret_index, ret_size);
 
@@ -94,4 +94,50 @@ int main(void)
     }
 #endif
     system("pause");
+}
+
+
+//å¦ä¸€ç§è§£æ³•
+/**
+ * å›žæº¯æ³•ç»å…¸è§£é¢˜
+ */
+int calcuSum(int* data, int counter)
+{
+    int sum = 0;
+    for (int i = 0; i < counter; i++) {
+        sum += data[i];
+    }
+    return sum;
+}
+
+void backtrace(int* candidates, int candidatesSize, int pos, int target, int curSum, int* tmpSaveAns, int* tmpCounter,       int**res, int* returnSize, int* returnColumnSizes) 
+{
+    if (curSum > target) {
+        return; // å¼‚å¸¸é€€å‡ºã€‚
+    }
+    if (curSum == target) {
+        res[(*returnSize)] = (int*)malloc(sizeof(int) * (*tmpCounter));
+        memset(res[*returnSize], 0, sizeof(int) * (*tmpCounter));
+        returnColumnSizes[*returnSize] = *tmpCounter;
+        memcpy(res[*returnSize], tmpSaveAns, sizeof(int) * (*tmpCounter));
+        (*returnSize)++;
+        return;
+    }
+    for (; pos < candidatesSize; pos++) {// è¿™é‡Œçš„å¾ªçŽ¯æœ‰æŠ€å·§ï¼Œå¦‚æžœæ¯æ¬¡éƒ½æ˜¯ä»Ži = 0 å¼€å§‹ï¼Œä¹Ÿèƒ½å¤Ÿå¾—åˆ°æŽ’åˆ—ï¼Œä½†æ˜¯ä¼šæœ‰é‡å¤çš„æŽ’åˆ—ï¼Œå³ä¸€ä¸ªæŽ’åˆ—ä¸­å…ƒç´ ä¸€æ ·ï¼Œåªæ˜¯é¡ºåºä¸ä¸€æ ·ã€‚
+        tmpSaveAns[(*tmpCounter)++] = candidates[pos];
+        curSum = calcuSum(tmpSaveAns, (*tmpCounter));
+        backtrace(candidates, candidatesSize, pos, target, curSum, tmpSaveAns, tmpCounter, res, returnSize, returnColumnSizes);
+        (*tmpCounter)--;
+    }
+}
+
+int** combinationSum(int* candidates, int candidatesSize, int target, int* returnSize, int** returnColumnSizes){
+    int** result = NULL;
+    result = (int**)malloc(sizeof(int*) * 10000);
+    (*returnColumnSizes) = (int*)malloc(sizeof(int) * 10000);
+    int* tmpSaveAns = (int*)malloc(sizeof(int) * 10000);
+    int tmpCounter = 0;
+    *returnSize = 0;
+    backtrace(candidates, candidatesSize, 0, target, 0, tmpSaveAns, &tmpCounter, result, returnSize, (*returnColumnSizes));
+    return result;
 }
