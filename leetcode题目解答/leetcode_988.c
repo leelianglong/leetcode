@@ -1,12 +1,10 @@
-### 解题思路
-
+/**
+解题思路：
 1、对二叉树基于DFS访问所有叶子节点。
 2、在访问各个节点的时候，记录遍历到的节点，在到达叶子节点时，把记录的所有节点拷贝到返回列表中。
 3、对返回列表中每个字符串进行逆序。
 4、对逆序后的每个字符串列表，进行字典序排序
-
-### 代码
-```
+**/
 /**
  * Definition for a binary tree node.
  * struct TreeNode {
@@ -80,4 +78,3 @@ char * smallestFromLeaf(struct TreeNode* root){
     #endif
     return res[0];
 }
-```
