@@ -1,3 +1,12 @@
+### 解题思路
+
+1、对二叉树基于DFS访问所有叶子节点。
+2、在访问各个节点的时候，记录遍历到的节点，在到达叶子节点时，把记录的所有节点拷贝到返回列表中。
+3、对返回列表中每个字符串进行逆序。
+4、对逆序后的每个字符串列表，进行字典序排序
+
+### 代码
+```
 /**
  * Definition for a binary tree node.
  * struct TreeNode {
@@ -27,11 +36,11 @@ int cmp(const void* a, const void* b)
 void step(struct TreeNode* root, char** res, int* returnSize, int *tmpCounter, char* tmpSave)
 {
     if (root->left == NULL && root->right == NULL) {
-        tmpSave[(*tmpCounter)] = (root->val - 0) + 'a';
+        tmpSave[(*tmpCounter)] = (root->val - 0) + 'a'; // 这里不要忘记还要获取一下节点值，这里获取的就是叶子节点值
         (*tmpCounter)++;
         res[(*returnSize)] = (char*)malloc(sizeof(char) * 8500);
         memset(res[*returnSize], 0, sizeof(char) * 8500);
-        strncpy(res[*returnSize], tmpSave, (*tmpCounter));
+        strncpy(res[*returnSize], tmpSave, (*tmpCounter)); // 这里要使用strncpy,指定拷贝的字符串长度，因为tmpSave相当于全局变量，上一个叶子节点遍历情况可能会影响到当前遍历的情况。
         (*returnSize)++;
         return;
     }
@@ -39,11 +48,11 @@ void step(struct TreeNode* root, char** res, int* returnSize, int *tmpCounter, c
     (*tmpCounter)++;
     if (root->left) {
         step(root->left, res, returnSize, tmpCounter, tmpSave);
-        (*tmpCounter)--;
+        (*tmpCounter)--; // 这里一定要，否则tmpsave中存储的就是树的所有节点，而非从跟节点到叶子节点
     }
     if (root->right) {
         step(root->right, res, returnSize, tmpCounter, tmpSave);
-        (*tmpCounter)--;
+        (*tmpCounter)--; // 这里一定要，否则tmpsave中存储的就是树的所有节点，而非从跟节点到叶子节点
     }
 }
 
@@ -71,3 +80,4 @@ char * smallestFromLeaf(struct TreeNode* root){
     #endif
     return res[0];
 }
+```
