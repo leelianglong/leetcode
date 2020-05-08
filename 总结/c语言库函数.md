@@ -26,6 +26,9 @@ isxdigit
 Check if character is hexadecimal digit (function )
 ```
 ### bsearch()
+
+该函数的使用需要先执行快速排序
+
 ```
 void* bsearch (const void* key, const void* base,
                size_t num, size_t size,
