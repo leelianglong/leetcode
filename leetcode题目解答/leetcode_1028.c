@@ -87,7 +87,7 @@ struct TreeNode* recoverFromPreorder(char * S){
     for (; index < strlen(S); index++) {
         int r = findDeepth(S, index);
         //printf("\ntop=%d, r=%d, index=%d", stack->top, r, index);
-        while (stack->top > r - index) {
+        while (stack->top > r - index) { // r-index 表示当前的深度， 如果栈中元素个数大于当前深度，则出栈，栈中只保留当前节点的父节点集合。
             PopStack(stack);
         }
         struct TreeNode* node = GetTopElement(stack);
@@ -111,3 +111,5 @@ struct TreeNode* recoverFromPreorder(char * S){
     }
     return root;
 }
+
+// 二叉树的前序遍历 使用栈来解决。
