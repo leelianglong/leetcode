@@ -24,3 +24,8 @@ int** merge(int** intervals, int intervalsSize, int* intervalsColSize, int* retu
 
 4、在LeetCode中要使用全局变量的话，可以先定义，但是不要初始化，在使用的主函数中初始化成0
 
+5、 返回空字符串的方法：
+char* result = (char*)malloc(sizeof(char) * 100);
+result[0] = '\0';
+return result; // 这样就返回空字符串
+
