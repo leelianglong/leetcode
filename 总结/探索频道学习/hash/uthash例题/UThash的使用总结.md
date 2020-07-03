@@ -1,5 +1,5 @@
 ## UTHash 使用总结
-
+```
 struct HashTable {
   type key;
   type data;
@@ -7,7 +7,7 @@ struct HashTable {
 };
 
 struct HashTable* users;
-
+```
 ### 1、添加int类型的接口
 
 HASH_ADD_INT(head, keyfield_name, item_ptr)
