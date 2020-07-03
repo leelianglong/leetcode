@@ -30,3 +30,23 @@ struct HashTable* find;
 int hashKey = key;
 HASH_FIND_INT(users, &hashKey, find);
 ```
+
+### 3、添加字符串 char str[] = {"hello"};类型的接口
+HASH_ADD_STR (head, keyfield_name, item_ptr)
+
+这里的第二个参数直接是key, item_ptr, 就是要添加的hash节点。
+```
+struct HashStr* tmp = (struct HashStr*)malloc(sizeof(struct HashStr));
+strcpy(tmp->key, tempArr);
+tmp->times = 1;
+HASH_ADD_STR(users, key, tmp);
+```
+
+### 4、查找字符串 char str[] = {"hello"};类型的接口
+HASH_FIND_STR (head, key_ptr, item_ptr)
+
+```
+char tempArr[11] = {0};
+strncpy(tempArr, &s[i], 10);
+HASH_FIND_STR(users, tempArr, findKey);
+```
