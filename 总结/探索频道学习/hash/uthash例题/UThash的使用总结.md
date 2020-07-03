@@ -50,3 +50,14 @@ char tempArr[11] = {0};
 strncpy(tempArr, &s[i], 10);
 HASH_FIND_STR(users, tempArr, findKey);
 ```
+### 5、 添加指针型字符串 char* key = "hello"类型的接口
+HASH_ADD_KEYPTR (hh_name, head, key_ptr, key_len, item_ptr)
+这里hh_name,就是hash结构中的handle, hh. head 是users, key_ptr,就是要添加的key的指针， key_len是key的长度， item_ptr,就是要添加的节点指针
+
+```
+struct StrHash* input = (struct StrHash*)malloc(sizeof(struct StrHash));
+input->str = searchStr;
+input->times = 1;
+HASH_ADD_KEYPTR(hh, users, input->str, strlen(input->str), input);
+```
+对于此类型的查找还是可以使用HASH_FIND_STR(users, "hello", hashNode);
