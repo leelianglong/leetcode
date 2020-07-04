@@ -93,13 +93,26 @@ HASH_ADD(hh, records, key, sizeof(record_key_t), r);
 ```
 ### 8、hash表排序接口
 HASH_SORT (head, cmp)
+```
+int Cmp(const void* a, const void* b)
+{
+    return ((struct HashTable*)b)->times - ((struct HashTable*)a)->times;
+}
 
+HASH_SORT(users, Cmp);
+```
 其中cmp是基于什么条件排序的函数。
 
 ### 9、删除hash节点的接口
 HASH_DEL (head, item_ptr)
 
-item_ptr就是要删除的节点。
+item_ptr就是要删除的节点。对于删除了的节点要释放内存。
+```
+HASH_ITER(hh, users, cur, tmp) {
+     HASH_DEL(users, cur);
+     free(cur);
+}
+```
 
 ### 10、hash表的迭代接口
 HASH_ITER (hh_name, head, item_ptr, tmp_item_ptr)
@@ -116,3 +129,5 @@ HASH_ITER(hh, users, cur, tmp) {
   }
 }
 ```
+
+小结： 对于查找类接口，第二个参数都是要查找的key的指针，对于添加类接口，第二个参数直接是hash结构中定义的key。
