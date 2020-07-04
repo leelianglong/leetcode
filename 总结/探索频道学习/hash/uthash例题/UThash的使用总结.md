@@ -61,3 +61,58 @@ input->times = 1;
 HASH_ADD_KEYPTR(hh, users, input->str, strlen(input->str), input);
 ```
 对于此类型的查找还是可以使用HASH_FIND_STR(users, "hello", hashNode);
+
+### 6、查找结构体类型的key的接口
+HASH_FIND (hh_name, head, key_ptr, key_len, item_ptr)
+
+```
+typedef struct {
+  char a;
+  int b;
+} record_key_t;
+typedef struct {
+    record_key_t key;
+    /* ... other data ... */
+    UT_hash_handle hh;
+} record_t;
+
+l.key.a = 'a';
+l.key.b = 1;
+HASH_FIND(hh, records, &l.key, sizeof(record_key_t), p);
+```
+
+
+### 7、添加结构体类型的key的接口
+HASH_ADD (hh_name, head, keyfield_name, key_len, item_ptr)
+```
+r = (record_t *)malloc(sizeof *r);
+memset(r, 0, sizeof *r);
+r->key.a = 'a';
+r->key.b = 1;
+HASH_ADD(hh, records, key, sizeof(record_key_t), r);
+```
+### 8、hash表排序接口
+HASH_SORT (head, cmp)
+
+其中cmp是基于什么条件排序的函数。
+
+### 9、删除hash节点的接口
+HASH_DEL (head, item_ptr)
+
+item_ptr就是要删除的节点。
+
+### 10、hash表的迭代接口
+HASH_ITER (hh_name, head, item_ptr, tmp_item_ptr)
+每次遍历得到的节点就是 item_ptr.对于需要的数据就从这个节点中获取。
+```
+struct HashTable* cur;
+struct HashTable* tmp;
+
+HASH_ITER(hh, users, cur, tmp) {
+  result[*returnSize] = cur->key;
+     (*returnSize)++;
+     if (*returnSize >= k) {
+         break;
+  }
+}
+```
