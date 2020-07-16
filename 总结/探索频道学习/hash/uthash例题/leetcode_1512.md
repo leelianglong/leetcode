@@ -1,6 +1,8 @@
 ### 题目 leetcode 1512
 思路：首先通过HASH找到所有重复的数据；第二步，要找到规律，计算重复数的对数。使用下面的递归。
 
+### 代码
+```
 struct HashTable {
     int key;
     int times;
@@ -48,3 +50,4 @@ int numIdenticalPairs(int* nums, int numsSize){
     }
     return counter;
 }
+```
