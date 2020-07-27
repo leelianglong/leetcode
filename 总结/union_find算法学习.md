@@ -70,6 +70,21 @@ void union_element(UFStruct* data, int p, int q)
     data->counter--;
 }
 
+// union最常规的方法；
+void union_find(int p, int q) {
+   int pId = find(p);
+   int qId = find(q);
+   if (pId == qId) {
+      return;
+   }
+   for (int i = 0; i < MAX_LENGTH; i++) {
+      if (id[i] == pId) {
+         id[i] = qId;
+      }
+   }
+   count--; // 连通分量少了一个
+}
+
 bool isConnected(UFStruct* data, int p, int q)
 {
     int rootP = find(data, p);
