@@ -19,6 +19,52 @@ union（） 主要功能是把2个节点连通起来，并把连通分量减 1
  
 关键点： 初始化时，数组内容要是 0 --- n - 1,不能初始化成0；并且初始化化连通分量 为 n. union处理的过程中，2个节点的根节点不一样时，是吧根节点赋值到数组中，不是单个节点本身。
 
+### 常规写法：
+```
+typedef struct {
+    int nodeCounter;
+    int* buff;
+} UF;
+
+
+UF* InitUf(int n)
+{
+   UF* tmp = (UF*)malloc(sizeof(UF));
+   tmp->buff = (int*)malloc(sizeof(int) * n);
+   tmp->nodeCounter = n;
+
+   for (int i = 0; i < n; i++) {
+       tmp->buff[i] = i; // tmp->buff[i]的意义是 节点i 的根节点
+   }
+   return tmp;
+}
+
+/* 用于返回某个节点的根节点 */
+int Find(UF* obj, int x)
+{
+    while (obj->buff[x] != x) {
+        x = obj->buff[x];
+    }
+    return x;
+}
+
+void UnionFind(UF* object, int p, int q)
+{
+    int rootP = Find(object, p);
+    int rootQ = Find(object, q);
+
+    if (rootP == rootQ) {
+        return;
+    }
+    object->buff[rootP] = rootQ; // 将2个树合并成一棵树，也就是将一棵树的根节点，接到另一个树的根节点上。
+    object->nodeCounter--;
+}
+
+```
+
+
+### 优化算法
+
 ```
 typedef struct {
     int* weight;
@@ -68,21 +114,6 @@ void union_element(UFStruct* data, int p, int q)
         data->weight[rootQ] += data->weight[rootP];
     }
     data->counter--;
-}
-
-// union最常规的方法；
-void union_find(int p, int q) {
-   int pId = find(p);
-   int qId = find(q);
-   if (pId == qId) {
-      return;
-   }
-   for (int i = 0; i < MAX_LENGTH; i++) {
-      if (id[i] == pId) {
-         id[i] = qId;
-      }
-   }
-   count--; // 连通分量少了一个
 }
 
 bool isConnected(UFStruct* data, int p, int q)
