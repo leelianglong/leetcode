@@ -124,3 +124,75 @@ bool isConnected(UFStruct* data, int p, int q)
 }
 
 ```
+
+## 练习题目： leetcode 990
+
+### 思路
+1、把相等的先连接起来
+2、再查看步相等的，看看不相等的和之前已经判断相等是不是有冲突，如果有冲突，则要返回false
+3、UF算法，关键要选择好空间大小，例如这里就要选择26，不是表达式的个数，因为无论表达式是什么，他们都说由26个字母组成的。
+   另外，对存储空间的初始化也很关键，要初始化成0---N - 1， 不能初始化成0
+   
+### 思路
+```
+typedef struct {
+	int* buff;
+	int nodeCounter;
+} UF;
+
+UF* InitUf(int n)
+{
+	UF* obj = (UF*)malloc(sizeof(UF));
+	obj->buff = (int*)malloc(sizeof(int) * n);
+	//memset(obj->buff, 0, sizeof(int) * n);
+    for (int i = 0; i < n; i++) {
+        obj->buff[i] = i;
+    }
+	obj->nodeCounter = n;
+	return obj;
+}
+
+int Find(UF* obj, int x)
+{
+	while ( obj->buff[x] != x) {
+		x = obj->buff[x];
+	}
+	return x;
+}
+
+void Uinon(UF* obj, int p, int q)
+{
+	int rootP = Find(obj, p);
+	int rootQ = Find(obj, q);
+	if (rootP == rootQ) {
+		return;
+	}
+	obj->buff[rootP] = rootQ;
+	obj->nodeCounter--;
+}
+
+bool Connected(UF* obj, int p, int q)
+{
+	int rootP = Find(obj, p);
+	int rootQ = Find(obj, q);
+	return rootP == rootQ;
+}
+
+bool equationsPossible(char ** equations, int equationsSize){
+    UF* obj = InitUf(26);
+	for (int i = 0; i < equationsSize; i++) {
+		if (equations[i][1] == '=') {
+			Uinon(obj, equations[i][0] - 'a', equations[i][3] - 'a');
+		}
+	}
+	
+	for (int i = 0; i < equationsSize; i++) {
+		if (equations[i][1] == '!') {
+			if (Connected(obj, equations[i][0] - 'a', equations[i][3] - 'a')) {
+				return false;
+			}
+		}
+	}
+	return true;
+}
+```
