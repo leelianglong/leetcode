@@ -17,7 +17,7 @@ HASH_ADD_INT(head, keyfield_name, item_ptr)
 struct HashTable* add;
 add = (struct HashTable*)malloc(sizeof(struct HashTable));
 add->key = key;
-add->pos = pos;
+add->data = data;
 HASH_ADD_INT(users, key, add);
 ```
 
