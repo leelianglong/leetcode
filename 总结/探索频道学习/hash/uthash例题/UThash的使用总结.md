@@ -130,4 +130,13 @@ HASH_ITER(hh, users, cur, tmp) {
 }
 ```
 
+### 11、hash count 接口
+计算当前hash表中有多少个元素
+HASH_COUNT(users)  这里users是hash表头
+```
+unsigned int num_users;
+num_users = HASH_COUNT(users);
+printf("there are %u users\n", num_users);
+```
+
 小结： 对于查找类接口，第二个参数都是要查找的key的指针，对于添加类接口，第二个参数直接是hash结构中定义的key。
