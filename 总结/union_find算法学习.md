@@ -60,6 +60,13 @@ void UnionFind(UF* object, int p, int q)
     object->nodeCounter--;
 }
 
+int IsConnected(UF* obj, int p, int q)
+{
+    int rootP = Find(obj, p);
+    int rootQ = Find(obj, q);
+    return rootP == rootQ;
+}
+
 ```
 
 
