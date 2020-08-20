@@ -136,7 +136,9 @@ bool isConnected(UFStruct* data, int p, int q)
 
 ### 思路
 1、把相等的先连接起来
-2、再查看步相等的，看看不相等的和之前已经判断相等是不是有冲突，如果有冲突，则要返回false
+
+2、再查看不相等的，看看不相等的和之前已经判断相等是不是有冲突，如果有冲突，则要返回false
+
 3、UF算法，关键要选择好空间大小，例如这里就要选择26，不是表达式的个数，因为无论表达式是什么，他们都说由26个字母组成的。
    另外，对存储空间的初始化也很关键，要初始化成0---N - 1， 不能初始化成0
    
@@ -152,9 +154,9 @@ UF* InitUf(int n)
 	UF* obj = (UF*)malloc(sizeof(UF));
 	obj->buff = (int*)malloc(sizeof(int) * n);
 	//memset(obj->buff, 0, sizeof(int) * n);
-    for (int i = 0; i < n; i++) {
-        obj->buff[i] = i;
-    }
+        for (int i = 0; i < n; i++) {
+            obj->buff[i] = i;
+        }
 	obj->nodeCounter = n;
 	return obj;
 }
