@@ -205,3 +205,87 @@ bool equationsPossible(char ** equations, int equationsSize){
 	return true;
 }
 ```
+
+
+岛屿的数量：
+```
+typedef struct {
+    int* buff; // 用于存储数据
+    int counter; // 表示数据多少
+} UnionFind;
+
+UnionFind* InitUf(int counter)
+{
+    UnionFind* obj = (UnionFind*)malloc(sizeof(UnionFind));
+    obj->buff = (int*)malloc(sizeof(int) * counter);
+    memset(obj->buff, 0, sizeof(int) * counter);
+    obj->counter = counter;
+    for (int i = 0; i < counter; i++) {
+        obj->buff[i] = i;
+    }
+    return obj;
+}
+
+int Find(UnionFind* obj, int p)
+{
+    while(p != obj->buff[p]) {
+        p = obj->buff[p];
+    }
+    return p;
+}
+
+// 把2个元素连通在一起
+void Union(UnionFind* obj, int p, int q)
+{
+    int rootP = Find(obj, p);
+    int rootQ = Find(obj, q);
+    if (rootP == rootQ) {
+        return;
+    }
+    obj->buff[rootP] = rootQ;
+    obj->counter--; // 连通在一起就把这个counter减1.
+}
+
+int dircet[4][2] = {{1,0},{0,1}, {-1, 0}, {0, -1}};
+int numIslands(char** grid, int gridSize, int* gridColSize){
+    if (gridSize <= 0) {
+        return 0;
+    }
+    int row = gridSize;
+    int col = *gridColSize;
+    UnionFind* obj = InitUf(row * col);
+    int p;
+    int q;
+    for (int i = 0; i < row; i++) {
+        for (int j = 0; j < col; j++) {
+            if (grid[i][j] == '0') {
+                continue;
+            }
+            p = i * col + j;
+            for (int k = 0; k < 4; k++) {
+                int dx = i + dircet[k][0];
+                int dy = j + dircet[k][1];
+                if (grid[dx][dy] == '0') {
+                    continue;
+                }
+                
+                if ( dx < 0 || dx > row -1 || dy < 0 || dy > col - 1) {
+                    continue;
+                }
+                q = dx * col + dy;
+                Union(obj, p, q);
+            }
+        }
+    }
+    int counter = 0;
+    for (int i = 0; i < row; i++) {
+        for (int j = 0; j < col; j++) {
+            if (grid[i][j] == '0') {
+                counter++;
+            }
+        }
+    }
+    printf("\ncounter=%u, %u\n", counter,obj->counter);
+    return obj->counter - counter;
+}
+```
