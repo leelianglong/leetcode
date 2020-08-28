@@ -78,7 +78,7 @@ typedef struct {
 
 l.key.a = 'a';
 l.key.b = 1;
-HASH_FIND(hh, records, &l.key, sizeof(record_key_t), p);
+HASH_FIND(hh, users, &l.key, sizeof(record_key_t), p);
 ```
 
 
@@ -89,7 +89,7 @@ r = (record_t *)malloc(sizeof *r);
 memset(r, 0, sizeof *r);
 r->key.a = 'a';
 r->key.b = 1;
-HASH_ADD(hh, records, key, sizeof(record_key_t), r);
+HASH_ADD(hh, users, key, sizeof(record_key_t), r);
 ```
 ### 8、hash表排序接口
 HASH_SORT (head, cmp)
