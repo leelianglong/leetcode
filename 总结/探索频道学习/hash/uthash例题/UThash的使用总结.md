@@ -76,6 +76,9 @@ typedef struct {
     UT_hash_handle hh;
 } record_t;
 
+record_t l;
+record_t* users;
+
 l.key.a = 'a';
 l.key.b = 1;
 HASH_FIND(hh, users, &l.key, sizeof(record_key_t), p);
