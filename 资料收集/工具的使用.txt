@@ -32,3 +32,12 @@ gcc / gdb 的简单使用方法如下：
 4、如果想使用gdb调试，那么在编译时需要加上 -g参数，使用下面命令：
    gcc -g  qsort_test.c -o qsort_test 这样就生成可以调试的 qsort_test文件，
    然后使用 gdb ./qsort_test 就启动了gdb，调试
+
+
+在github中添加图片的方式是：
+1、先把图片放到github上
+
+2、获取图片的URL，例如：https://github.com/leelianglong/LearnCplusplus/blob/master/icon/class.PNG
+
+3、在需要添加的地方使用 ！[图片名称] (图片URL)
+
