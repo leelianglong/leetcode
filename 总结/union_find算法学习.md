@@ -19,6 +19,59 @@ union（） 主要功能是把2个节点连通起来，并把连通分量减 1
  
 关键点： 初始化时，数组内容要是 0 --- n - 1,不能初始化成0；并且初始化化连通分量 为 n. union处理的过程中，2个节点的根节点不一样时，是吧根节点赋值到数组中，不是单个节点本身。
 
+### 常规写法：
+```
+typedef struct {
+    int nodeCounter;
+    int* buff;
+} UF;
+
+
+UF* InitUf(int n)
+{
+   UF* tmp = (UF*)malloc(sizeof(UF));
+   tmp->buff = (int*)malloc(sizeof(int) * n);
+   tmp->nodeCounter = n;
+
+   for (int i = 0; i < n; i++) {
+       tmp->buff[i] = i; // tmp->buff[i]的意义是 节点i 的根节点
+   }
+   return tmp;
+}
+
+/* 用于返回某个节点的根节点 */
+int Find(UF* obj, int x)
+{
+    while (obj->buff[x] != x) {
+        x = obj->buff[x];
+    }
+    return x;
+}
+
+void UnionFind(UF* object, int p, int q)
+{
+    int rootP = Find(object, p);
+    int rootQ = Find(object, q);
+
+    if (rootP == rootQ) {
+        return;
+    }
+    object->buff[rootP] = rootQ; // 将2个树合并成一棵树，也就是将一棵树的根节点，接到另一个树的根节点上。
+    object->nodeCounter--;
+}
+
+int IsConnected(UF* obj, int p, int q)
+{
+    int rootP = Find(obj, p);
+    int rootQ = Find(obj, q);
+    return rootP == rootQ;
+}
+
+```
+
+
+### 优化算法
+
 ```
 typedef struct {
     int* weight;
@@ -77,4 +130,162 @@ bool isConnected(UFStruct* data, int p, int q)
     return rootP == rootQ;
 }
 
+```
+
+## 练习题目： leetcode 990
+
+### 思路
+1、把相等的先连接起来
+
+2、再查看不相等的，看看不相等的和之前已经判断相等是不是有冲突，如果有冲突，则要返回false
+
+3、UF算法，关键要选择好空间大小，例如这里就要选择26，不是表达式的个数，因为无论表达式是什么，他们都说由26个字母组成的。
+   另外，对存储空间的初始化也很关键，要初始化成0---N - 1， 不能初始化成0
+   
+### 思路
+```
+typedef struct {
+	int* buff;
+	int nodeCounter;
+} UF;
+
+UF* InitUf(int n)
+{
+	UF* obj = (UF*)malloc(sizeof(UF));
+	obj->buff = (int*)malloc(sizeof(int) * n);
+	//memset(obj->buff, 0, sizeof(int) * n);
+        for (int i = 0; i < n; i++) {
+            obj->buff[i] = i;
+        }
+	obj->nodeCounter = n;
+	return obj;
+}
+
+int Find(UF* obj, int x)
+{
+	while ( obj->buff[x] != x) {
+		x = obj->buff[x];
+	}
+	return x;
+}
+
+void Uinon(UF* obj, int p, int q)
+{
+	int rootP = Find(obj, p);
+	int rootQ = Find(obj, q);
+	if (rootP == rootQ) {
+		return;
+	}
+	obj->buff[rootP] = rootQ;
+	obj->nodeCounter--;
+}
+
+bool Connected(UF* obj, int p, int q)
+{
+	int rootP = Find(obj, p);
+	int rootQ = Find(obj, q);
+	return rootP == rootQ;
+}
+
+bool equationsPossible(char ** equations, int equationsSize){
+    UF* obj = InitUf(26);
+	for (int i = 0; i < equationsSize; i++) {
+		if (equations[i][1] == '=') {
+			Uinon(obj, equations[i][0] - 'a', equations[i][3] - 'a');
+		}
+	}
+	
+	for (int i = 0; i < equationsSize; i++) {
+		if (equations[i][1] == '!') {
+			if (Connected(obj, equations[i][0] - 'a', equations[i][3] - 'a')) {
+				return false;
+			}
+		}
+	}
+	return true;
+}
+```
+
+
+岛屿的数量：
+```
+typedef struct {
+    int* buff; // 用于存储数据
+    int counter; // 表示数据多少
+} UnionFind;
+
+UnionFind* InitUf(int counter)
+{
+    UnionFind* obj = (UnionFind*)malloc(sizeof(UnionFind));
+    obj->buff = (int*)malloc(sizeof(int) * counter);
+    memset(obj->buff, 0, sizeof(int) * counter);
+    obj->counter = counter;
+    for (int i = 0; i < counter; i++) {
+        obj->buff[i] = i;
+    }
+    return obj;
+}
+
+int Find(UnionFind* obj, int p)
+{
+    while(p != obj->buff[p]) {
+        p = obj->buff[p];
+    }
+    return p;
+}
+
+// 把2个元素连通在一起
+void Union(UnionFind* obj, int p, int q)
+{
+    int rootP = Find(obj, p);
+    int rootQ = Find(obj, q);
+    if (rootP == rootQ) {
+        return;
+    }
+    obj->buff[rootP] = rootQ;
+    obj->counter--; // 连通在一起就把这个counter减1.
+}
+
+int dircet[4][2] = {{1,0},{0,1}, {-1, 0}, {0, -1}};
+int numIslands(char** grid, int gridSize, int* gridColSize){
+    if (gridSize <= 0) {
+        return 0;
+    }
+    int row = gridSize;
+    int col = *gridColSize;
+    UnionFind* obj = InitUf(row * col);
+    int p;
+    int q;
+    for (int i = 0; i < row; i++) {
+        for (int j = 0; j < col; j++) {
+            if (grid[i][j] == '0') {
+                continue;
+            }
+            p = i * col + j;
+            for (int k = 0; k < 4; k++) {
+                int dx = i + dircet[k][0];
+                int dy = j + dircet[k][1];
+                if (grid[dx][dy] == '0') {
+                    continue;
+                }
+                
+                if ( dx < 0 || dx > row -1 || dy < 0 || dy > col - 1) {
+                    continue;
+                }
+                q = dx * col + dy;
+                Union(obj, p, q);
+            }
+        }
+    }
+    int counter = 0;
+    for (int i = 0; i < row; i++) {
+        for (int j = 0; j < col; j++) {
+            if (grid[i][j] == '0') {
+                counter++;
+            }
+        }
+    }
+    printf("\ncounter=%u, %u\n", counter,obj->counter);
+    return obj->counter - counter;
+}
 ```

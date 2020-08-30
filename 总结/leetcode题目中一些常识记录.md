@@ -36,3 +36,6 @@ return result; // 这样就返回空字符串
 
 6、 二分查找类以及2数之和的移动过程，应该把相等的条件放在前面，然后每个else if 分支里面明确做一件事。把所有的情况都用elseif分支确定下来。
 
+
+7、malloc返回的是一段内存的地址，这段内存，你准备存储什么类型，那么在分配时，就要使用 type* buf = (type*)malloc(sizeof(type) * size); 例如你打算存储的是 结构体指针，那么就要使用 type** buf = (type**)malloc(sizeof(type*) * size); malloc分配的内存可以存储任意类型的数据
+

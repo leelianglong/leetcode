@@ -27,12 +27,16 @@ Check if character is hexadecimal digit (function )
 ```
 ### bsearch()
 
-该函数的使用需要先执行快速排序
+bsearch()函数是基于快速排序的结构，进行搜索的。各个参数的意义如下：
 
 ```
-void* bsearch (const void* key, const void* base,
-               size_t num, size_t size,
-               int (*compar)(const void*,const void*));
+void* bsearch (const void* target,  // 要查找的目标
+               const void* buf, // 搜索空间
+               size_t num, // 搜索空间的大小
+               size_t size, //搜索的每个元素的大小
+               int (*compar)(const void*,const void*) // 排序的规则
+               );
+返回值是找到元素的地址。
 #include <stdio.h>      /* printf */
 #include <stdlib.h>     /* qsort, bsearch, NULL */
 
@@ -56,3 +60,7 @@ int main ()
   return 0;
 }
 ```
+
+### 求绝对值
+
+abs()  和 llabs() 这2个函数都可以求绝对值，前者对int 型的数据求绝对值， 后者对long long 类型的数据求绝对值。

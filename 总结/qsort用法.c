@@ -23,6 +23,8 @@ int CmpStrArray(const void*a, const void* b)
 }
 
 // 对字符串指针数组排序 *s[]
+// 下面要强制转换成char** a 二维指针的原因是，要比较的数据是这个字符串数组中的成员，而不是这个数组本身，如果强转成char*,其实就是数组本身，比较是没有意义的，要强转成char**
+// char** 表示指向字符串的指针, 然后再取值，就是字符串了，这个时候再比较就是正确的。
 int CmpStrPointArray(const void* a, const void* b)
 {
 	char*aa = *(char**)a; // 注意如果要排序的是字符串指针数组的话，这里要先转换成*(char**)a
@@ -71,7 +73,7 @@ void main()
 		{"th"},
 		{"op"},
 	};
-	char *strPointArray[10] = { // 注意，如果这里没有定义10个字符串，下面在使用排序时会出现段错误。
+	char *strPointArray[10] = { // 这里没有必要指定大小。
 		"hwteg",
 		"dfh",
 		"qe",
