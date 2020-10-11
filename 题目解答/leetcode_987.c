@@ -94,3 +94,70 @@ int** verticalTraversal(struct TreeNode* root, int* returnSize, int** returnColu
     return result;
 
 }
+
+// 下面这种临时存储采用一维指针的方式，更方便一些
+typedef struct {
+    int x;
+    int y;
+    int val;
+} Location;
+
+int g_nodeCnt;
+
+#define MAX_NODE_COUNT 1001
+
+void GetLocation(struct TreeNode* root, int xx, int yy, Location* tmpSave) {
+    tmpSave[g_nodeCnt].x = xx;
+    tmpSave[g_nodeCnt].y = yy;
+    tmpSave[g_nodeCnt].val = root->val;
+    g_nodeCnt++;
+
+    if (root->left) {
+        GetLocation(root->left, xx - 1, yy + 1, tmpSave);
+    }
+
+    if (root->right) {
+        GetLocation(root->right, xx + 1, yy + 1, tmpSave);
+    }
+}
+
+int cmp(const void* a, const void* b) {
+    Location* aa = (Location*)a;
+    Location* bb = (Location*)b;
+    if (aa->x != bb->x) {
+        return aa->x - bb->x;
+    } else if (aa->y != bb->y){
+        return aa->y - bb->y;
+    } else {
+        return aa->val - bb->val;
+    }
+    return 0;
+}
+
+int** verticalTraversal(struct TreeNode* root, int* returnSize, int** returnColumnSizes){
+    int** result = (int**)malloc(sizeof(int*) * MAX_NODE_COUNT);
+    *returnSize = -1;
+    g_nodeCnt = 0;
+    *returnColumnSizes = (int*)malloc(sizeof(int) * MAX_NODE_COUNT);
+    Location* tmpSave = (Location*)malloc(sizeof(Location) * MAX_NODE_COUNT);
+    memset(tmpSave, 0, sizeof(Location) * MAX_NODE_COUNT);
+    GetLocation(root, 0, 0, tmpSave);
+    qsort(tmpSave, g_nodeCnt, sizeof(Location), cmp);
+    int curX = INT_MIN;
+    for (int i = 0; i < g_nodeCnt; i++) {
+        if (tmpSave[i].x > curX) {
+            (*returnSize)++;
+            result[(*returnSize)] = (int*)malloc(sizeof(int) * MAX_NODE_COUNT);
+            memset(result[(*returnSize)], 0,  sizeof(int) * MAX_NODE_COUNT);
+            (*returnColumnSizes)[*returnSize] = 0;
+            result[*returnSize][ (*returnColumnSizes)[*returnSize]] = tmpSave[i].val;
+            ((*returnColumnSizes)[*returnSize])++;
+            curX = tmpSave[i].x;
+        } else {
+            result[*returnSize][ (*returnColumnSizes)[*returnSize]] = tmpSave[i].val;
+            ((*returnColumnSizes)[*returnSize])++; 
+        }
+    }
+    (*returnSize)++;
+    return result;
+}
