@@ -1,4 +1,8 @@
 ## UTHash 使用总结
+
+使用UThash只需要包含 uthash.h 头文件即可
+
+
 ```
 struct HashTable {
   type key;
@@ -46,6 +50,12 @@ HASH_ADD_STR (head, keyfield_name, item_ptr)
 添加字符串的标准宏HASH_ADD_STR()的第二个参数是任然是key.
 
 ```
+struct HashStr {
+    char key[11];
+    int id;
+    UT_hash_handle hh;
+};
+
 struct HashStr* tmp = (struct HashStr*)malloc(sizeof(struct HashStr));
 strcpy(tmp->key, tempArr);
 tmp->times = 1;
@@ -68,6 +78,12 @@ HASH_ADD_KEYPTR (hh_name, head, key_ptr, key_len, item_ptr)
 这里hh_name,就是hash结构中的handle, hh. head 是users, key_ptr,就是要添加的key的指针， key_len是key的长度， item_ptr,就是要添加的节点指针
 
 ```
+struct StrHash{
+   const char* str;
+   int id;
+   UT_hash_handle hh;
+};
+
 struct StrHash* input = (struct StrHash*)malloc(sizeof(struct StrHash));
 input->str = searchStr;
 input->times = 1;
