@@ -12,7 +12,10 @@ struct HashTable* users;
 
 HASH_ADD_INT(head, keyfield_name, item_ptr)
 
-这里head就是全局变量users,这个users相等时一个表头， keyfield_name实际上是hash结构体中key。 item_ptr, 这里也就是指向待添加的节点的指针。举例：
+这里head就是全局变量users,这个users相当是一个表头， keyfield_name实际上是hash结构体中key。 item_ptr, 这里也就是指向待添加的节点的指针。
+
+添加的操作要点是： 要创建一个添加节点 struct HashObj* 需要分配内存，然后初始化这个节点。使用标准的宏，宏中第一个参数是表头，第二个参数是固定的key, 第三个参数就是创建的节点
+举例：
 ```
 struct HashTable* add;
 add = (struct HashTable*)malloc(sizeof(struct HashTable));
@@ -24,7 +27,10 @@ HASH_ADD_INT(users, key, add);
 ### 2、查找int类型的接口
 HASH_FIND_INT (head, key_ptr, item_ptr)
 
-head是users, key_ptr是指向key的指针，item_ptr就是根据key找到hash表节点，举例：
+head是users, key_ptr是指向key的指针，item_ptr就是根据key找到hash表节点，
+
+查找的操作：先定义一个struct HashObj* 的节点，无需初始化，另外把查找的值设置成key, 使用HASH_FIND_INT()宏，第一个参数是表头，第二个参数是 &key, 第三参数是 查找节点。
+举例：
 ```
 struct HashTable* find;
 int hashKey = key;
@@ -35,6 +41,10 @@ HASH_FIND_INT(users, &hashKey, find);
 HASH_ADD_STR (head, keyfield_name, item_ptr)
 
 这里的第二个参数直接是key, item_ptr, 就是要添加的hash节点。
+
+添加字符串时，直接将字符串拷贝到添加节点里面。
+添加字符串的标准宏HASH_ADD_STR()的第二个参数是任然是key.
+
 ```
 struct HashStr* tmp = (struct HashStr*)malloc(sizeof(struct HashStr));
 strcpy(tmp->key, tempArr);
