@@ -107,6 +107,9 @@ r->key.a = 'a';
 r->key.b = 1;
 HASH_ADD(hh, users, key, sizeof(record_key_t), r);
 ```
+注意这里最后的参数r 不是hash节点，而是添加的元素节点的指针。
+
+
 ### 8、hash表排序接口
 HASH_SORT (head, cmp)
 ```
@@ -161,5 +164,7 @@ printf("there are %u users\n", num_users);
 1、对于查找类接口，第二个参数都是要查找的key的指针，对于添加类接口，第二个参数直接是hash结构中定义的key。
 
 2、对于全局变量 users的定义， 要在外面定义，然后在函数执行开始的地方，初始化成 NULL，就会避免全局变量对多个用例的影响。也可以在函数退出前使用HASH_ITER（）来逐个释放hash节点。
+
+3、对于字符串 和 单个数字的添加操作时，HASH_ADD_XX()的最后一个参数是hash节点，只不过这个节点中包含了要添加的值。对于结构体的添加方式来说，最后一个参数是要添加的结构体指针。
 
 3、对于结构体的hash操作来讲，HASH_ADD的参数是 hh, users, key, key的长度，添加节点。 总共4个参数
