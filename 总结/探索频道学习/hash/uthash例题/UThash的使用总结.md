@@ -55,10 +55,13 @@ HASH_ADD_STR(users, key, tmp);
 ### 4、查找字符串 char str[] = {"hello"};类型的接口
 HASH_FIND_STR (head, key_ptr, item_ptr)
 
+这里把要查找的字符串当作key, 把字符串的地址传到宏中，第3个参数是查找节点。
+
 ```
 char tempArr[11] = {0};
-strncpy(tempArr, &s[i], 10);
+strncpy(tempArr, &str[i], 10);
 HASH_FIND_STR(users, tempArr, findKey);
+
 ```
 ### 5、 添加指针型字符串 char* key = "hello"类型的接口
 HASH_ADD_KEYPTR (hh_name, head, key_ptr, key_len, item_ptr)
@@ -158,3 +161,5 @@ printf("there are %u users\n", num_users);
 1、对于查找类接口，第二个参数都是要查找的key的指针，对于添加类接口，第二个参数直接是hash结构中定义的key。
 
 2、对于全局变量 users的定义， 要在外面定义，然后在函数执行开始的地方，初始化成 NULL，就会避免全局变量对多个用例的影响。也可以在函数退出前使用HASH_ITER（）来逐个释放hash节点。
+
+3、对于结构体的hash操作来讲，HASH_ADD的参数是 hh, users, key, key的长度，添加节点。 总共4个参数
