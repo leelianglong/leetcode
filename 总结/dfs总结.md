@@ -78,3 +78,59 @@ int findTargetSumWays(int* nums, int numsSize, int S){
     return counter;
 }
 ```
+
+### 题目 leetcode 695 岛屿的最大面积
+
+1. 实际上就是计算在一起的 1 的个数， 使用一个变量counter来记录访问过的1的数量。
+2. 遇到1就对其上下左右进行搜索，直到搜索到边界， 每搜索到一个1，就把记录个数count增加并且标记访问过vist置1。
+3. 使用一个标记位visit记录是否访问过，否则会出现无限次循环访问导致leetcode的堆栈溢出。
+4. 对所有点进行遍历，遇到1，调用上面的dfs.注意counter从1开始，因为遇到1，才调用dfs的。
+
+这里是最简单最典型的dfs题目
+```
+int row;
+int colum;
+int dirction[4][2] = {{1,0}, {0,1}, {-1,0}, {0, -1}};
+void dfs(int** grid, int x, int y, int* counter, int* visit)
+{
+    for (int idx = 0; idx < 4; idx++) {
+        int xx = x + dirction[idx][0];
+        int yy = y + dirction[idx][1];
+        if (xx < 0 || yy < 0 || xx > row - 1 || yy > colum - 1) {
+            continue;
+        }
+        if (grid[xx][yy] == 0) {
+            continue;
+        }
+        if (visit[xx * colum + yy] == 1) {
+            continue;
+        }
+        visit[xx * colum + yy] = 1;
+        (*counter)++;
+        dfs(grid, xx, yy, counter, visit);
+    }
+}
+
+int maxAreaOfIsland(int** grid, int gridSize, int* gridColSize){
+    if (gridSize <= 0) {
+        return 0;
+    }
+    int res = INT_MIN;
+    row = gridSize;
+    colum = *gridColSize;
+    int counter;
+    int* visit = (int*)malloc(sizeof(int) * (row * colum));
+    memset(visit, 0, sizeof(int) * (row * colum));
+    for (int i = 0; i < row; i++) {
+        for (int j = 0; j < colum; j++) {
+            if (grid[i][j] == 1) {
+                visit[i * colum + j] = 1;
+                counter = 1;
+                dfs(grid, i, j, &counter, visit);
+                res = res > counter ? res : counter;
+            }
+        }
+    }
+    return res == INT_MIN ? 0 : res;
+}
+```
