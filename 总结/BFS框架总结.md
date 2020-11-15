@@ -271,4 +271,68 @@ int** updateMatrix(int** matrix, int matrixSize, int* matrixColSize, int* return
 }
 ```
 
+### 题目 leetcode 5552 
+到家的最少次跳跃
+采用BFS 该题目注意一下几点：
+
+1. 不能回跳2次，所以需要设置一个标记来表示是否回跳过。
+2. 设置一个全局访问标记，在向前跳的过程中，进行标记。
+3. 注意题目要求向前跳时，可以超过目的地，要确定超多少，这里每跳一次 以及 禁止跳的长度都是 2000，所以这个最远跳的距离是4001.，向后跳，需要大于0
+4. BFS 一般比较耗内存，设置一个较大的队列。
+5. 下面题目最后一个用例过不了
+### 代码
+```
+typedef struct {
+    int x;
+    bool back;
+} Node;
+
+#define LENGTH   50000
+
+int minimumJumps(int* forbidden, int forbiddenSize, int a, int b, int x){
+    int visit[LENGTH] = {false};
+    Node* queue = (Node*)malloc(sizeof(Node) * LENGTH);
+    memset(queue, 0, sizeof(Node) * LENGTH);
+    for (int i = 0; i < forbiddenSize; i++) {
+        visit[forbidden[i]] = true;
+    }
+
+    int front = 0;
+    int rear = 0;
+    Node tmp1 = {
+        .x = 0,
+        .back = false
+    };
+    queue[rear++] = tmp1;
+
+    int res = 0;
+    while (rear != front) {
+        res++;
+        int curSize = rear - front;
+        for (int j = 0; j < curSize; j++) {
+            Node pop = queue[front];
+            front++;
+            if (pop.x + a == x) {
+                return res;
+            } else if (pop.x + a < 4001 && visit[pop.x + a] == false ){
+                Node add;
+                add.x = pop.x + a;
+                add.back = false;
+                visit[add.x] = true;
+                queue[rear++] = add;
+            }
+
+            if (pop.x - b == x) {
+                return res;
+            } else if (pop.x - b >= 0 && visit[pop.x - b] == false && pop.back == false) {
+                Node add;
+                add.x = pop.x - b;
+                add.back = true;
+                queue[rear++] = add;
+            }
+        }
+    }
+    return -1; 
+}
+```
 
