@@ -273,7 +273,7 @@ int** updateMatrix(int** matrix, int matrixSize, int* matrixColSize, int* return
 
 ### 题目 leetcode 5552 
 到家的最少次跳跃
-采用BFS 该题目注意一下几点：
+采用BFS ，队列节点记录当前跳的位置以及该位置是否回跳过的标记，该题目注意一下几点：
 
 1. 不能回跳2次，所以需要设置一个标记来表示是否回跳过。
 2. 设置一个全局访问标记，在向前跳的过程中，进行标记。
@@ -283,8 +283,8 @@ int** updateMatrix(int** matrix, int matrixSize, int* matrixColSize, int* return
 ### 代码
 ```
 typedef struct {
-    int x;
-    bool back;
+    int x; // 当前节点。
+    bool back; // 当前节点是否回跳过
 } Node;
 
 #define LENGTH   50000
