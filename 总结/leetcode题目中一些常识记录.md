@@ -39,3 +39,8 @@ return result; // 这样就返回空字符串
 
 7、malloc返回的是一段内存的地址，这段内存，你准备存储什么类型，那么在分配时，就要使用 type* buf = (type*)malloc(sizeof(type) * size); 例如你打算存储的是 结构体指针，那么就要使用 type** buf = (type**)malloc(sizeof(type*) * size); malloc分配的内存可以存储任意类型的数据
 
+
+8、 1e9 类似这种类型的值不能作为数组下标。例如 int buf[1e7] 会报错
+
+9、参数宏，define(a,b)  直接这样写即可，不要写成 define((a), (b))  这种形式。 在它要替代的表达式中需要使用括号来把参数括起来。
+ 
