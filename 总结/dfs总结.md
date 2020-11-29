@@ -134,3 +134,83 @@ int maxAreaOfIsland(int** grid, int gridSize, int* gridColSize){
     return res == INT_MIN ? 0 : res;
 }
 ```
+
+
+### 题目 leetcode 322  零钱兑换
+思路：详见代码注释
+
+### 代码
+```
+第一种超时
+#define MIN(a, b)  ((a) > (b) ? (b) : (a))
+
+int cmp(const void* a, const void* b)
+{
+    return *(int*)a - *(int*)b;
+}
+
+int dfs(int* coins, int coinsSize, int curPos, int amount)
+{
+    if (coinsSize == 0 || amount == 0) {
+        return 0;
+    }
+    if (curPos < coinsSize && amount > 0) { // 注意这里的剪枝
+        int maxCount = amount / coins[curPos]; // 计算要兑换amount所需要的当前coins数组中第curpos个面值的最大个数
+        int minCOunt = INT_MAX;
+        for (int i = 0; i <= maxCount; i++) { // 这里就是查询分别需要0到maxCount个当前面值和剩余的其他面值能够满足兑换需求的 所有硬币的总数最小值。 对于这种循环方式，前面的排序没有必要
+            if (amount >= i * coins[curPos]) {
+                int res = dfs(coins, coinsSize, curPos + 1, amount - i * coins[curPos]);
+                if (res != -1) {
+                    minCOunt = MIN(minCOunt, res + i);
+                }
+            }
+        }
+        return minCOunt == INT_MAX ? -1 : minCOunt;
+    }
+    return -1;
+}
+
+int coinChange(int* coins, int coinsSize, int amount){
+    if (amount == 0) {
+        return 0;
+    }
+    qsort(coins, coinsSize, sizeof(coins[0]), cmp);
+    return dfs(coins, coinsSize, 0, amount);
+}
+
+
+第二种通过剪枝，通过
+
+#define MIN(a, b)  ((a) > (b) ? (b) : (a))
+
+int cmp(const void* a, const void* b)
+{
+    return *(int*)b - *(int*)a;
+}
+int res;
+void dfs(int* coins, int coinsSize, int curPos, int amount, int findCnt)
+{
+    if (amount == 0) { //注意剪枝
+        res = MIN(res, findCnt); 
+        return;
+    }
+    if (curPos >= coinsSize) { // 注意剪枝
+        return 0;
+    }
+    int CurCnt = amount / coins[curPos];
+    for (int i = CurCnt; i >= 0 && findCnt + i < res; i--) { // 这里倒置循环，就是先获取大面额的。最开始要求对面额倒序排序，另外注意这里的剪枝 findcnt + i < res
+        dfs(coins, coinsSize, curPos + 1, amount - i * coins[curPos], findCnt + i);
+    }
+}
+
+int coinChange(int* coins, int coinsSize, int amount){
+    if (amount == 0) {
+        return 0;
+    }
+    res = INT_MAX;
+    qsort(coins, coinsSize, sizeof(coins[0]), cmp);
+    dfs(coins, coinsSize, 0, amount, 0);
+    return res == INT_MAX ? -1 : res;
+}
+
+```
