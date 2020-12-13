@@ -214,3 +214,41 @@ int coinChange(int* coins, int coinsSize, int amount){
 }
 
 ```
+
+### 题目 leetcode 547
+思路：
+1. 本题虽然是给的二维矩阵，但是要注意，只有n个同学，这里的二维矩阵，仅仅是表示它们直接的是否存在关系。搜索时，在顶层没有必要二维遍历，只需要外面一层从行开始搜索，dfs里面从列开始搜索。
+2. 设置访问标记长度每必要是二维矩阵的长度，应该是同学的人数。
+3. 朋友圈的个数，就是dfs能遍历的次数。
+
+### 代码
+```
+int gColumn;
+void dfs(int** M, int x, int* visit)
+{
+    for (int i = 0; i < gColumn; i++) {
+        if (M[x][i] == 1 && visit[i] == false) {
+            visit[i] = true;
+            dfs(M, i, visit);
+        }
+    }
+}
+
+int findCircleNum(int** M, int MSize, int* MColSize){
+    if (MSize <= 0) {
+        return 0;
+    }
+    gColumn = MSize;
+    int* visit = (int*)malloc(gColumn * sizeof(int));
+    memset(visit, 0, sizeof(int) * gColumn);
+    int count = 0;
+    for (int j = 0; j < gColumn; j++) {
+        if (visit[j] == false) {
+            dfs(M, j, visit);
+            count++;
+        }
+    }
+
+    return count;
+}
+```
