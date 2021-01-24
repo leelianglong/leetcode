@@ -64,3 +64,27 @@ int main ()
 ### 求绝对值
 
 abs()  和 llabs() 这2个函数都可以求绝对值，前者对int 型的数据求绝对值， 后者对long long 类型的数据求绝对值。
+
+
+### strtok 函数使用
+strtok的参数一定要是字符串数组，不能是字符串常量指针。例如下面这种使用是错误的，有内存问题。
+```
+    const char* tmp = "a good      example";
+    char* res = NULL;
+    res = strtok(tmp, " ");
+    while (res) {
+        printf("%s\n", res);
+        res = strtok(NULL, " ");
+    }
+```
+下面这种是正常的。
+```
+    char tmp[] = "a good      example";
+    char* res = NULL;
+    res = strtok(tmp, " ");
+    while (res) {
+        printf("%s\n", res);
+        res = strtok(NULL, " ");
+    }
+```
+
