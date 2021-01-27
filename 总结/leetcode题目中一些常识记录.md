@@ -1,6 +1,10 @@
 1、leetcode平台上 sizeof(int) 和 sizeof(int*) 大小是不一样的。前者是4 后者是 8；所以在进行二级指针分配内存时，第一次，要使用sizeof(int*)
 ```
 int** res = (int**)malloc(sizeof(int*) * num); // 这里一定是 sizeof(int*)
+一般*returnSize 就是要返回的二维数组的行数；
+**returnColSize 表示要返回的二维数组的每一行的元素个数。
+对此，一般首先会把*returnSize = 0;
+*returnColSize = (int*)malloc(sizeof(int) * num);  // 这里分配内存的时候，只要使用sizeof(int) 即可
 ```
 
 2、对于入参是二维指针时，对入参的判断使用下面的几个条件就够
