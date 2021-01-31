@@ -17,10 +17,10 @@ int** merge(int** intervals, int intervalsSize, int* intervalsColSize, int* retu
         return intervals;
     }
 }
-```
 不要使用*intervalsColSize，有可能报越界
 在后续计算的过程中，要使用*returnSize = 0;要先对其初始化。
 返回二维指针时，一定要制定要返回的行数，以及每行的列数。
+```
 
 3. 有时候会发现，单独执行用例可以通过，但是提交后不能通过的情况发生，这里主要是使用了全局变量。系统在执行多个用例时，这个全局变量中的值相互影响了。
 在DFS相关的题目中，把需要记录的数据都使用指针的形式放在函数参数中，不要定义成全局变量，否则会导致有些用例不过.
