@@ -88,3 +88,24 @@ strtok的参数一定要是字符串数组，不能是字符串常量指针。�
     }
 ```
 
+### strstr()
+
+1. strstr(a,b) 在a中查找是否包含b,如果找到返回找到的位置，返回的是char*.
+
+2. 该函数的作用就是从a[0] 开始遍历查找是否满足b字符串的，所以如果a中包含多个b时，如果使用了for循环，一旦找不到，则立即退出，没必要再继续找。
+```
+    for (int i = 0; i < smallsSize; i++) {
+        char* tmp = big;
+        int* save = (int*)malloc(sizeof(int) * 1000);
+        memset(save, 0, sizeof(int) * 1000);
+        int count = 0;
+        for (int j = 0; j < strlen(big) && strlen(smalls[i]) > 0; j++) {
+            char* find = strstr(&big[j], smalls[i]);
+            if (find) {
+                save[count++] = (find - tmp);
+                j = find - tmp;
+            } else {
+                break;
+            }
+        }
+```
