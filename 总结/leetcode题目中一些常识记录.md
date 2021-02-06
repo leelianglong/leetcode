@@ -50,3 +50,14 @@ return result; // 这样就返回空字符串
 10. 变量一定要按需初始化，例如在双指针或者二分查找题目中，要把left  和 right 初始化成确定的值，不能不初始化，否则在跑多个用例时会失败。
  
 11. sprintf(buf, format, content) 这个函数默认会在结束的地方添加字符串的结尾符。
+
+12. 数组元素去重的一般算法
+```
+a)、把数组元素排序 qsort()
+b)、  
+for (int i = 0; i < size; i++) {
+    if (i > 0 && nums[i] == nums[i - 1]) {
+        continue;
+    }
+}
+```
