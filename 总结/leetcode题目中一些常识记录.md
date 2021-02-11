@@ -53,11 +53,68 @@ return result; // 这样就返回空字符串
 
 12. 数组元素去重的一般算法
 ```
-a)、把数组元素排序 qsort()
-b)、  
+把数组元素排序 qsort()  
 for (int i = 0; i < size; i++) {
     if (i > 0 && nums[i] == nums[i - 1]) {
         continue;
     }
+}
+```
+13. 三维指针的用
+对于需要返回3级指针的函数，在最初先分配一个3级指针，例如
+int*** res = (int***)malloc(sizeof(int**) * 10000);
+
+接口中的*returnSize表示该3维指针中二维部分有多少个。
+
+对于二维部分，先临时申请一个二维指针，用来存储在计算的过程中的临时的数据。 int** save = (int**)malloc(sizeof(int*) * COUNT);
+
+在最终返回的结果的地方，再把这个临时的二维指针赋给res, 如下：
+
+res[*returnSize] = (int**)malloc(sizeof(int*) * COUNT); res本身是3级指针，res[*returnSize] 就变成二维的了，
+
+根据二维指针的个数，这里可以直接把临时的二维指针赋值给res, 完整的代码如下：
+
+```
+void dfs(char* s, char*** res, int* returnSize, char** save, int count, int** returnColumnSizes, int startIdx)
+{
+    if (startIdx == strlen(s)) {
+        res[*returnSize] = (char**)malloc(sizeof(char*) * count);
+        (*returnColumnSizes)[*returnSize] = count;
+        for (int i = 0; i < count; i++) {
+            res[*returnSize][i] = (char*)malloc(sizeof(char) * (strlen(save[i]) + 1));
+            memset(res[*returnSize][i], 0, sizeof(char) * (strlen(save[i]) + 1));
+            strncpy(res[*returnSize][i], save[i], strlen(save[i]));
+        }
+        (*returnSize)++;
+        return;
+    }
+    for (int i = startIdx; i < strlen(s); i++) {
+        if (!IsValid(s, startIdx, i)) {
+            continue;
+        }
+        strncpy(save[count], &s[startIdx], i - startIdx + 1);
+        count++;
+        printf("\n enter");
+        dfs(s, res, returnSize, save, count, returnColumnSizes, i + 1);
+        memset(save[count], 0, strlen(save[count]));
+        printf("\n back i=%d, count=%d", i,count);
+        count--;
+    }
+}
+#define COUNT 150000
+char *** partition(char * s, int* returnSize, int** returnColumnSizes){
+    char*** res = (char***)malloc(sizeof(char**) * COUNT);
+    *returnSize = 0;
+    *returnColumnSizes = (int*)malloc(sizeof(int) * COUNT);
+    memset(*returnColumnSizes, 0, sizeof(int) * COUNT);
+
+    char** save = (char**)malloc(sizeof(char*) * COUNT);
+    for (int i = 0; i < COUNT; i++) {
+        save[i] = (char*)malloc(sizeof(char) * strlen(s) + 1);
+        memset(save[i], 0, sizeof(char) * strlen(s) + 1);
+    }
+    int count = 0;
+    dfs(s, res, returnSize, save, count, returnColumnSizes, 0);
+    return res;
 }
 ```
