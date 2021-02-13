@@ -336,3 +336,115 @@ int minimumJumps(int* forbidden, int forbiddenSize, int a, int b, int x){
 }
 ```
 
+### 题目 leetcode 127
+#### 思路
+1. 对于BFS还是要看到，队列里存什么，队列要设置多大。
+2. 如何找到队列元素间的关系，才能确定如何入队，如何出队。
+3. 队列终止条件是 队列为空（front < rear  不在满足） 或者 已经找到相应的目标
+4. 在循环外面，先要入队，在循环里面先要计算队列深度，然后逐个出队，每出一个元素，与目标进行比较。
+5. 在入队的时候，要检查一下，是否已经入队过，不要重复入队。
+
+#### 代码
+```
+当前代码已经超时了：
+struct HashObj {
+    const char* key;
+    int times;
+    UT_hash_handle hh; 
+};
+
+struct HashObj* users;
+
+bool IsOneHCharChange(char* a, char* b)
+{
+    int count = 0;
+    if (strlen(a) != strlen(b)) {
+        return false;
+    }
+    for (int i = 0; i < strlen(a); i++) {
+        if (a[i] != b[i]) {
+            count++;
+            if (count > 1) {
+                return false;
+            }
+        }
+    }
+    return count == 1;
+}
+
+bool targetExist(char** queue, int size, char* tar)
+{
+    for (int i = 0; i < size; i++) {
+        if (strcmp(queue[i], tar) == 0) {
+            return true;
+        }
+    }
+    return false;
+}
+
+const int COUNT = 20000;
+#define WORLD_LENGTH 11
+
+int ladderLength(char * beginWord, char * endWord, char ** wordList, int wordListSize){
+    if (beginWord == NULL || endWord == NULL || wordListSize == 0) {
+        return 0;
+    }
+    int i = 0;
+    for (; i < wordListSize; i++) {
+        if (strcmp(wordList[i], endWord) == 0) {
+            break;
+        }
+    }
+    if (i == wordListSize) {
+        return 0;
+    }
+    users = NULL;
+    char* queue[COUNT];
+    for (int i = 0; i < COUNT; i++) {
+        queue[i] = (char*)malloc(sizeof(char) * WORLD_LENGTH);
+        memset(queue[i], 0, sizeof(char) * WORLD_LENGTH);
+    }
+    int rear = 0;
+    int front = 0;
+    strcpy(queue[rear++], beginWord);
+    struct HashObj* add = (struct HashObj*)malloc(sizeof(struct HashObj));
+    add->key = beginWord;
+    add->times = 1;
+    HASH_ADD_KEYPTR(hh, users, add->key, strlen(beginWord), add);
+
+    int layer = 0;
+    while (front < rear) {
+        char cur[WORLD_LENGTH] = {0};
+        int curSize = rear - front;
+        layer++;
+        for (int i = 0; i < curSize; i++) {
+            strcpy(cur, queue[front++]); // 出队
+            //printf("\n cur=%s", cur);
+            for (int i = 0; i < wordListSize; i++) {
+                if (strcmp(cur, endWord) == 0) {
+                   // printf("\nfind end\n");
+                    return layer;
+                }
+                struct HashObj* find;
+                //printf("\ni=%d, s=%s", i, wordList[i]);
+                HASH_FIND_STR(users, wordList[i], find);
+                if (find) {
+                    //printf("\nvisited");
+                    continue;
+                }
+                if (!IsOneHCharChange(cur, wordList[i])) {
+                    //printf("\nnot change");
+                    continue;
+                }
+                //printf("\nadd %s", wordList[i]);
+                strcpy(queue[rear++], wordList[i]);
+                struct HashObj* add1 = (struct HashObj*)malloc(sizeof(struct HashObj));
+                add1->key = wordList[i];
+                add1->times = 1;
+                HASH_ADD_KEYPTR(hh, users, add1->key, strlen(wordList[i]), add1);
+            }
+        }
+    }
+    return  0;
+}
+```
