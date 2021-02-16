@@ -123,7 +123,7 @@ char *** partition(char * s, int* returnSize, int** returnColumnSizes){
 ```
 
 13. 关于变量的定义需要注意，像下面的2段代码对应定义的变量含义是不一样的。
-
+```
 for (int i = 1; i < heightSize - 1; i++) {
     int maxLeft = 0;
     int maxRight = 0;
@@ -136,9 +136,10 @@ for (int i = 1; i < heightSize - 1; i++) {
     printf("%d,", MIN(maxRight, maxLeft) - height[i]);
     res += MIN(maxRight, maxLeft) - height[i];
 }
+```
 
 和下面的代码片段
-
+```
 int maxLeft = 0;
 int maxRight = 0;
 for (int i = 1; i < heightSize - 1; i++) {
@@ -151,7 +152,27 @@ for (int i = 1; i < heightSize - 1; i++) {
     printf("%d,", MIN(maxRight, maxLeft) - height[i]);
     res += MIN(maxRight, maxLeft) - height[i];
 }
+```
 第一种，maxRight,maxLeft这2个变量定义在for循环的里面，每次执行for循环的时候，这2个值都是重新被定义的，相当于是局部变量了。后面这种，在for循环的外面定义一次，后面for循环中改变了这2个值后，
 下次执行for循环的时候，就是基于变化后的值。
+
+15. 如果暂存的类型是 long* 的，但是返回的值需要的是int, 那么一定要把这个long类型的转换成 int 之后，再返回，否则有问题。例如，暂存的数据存储在 res， 但是它是long 的，返回的值需要int，所以下面需要类型转换一下。
+```
+int* splitIntoFibonacci(char * S, int* returnSize){
+    long* res = (long*)malloc(sizeof(long) * RET_COUNT);
+    memset(res, 0, sizeof(long) * RET_COUNT);
+    gLength = strlen(S);
+    *returnSize = 0;
+    bool result = dfs(S, res, returnSize, 0);
+    *returnSize = result ? *returnSize : 0;
+    
+    int* resultBuf = (int*)malloc(sizeof(int) * *returnSize);
+    for (int i = 0; i < *returnSize; i++) {
+        resultBuf[i] = res[i];
+    }
+    return resultBuf;
+}
+```
+
 
 
