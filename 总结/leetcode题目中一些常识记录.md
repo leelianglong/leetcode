@@ -121,3 +121,37 @@ char *** partition(char * s, int* returnSize, int** returnColumnSizes){
     return res;
 }
 ```
+
+13. 关于变量的定义需要注意，像下面的2段代码对应定义的变量含义是不一样的。
+
+for (int i = 1; i < heightSize - 1; i++) {
+    int maxLeft = 0;
+    int maxRight = 0;
+    for (int j = i; j >= 0; j--) {
+        maxLeft = MAX(maxLeft, height[j]);
+    }
+    for (int k = i; k < heightSize; k++) {
+        maxRight = MAX(maxRight, height[k]);
+    }
+    printf("%d,", MIN(maxRight, maxLeft) - height[i]);
+    res += MIN(maxRight, maxLeft) - height[i];
+}
+
+和下面的代码片段
+
+int maxLeft = 0;
+int maxRight = 0;
+for (int i = 1; i < heightSize - 1; i++) {
+    for (int j = i; j >= 0; j--) {
+        maxLeft = MAX(maxLeft, height[j]);
+    }
+    for (int k = i; k < heightSize; k++) {
+        maxRight = MAX(maxRight, height[k]);
+    }
+    printf("%d,", MIN(maxRight, maxLeft) - height[i]);
+    res += MIN(maxRight, maxLeft) - height[i];
+}
+第一种，maxRight,maxLeft这2个变量定义在for循环的里面，每次执行for循环的时候，这2个值都是重新被定义的，相当于是局部变量了。后面这种，在for循环的外面定义一次，后面for循环中改变了这2个值后，
+下次执行for循环的时候，就是基于变化后的值。
+
+
