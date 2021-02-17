@@ -353,3 +353,72 @@ int findCircleNum(int** isConnected, int isConnectedSize, int* isConnectedColSiz
     return obj->count;
 }
 ```
+
+### leetcode 684
+#### 思路
+1. 题意是一颗树，树里有一个附件加的边，这个边不属于树， 这个边使树中存在环了。
+2. 现在需要找到这个附加边，并把它删除，注意这个边一定是靠后的边。
+3. 这个怎么和并查集联系？ 实际上一个树就是一个集合，他们有共同的一个跟节点。所以当前就依次遍历各个边，如果还不属于一个集合，就把这条边添加到集合中，如果发现当前的这条边已经和现有集合是一起的话，说明这个边就是多余的。
+
+
+#### 代码
+```
+typedef struct {
+    int* buff;
+    int count;
+} UnionFind;
+
+UnionFind* Init(int count)
+{
+    UnionFind* obj = (UnionFind*)malloc(sizeof(UnionFind));
+    obj->buff = (int*)malloc(sizeof(int) * count);
+    for (int i = 0; i < count; i++) {
+        obj->buff[i] = i;
+    }
+    obj->count = count;
+    return obj;
+}
+
+int find(UnionFind* obj, int x)
+{
+    while (x != obj->buff[x]) {
+        x  = obj->buff[x];
+    }
+    return x;
+}
+
+void Union(UnionFind* obj, int x, int y)
+{
+    int rootp = find(obj, x);
+    int rootq = find(obj, y);
+    if (rootp == rootq) {
+        return;
+    }
+    obj->buff[rootq] = rootp;
+    obj->count--;
+}
+
+bool IsConnected(UnionFind* obj, int x, int y)
+{
+    int rootp = find(obj, x);
+    int rootq = find(obj, y);
+    return rootp == rootq;
+}
+
+int* findRedundantConnection(int** edges, int edgesSize, int* edgesColSize, int* returnSize){
+    UnionFind * obj = Init(edgesSize + 1);
+    *returnSize = 2;
+    int * res = (int*)malloc(sizeof(int) * 2);
+    memset(res, 0, sizeof(int) * 2);
+
+    for (int i = 0; i < edgesSize; i++) {
+        if (IsConnected(obj, edges[i][0], edges[i][1])) {
+            res[0] = edges[i][0];
+            res[1] = edges[i][1];
+        } else {
+            Union(obj, edges[i][0], edges[i][1]);
+        }
+    }
+    return res;
+}
+```
