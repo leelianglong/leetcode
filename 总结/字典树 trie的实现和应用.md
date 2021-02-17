@@ -1,4 +1,5 @@
 ## 概念
+![字典树概念](https://github.com/leelianglong/leetcode/blob/master/%E6%80%BB%E7%BB%93/graph_icon/Snipaste_2021-02-17_22-01-54.png)
 
 ### 性质
 1. 字典树节点本身不存储完整单词，只存储当前节点到下一个节点的关系
