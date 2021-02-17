@@ -162,3 +162,66 @@ char ** findWords(char** board, int boardSize, int* boardColSize, char ** words,
     return res;
 }
 ```
+
+### leetcode 720
+#### 思路
+1.创建字典树。把所有的字符串都添加到字典树中
+2.逐个遍历字符串中的每个字符，在字典树中查找是不是结束符。如果是结束字符，则遍历下一个节点，如果不是结束符，则说明当前这个字符串是无关的，不需要考虑。这是因为，按照题意，最长的字符串是有字符串中每个字符串，逐个增加一个字符得到的。则意味着字符串中每个字符都有可能是结束符的。
+3.把一个字符串遍历完了，就把它同结果集中的字符串比较长短，使结果集中的字符串始终最长，如果结果集和当前字符串是等长的，取字典序较小的。
+#### 代码
+```
+#define LEN  26
+typedef struct __Trie {
+    bool isEnd;
+    struct __Trie* next[LEN];
+} Trie;
+
+Trie* Create(void)
+{
+    Trie* obj = (Trie*)malloc(sizeof(Trie));
+    obj->isEnd = false;
+    memset(obj->next, 0, sizeof(obj->next));
+    return obj;
+}
+
+void Insert(Trie* obj, char* word)
+{
+    Trie* tmp = obj;
+    for (int i = 0; i < strlen(word); i++) {
+        if (tmp->next[word[i] - 'a'] == NULL) {
+            tmp->next[word[i] - 'a'] = Create();
+        }
+        tmp = tmp->next[word[i] - 'a'];
+    }
+    tmp->isEnd = true;
+}
+
+char * longestWord(char ** words, int wordsSize){
+    Trie* obj = Create();
+    for (int i = 0; i < wordsSize; i++) {
+        Insert(obj, words[i]);
+    }
+    char* res = (char*)malloc(sizeof(char) * 31);
+    memset(res, 0, sizeof(char) * 31);
+    bool flg = true;
+    for (int i = 0; i < wordsSize; i++) {
+        Trie* tmp = obj;
+        flg = true;
+        for (int j = 0; j < strlen(words[i]); j++) {
+            if (tmp->next[words[i][j] - 'a']->isEnd == false) { 
+                flg = false;
+                break;
+            }
+            tmp = tmp->next[words[i][j] - 'a'];
+        }
+        if (flg) {
+            if (strlen(words[i]) > strlen(res)) {
+                strncpy(res, words[i], strlen(words[i]));
+            } else if (strlen(words[i]) == strlen(res) && strcmp(words[i], res) < 0){
+                strncpy(res, words[i], strlen(words[i]));
+            }
+        }
+    }
+    return res;
+}
+```
