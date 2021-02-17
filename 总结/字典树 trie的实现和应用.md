@@ -70,3 +70,95 @@ void trieFree(Trie* obj) {
 ```
 
 ## 应用
+### leetocde 212
+#### 思路
+1. 先创建字典树，将words中的单词添加到字典树中
+2. 使用dfs(实际上是回溯)在二维数组 board上都搜索，这里需要准备的参数主要有，board， 当前坐标，返回结果存储，中间临时结果存储。
+3. 在dfs时，当遍历的当前字符的当前trie节点不为空时，说明当前这个字符是我们需要的，把这个字符暂存下来。接下来就把字典树走到下一个节点去
+4. 当当前节点已经是某个前缀的结束节点时，就可以把暂存的字符串拷贝到返回的结果中，并把当前这个结束节点置为false。
+5. 典型的4个方向进行搜索。注意这里没有使用访问标记，在四个方向搜索前，先把当前坐标的字符保存下来，然后置为一个不可能的值。当4个方向搜索完了之后，在把这个坐标上的字符回复。
+
+#### 代码
+```
+#define      LEN         26
+typedef struct __Trie {
+    bool isEnd;
+    struct __Trie* next[LEN];
+} Trie;
+
+Trie* Create(void)
+{
+    Trie* obj = (Trie*)malloc(sizeof(Trie));
+    obj->isEnd = false;
+    memset(obj->next, 0, sizeof(obj->next));
+    return obj;
+}
+
+void Insert(Trie* obj, char* word)
+{
+    Trie* tmp = obj;
+    for (int i = 0; i < strlen(word); i++) {
+        if (tmp->next[word[i] - 'a'] == NULL) {
+            tmp->next[word[i] - 'a'] = Create();
+        }
+        tmp = tmp->next[word[i] - 'a'];
+    }
+    tmp->isEnd = true;
+}
+
+int row;
+int column;
+int direction[4][2] = {{1,0},{0,1}, {-1,0}, {0,-1}};
+void dfs(char** board, Trie* tree, int x, int y, char** res, int* returnSize, char* tmpSave, int pos)
+{
+    if (tree->next[board[x][y] - 'a']) {
+        tree = tree->next[board[x][y] - 'a']; // 遍历下一个节点
+        tmpSave[pos++] = board[x][y];
+        if (tree->isEnd) {
+            res[*returnSize] = (char*)malloc(sizeof(char) * (pos + 1));
+            memset(res[*returnSize], 0, sizeof(char) * (pos + 1));
+            strncpy(res[*returnSize], tmpSave, pos);
+            (*returnSize)++;
+            tree->isEnd = false;
+        }
+        char ch = board[x][y];
+        board[x][y] = '#';
+        for (int i = 0; i < 4; i++) {
+            int xx = x + direction[i][0];
+            int yy = y + direction[i][1];
+            if (xx < 0 || yy < 0 || xx >= row || yy >= column) {
+                continue;
+            }
+            if (board[xx][yy] == '#') {
+                continue;
+            }
+            dfs(board, tree, xx, yy, res, returnSize, tmpSave, pos);
+        }
+        board[x][y] = ch;
+    }
+}
+
+
+#define  COUNT 30001
+char ** findWords(char** board, int boardSize, int* boardColSize, char ** words, int wordsSize, int* returnSize){
+    *returnSize = 0;
+    if (boardSize == 0 || boardColSize[0] == 0 || wordsSize == 0) {
+        return NULL;
+    }
+    row = boardSize;
+    column = boardColSize[0];
+    char** res = (char**)malloc(sizeof(char*) * COUNT);
+    Trie* obj = Create();
+    for (int i = 0; i < wordsSize; i++) {
+        Insert(obj, words[i]);
+    }
+    char* tmpSave = (char*)malloc(sizeof(char) * (12));
+    memset(tmpSave, 0, sizeof(char) * 12);
+    for (int i = 0; i < row; i++) {
+        for (int j = 0; j < column; j++) {
+            dfs(board, obj, i, j, res, returnSize, tmpSave, 0);
+        }
+    }
+    return res;
+}
+```
