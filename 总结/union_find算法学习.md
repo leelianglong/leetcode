@@ -422,3 +422,66 @@ int* findRedundantConnection(int** edges, int edgesSize, int* edgesColSize, int*
     return res;
 }
 ```
+
+### leetcode 947
+#### 思路
+主要把在同一行的同一列的石子合并到一起。用总的石子数 减去 并查集中剩余的石子数， 就是移除的石子数。
+
+#### 代码
+```
+typedef struct {
+    int* buff;
+    int count;
+} UnionFind;
+
+UnionFind* Init(int count)
+{
+    UnionFind* obj = (UnionFind*)malloc(sizeof(UnionFind));
+    obj->buff = (int*)malloc(sizeof(int) * count);
+    for (int i = 0; i < count; i++) {
+        obj->buff[i] = i;
+    }
+    obj->count = count;
+    return obj;
+}
+
+int find(UnionFind* obj, int x)
+{
+    while(x != obj->buff[x]) {
+        x = obj->buff[x];
+    }
+    return x;
+}
+
+void Union(UnionFind* obj, int x, int y)
+{
+    int rootp = find(obj, x);
+    int rootq = find(obj, y);
+    if (rootp == rootq) {
+        return;
+    }
+    obj->buff[rootq] = rootp;
+    obj->count--;
+}
+
+bool IsConnected(UnionFind* obj, int x, int y)
+{
+    int rootp = find(obj, x);
+    int rootq = find(obj, y);
+
+    return rootp == rootq;   
+}
+
+int removeStones(int** stones, int stonesSize, int* stonesColSize){
+    UnionFind* obj = Init(stonesSize);
+
+    for (int i = 0; i < stonesSize - 1; i++) {
+        for (int j = i + 1; j < stonesSize; j++) {
+            if (stones[i][0] == stones[j][0] || stones[i][1] == stones[j][1]) { // 把同一行的 或者 同一列的元素合并。
+                Union(obj, i, j);
+            }
+        }
+    }
+    return stonesSize - obj->count; // 用总的石子数，减去并查集中剩余的石子数，就是移除的石子数
+}
+```
