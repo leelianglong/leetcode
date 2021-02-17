@@ -295,3 +295,61 @@ int numIslands(char** grid, int gridSize, int* gridColSize){
     return obj->counter - counter;
 }
 ```
+
+### leetcode 547
+#### 思路
+1. 有n个城市，有相邻的也有没有相邻的。
+2. 定义省份的概念是：直接相邻的或者间接相邻的城市。
+3. 有N X N的矩阵，用来标示这N个城市是否相邻。
+4. 计算省份的个数
+
+#### 代码
+```
+typedef struct {
+    int* root;
+    int count;
+} UnionFind;
+
+UnionFind* Init(int count)
+{
+    UnionFind* obj = (UnionFind*)malloc(sizeof(UnionFind));
+    obj->root = (int*)malloc(sizeof(int) * count);
+    for (int i = 0; i < count; i++) {
+        obj->root[i] = i;
+    }
+    obj->count = count;
+    return obj;
+}
+
+int find(UnionFind* obj, int x)
+{
+    while (x != obj->root[x]) {
+        x = obj->root[x];
+    }
+    return x;
+}
+
+void Union(UnionFind* obj, int x, int y)
+{
+    int rootp = find(obj,x);
+    int rootq = find(obj,y);
+    if (rootp == rootq) {
+        return;
+    }
+    obj->root[rootp] = rootq;
+    obj->count--;
+}
+
+int findCircleNum(int** isConnected, int isConnectedSize, int* isConnectedColSize){
+    int row = isConnectedSize;
+    UnionFind* obj = Init(row);
+    for (int i = 0; i < row; i++) {
+        for (int j = i + 1; j < row; j++) {
+            if (isConnected[i][j] == 1) {
+                Union(obj, i, j);
+            }
+        }
+    }
+    return obj->count;
+}
+```
