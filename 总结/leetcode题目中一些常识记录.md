@@ -12,7 +12,7 @@ int** res = (int**)malloc(sizeof(int*) * num); // 这里一定是 sizeof(int*)
 int** merge(int** intervals, int intervalsSize, int* intervalsColSize, int* returnSize, int** returnColumnSizes){
     int i;
     int **result = NULL;
-    returnSize = 0; // 这个一定要放在前面。
+    *returnSize = 0; // 这个一定要放在前面。
     if (intervals == NULL || intervalsSize == 0 || intervalsColSize[0] == 0) {
         return intervals;
     }
