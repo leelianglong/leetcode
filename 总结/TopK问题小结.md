@@ -78,3 +78,114 @@ char * frequencySort(char * s){
     return res;
 }
 ```
+
+### 面试17.14
+#### 思路
+1. 基于快排的思想，只需要排序好前面的K个元素即可。
+2. 下面有2种方法，第一种最后1个用例超时，第二种，能够通过
+#### 代码1
+```
+#define SWAP(a, b) do {\
+    int tmp = a;\
+    a = b;\
+    b = tmp;\
+} while (0)
+
+int split(int* arr, int lo, int hi)
+{
+    int i = lo;
+    int x = arr[i];
+    int j;
+    for (j = lo + 1; j <= hi; j++) {
+        if (arr[j] <= x) {
+            i++;
+            SWAP(arr[i], arr[j]);
+        }
+    }
+    SWAP(arr[lo], arr[i]);
+    return i;
+}
+
+
+int* smallestK(int* arr, int arrSize, int k, int* returnSize){
+    int count = 0;
+    int* res = (int*)malloc(sizeof(int) * (k + 1));
+    memset(res, 0, sizeof(int) * (k + 1));
+    int lo = 0;
+    int hi = arrSize - 1;
+    *returnSize = 0;
+    if (k == 0) {
+        return res;
+    }
+    while (1) {
+        int idx = split(arr, lo, hi);
+        if (idx < k) {
+            lo++;
+        } else if (idx > k){
+            hi--;
+        } else {
+            for (int m = 0; m < k; m++) {
+                res[m] = arr[m];
+            }
+            break;
+        }
+    }
+    
+    *returnSize = k;
+    return res;
+}
+```
+#### 代码2
+```
+#define SWAP(a, b) do {\
+    int tmp = a;\
+    a = b;\
+    b = tmp;\
+} while (0)
+
+void partition(int* nums, int lo, int hi, int k, int* res)
+{
+    int flag = nums[lo];
+    int i = lo;
+    int j = hi;
+
+    while (i < j) {
+        while (i < j && nums[j] >= flag) {
+            j--; // 从右向左找到第一个小于比较元素的数
+        }
+        while (i < j && nums[i] <= flag) {
+            i++; // 从左向右找到第一个大于比较元素的数
+        }
+        /* 上面的i，j 顺序不能调换顺序， 否则i会走过头，以至于将后面大于比较元素的数放到数组的头 */
+        if (i != j) {
+            SWAP(nums[i], nums[j]);
+        }
+    }
+    SWAP(nums[lo], nums[i]);
+    // 当前的索引i表示已经排好到i位置了。如果i > k,意味着，我们要找的k个最小元素在i 之前就够了。
+    if (i > k) {
+        partition(nums, lo, i - 1, k, res);
+    } else if (i < k) { // 说明当前位置i前面的元素还不够，需要扩大搜索范围。
+        partition(nums, i + 1, hi, k, res);
+    } else { // 当前索引 i 刚好等于k, 说明前i个元素已经排好了，可以直接获取。
+        for (int m = 0; m < k; m++) {
+            res[m] = nums[m];
+        }
+    }
+}
+
+int* smallestK(int* arr, int arrSize, int k, int* returnSize){
+    int count = 0;
+    int* res = (int*)malloc(sizeof(int) * (k + 1));
+    memset(res, 0, sizeof(int) * (k + 1));
+    int lo = 0;
+    int hi = arrSize - 1;
+    *returnSize = 0;
+    if (k == 0) {
+        return res;
+    }
+    partition(arr, lo, hi, k, res);
+    *returnSize = k;
+    return res;
+}
+```
