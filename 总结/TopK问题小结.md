@@ -189,3 +189,188 @@ int* smallestK(int* arr, int arrSize, int k, int* returnSize){
     return res;
 }
 ```
+
+
+### leetcode 973
+#### 思路
+1. 通过手写快速排序的方法来找到前k个元素。
+2. 最终要返回的是坐标点，所以添加一个结构保存下坐标点的距离和在原来points中的索引。然后基于距离来排序，找到前k个合适的距离后，根据其坐标索引，拿到原来points中的坐标返回。
+
+#### 代码
+```
+typedef struct {
+    int distance;
+    int idx;
+} Num;
+
+#define SWAP(a, b) do {\
+    Num tmp = a;\
+    a = b;\
+    b = tmp;\
+} while (0)
+
+int split(Num* nums, int lo, int hi)
+{
+    int x = nums[lo].distance;
+    int i = lo;
+    for (int j = lo + 1; j <= hi; j++) {
+        if (nums[j].distance <= x) {
+            i++;
+            SWAP(nums[i],  nums[j]);
+        }
+    }
+    SWAP(nums[lo], nums[i]);
+    return i;
+}
+
+int** kClosest(int** points, int pointsSize, int* pointsColSize, int k, int* returnSize, int** returnColumnSizes){
+    *returnSize = 0;
+    *returnColumnSizes = (int*)malloc(sizeof(int) * k);
+    memset(*returnColumnSizes, 0, sizeof(int) * k);
+    if (k == pointsSize) {
+        *returnSize = pointsSize;
+        for (int i = 0; i < pointsSize; i++) {
+            (*returnColumnSizes)[i] = 2;
+        }
+        return points;
+    }
+    int** res = (int**)malloc(sizeof(int*) * k);
+    for (int i = 0; i < k; i++) {
+        res[i] = (int*)malloc(sizeof(int) * 2);
+        memset(res[i], 0, sizeof(int) * 2);
+    }
+    Num* nums = (Num*)malloc(sizeof(Num) * pointsSize);
+    for (int i = 0; i < pointsSize; i++) {
+        nums[i].distance = 0;
+        nums[i].idx = -1;
+    }
+    for (int i = 0; i < pointsSize; i++) {
+        nums[i].distance = (points[i][0] * points[i][0] + points[i][1] * points[i][1]);
+        nums[i].idx = i;
+    }
+    int lo = 0;
+    int hi = pointsSize - 1;
+    while (true) {
+        int idx = split(nums, lo, hi);
+        if (idx == k) {
+            for (int m = 0; m < k; m++) {
+                res[m][0] = points[nums[m].idx][0];
+                res[m][1] = points[nums[m].idx][1];
+                (*returnColumnSizes)[m] = 2;
+            }
+            break;
+        } else if (idx < k) {
+            lo++;
+        } else {
+            hi--;
+        }
+    }
+    *returnSize = k;
+    return res;
+}
+```
+### leetcode 347
+#### 思路
+1. 使用ut_hash库函数，对每个数字出现的频率做统计
+2. 然后基于频率排序
+3. 使用HASH_ITER宏来取出需要的元素
+
+#### 代码
+```
+struct Hash {
+    int key;
+    int times;
+    UT_hash_handle hh;
+};
+
+struct Hash* users;
+int cmp(const void* a, const void* b)
+{
+    struct Hash* aa = (struct Hash*)a;
+    struct Hash* bb = (struct Hash*)b;
+    return bb->times - aa->times;
+}
+
+int* topKFrequent(int* nums, int numsSize, int k, int* returnSize){
+    int* res = (int*)malloc(sizeof(int) * k);
+    memset(res, 0, sizeof(int) * k);
+    *returnSize = 0;
+    users = NULL;
+    for (int i = 0; i < numsSize; i++) {
+        struct Hash* find;
+        int key = nums[i];
+        HASH_FIND_INT(users, &key, find);
+        if (find == NULL) {
+            struct Hash* add = (struct Hash*)malloc(sizeof(struct Hash));
+            add->key = nums[i];
+            add->times = 1;
+            HASH_ADD_INT(users, key, add);
+        } else {
+            find->times++;
+        }
+    }
+    HASH_SORT(users, cmp);
+    struct Hash* cur;
+    struct Hash* tmp;
+    HASH_ITER(hh, users, cur, tmp) {
+        if (*returnSize == k) {
+            break;
+        }
+        res[(*returnSize)] = cur->key;
+        (*returnSize)++;
+    }
+
+    return res;
+}
+```
+
+### leetcode 251
+1. 手写快速排序的思路，找到第k个索引即可。
+
+#### 代码
+```
+#define SWAP(a, b)    do {\
+                        int tmp = a;\
+                        a = b;\
+                        b = tmp;\
+                        } while (0)
+
+int partition(int* nums, int lo, int hi)
+{
+    int flag = nums[lo];
+    int i = lo;
+    int j = hi;
+
+    while (i < j) {
+        while (i < j && nums[j] >= flag) {
+            j--; // 从右向左找到第一个小于比较元素的数
+        }
+        while (i < j && nums[i] <= flag) {
+            i++; // 从左向右找到第一个大于比较元素的数
+        }
+        /* 上面的i，j 顺序不能调换顺序， 否则i会走过头，以至于将后面大于比较元素的数放到数组的头 */
+        if (i != j) {
+            SWAP(nums[i], nums[j]);
+        }
+    }
+    SWAP(nums[lo], nums[i]);
+    return i;
+}
+
+int findKthLargest(int* nums, int numsSize, int k){
+    int target = numsSize - k;
+    int lo = 0;
+    int hi = numsSize - 1;
+    while (1) {
+        int idx = partition(nums, lo, hi);
+        if (idx == target) {
+            return nums[idx];
+        } else if (idx < target) {
+            lo++;
+        } else {
+            hi--;
+        }
+    }
+    return 0;
+}
+```
