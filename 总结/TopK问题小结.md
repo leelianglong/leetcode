@@ -40,3 +40,41 @@ int* getLeastNumbers(int* arr, int arrSize, int k, int* returnSize)
 	return res;
 }
 ```
+### leetcode 451
+#### 思路
+1. 题目的意思是按照字符出现的频率，从大到小的重新输出字符串。
+2. 使用二维数组map[128][2]来记录单个字符出现的频率。
+3. 然后按照频率从高到低排序。
+4. 然后遍历map把字符串重新构建
+#### 代码
+```
+int cmp(const void* a, const void* b)
+{
+    int* aa  = *(int**)a;
+    int* bb  = *(int**)b;
+    return bb[1] - aa[1];
+}
+#define MAP_SIZE  256
+char * frequencySort(char * s){
+    int** map = (int**)malloc(sizeof(int*) * MAP_SIZE);
+    for (int i = 0; i < MAP_SIZE; i++) {
+        map[i] = (int*)malloc(sizeof(int) * 2);
+        memset(map[i], 0, sizeof(int) * 2);
+    }
+    for (int i = 0; i < strlen(s); i++) {
+        map[s[i] - ' '][0] = s[i] - ' ';
+        map[s[i] - ' '][1]++;
+    }
+
+    qsort(map, MAP_SIZE, sizeof(map[0]), cmp);
+    char* res = (char*)malloc(strlen(s) + 1);
+    memset(res, 0, strlen(s) + 1);
+    int count = 0;
+    for (int i = 0; i < MAP_SIZE; i++) {
+        for (int j = 0; j < map[i][1]; j++) {
+            res[count++] = map[i][0] + ' ';
+        }
+    }
+    return res;
+}
+```
