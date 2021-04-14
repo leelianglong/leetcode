@@ -449,3 +449,43 @@ int ladderLength(char * beginWord, char * endWord, char ** wordList, int wordLis
     return  0;
 }
 ```
+
+### leetcode 279
+#### 思路
+1. 本题可以使用动态规划，也可以是BFS。这里参考别人的BFS解答.
+2. 先把n入队，然后在队列上进行遍历，
+3. 出队，再减去1， 2， 4， 9，，，， 这些个完全平方数。
+4. 将剩余的数再入队。 如果减后的值变成0，说明已经找到答案了。BFS主要用于求最短距离的。
+这里层数就是能够组成n的最少的完全平方数的个数。
+#### 代码
+```
+#define COUNT 10000
+int numSquares(int n){
+    int queue[COUNT];
+    bool visit[COUNT] = {false};
+    int front = 0; 
+    int rear = 0;
+
+    queue[rear++] = n;
+    visit[n] = true;
+    int level = 0;
+    while (front < rear) {
+        int curSize = rear - front;
+        level++;
+        for (int i = 0; i < curSize; i++) {
+            int curNode = queue[front++];
+            for (int j = 0; curNode - j*j >= 0; j++) {
+                if (visit[curNode - j*j]) {
+                    continue;
+                }
+                if (curNode - j * j == 0) {
+                    return level;
+                }
+                visit[curNode - j * j] = true;
+                queue[rear++] = curNode - j * j;
+            }
+        }
+    }
+    return -1;
+}
+```
