@@ -174,5 +174,19 @@ int* splitIntoFibonacci(char * S, int* returnSize){
 }
 ```
 
+16. 计算数组上连续k个数的和的最大值的最佳实践
+```
+    int extra = 0;
+    int cur = 0;
+    for (left = 0, right = 0; right < customersSize; right++) {
+        cur += customers[right];
+        if (right - left + 1 > k) {
+            cur -= customers[left];
+            left++;
+        }
+        extra = MAX(extra, cur);
+    }
+```
+
 
 
