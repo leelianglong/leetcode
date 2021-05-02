@@ -188,5 +188,18 @@ int* splitIntoFibonacci(char * S, int* returnSize){
     }
 ```
 
+17. 数组上固定窗口最小值的最佳实践
+```
+    int min = INT_MAX;
+    int cur = 0;
+    for (int i = 0, j = 0; j < cardPointsSize; j++) {
+        cur += cardPoints[j];
+        if (j - i + 1 >= cardPointsSize - k) {
+            min = MIN(min, cur);
+            cur -= cardPoints[i++];
+        }
+    }
+```
+
 
 
