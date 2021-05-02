@@ -200,6 +200,7 @@ int* splitIntoFibonacci(char * S, int* returnSize){
         }
     }
 ```
+注意这里的 >= 和上面的最大值是不一样的。
 
 
 
