@@ -281,3 +281,64 @@ int uniquePaths(int m, int n){
     return res;
 }
 ```
+### leetcode 437
+#### 思路
+1. 当前题目是说从二叉树的任意节点开始的路径都算，所以存在多重递归。从二叉树的任意节点遍历，路径上的和是target就可以了
+2. 当前存在2种递归，一个是计算和的递归； 一个是递归访问原来二叉树的任意节点。
+3. 减少函数参数，可以从原来的target中逐步减root->val值来判断是否找到结果。
+
+#### 代码
+```
+int dfs(struct TreeNode* root, int targetSum)
+{
+    int cnt = 0;
+    if (root == NULL) {
+        return 0;
+    }
+    targetSum -= root->val;
+    if (0 == targetSum) {
+        cnt++;
+    }
+    cnt += dfs(root->left, targetSum); 
+    cnt += dfs(root->right, targetSum);
+    return cnt;
+}
+
+int pathSum(struct TreeNode* root, int targetSum){
+    if (root == NULL) {
+        return 0;
+    }
+    return dfs(root, targetSum) + pathSum(root->left, targetSum) + pathSum(root->right, targetSum);  // 后面2个是对原二叉树的左子树和右子树的遍历。这里的顺序很重要不能交换。后面这2个也不可或缺。
+}
+```
+#### 代码2
+1. 这种方法不好，c语言中使用了全局变量。第一个用例使用过了之后，后面这个全局变量不会再被初始化，导致题目解答异常。
+```
+int g_count = 0;
+void dfs(struct TreeNode* root, int* curSum, int targetSum)
+{
+    if (root == NULL) {
+        return;
+    }
+    if (targetSum == *curSum) {
+        //printf("find\n");
+        g_count++;
+        return;
+    }
+    (*curSum) += root->val;
+    dfs(root->left, curSum, targetSum);
+    dfs(root->right, curSum, targetSum);
+}
+
+int pathSum(struct TreeNode* root, int targetSum){
+    if (root == NULL) {
+        return 0;
+    }
+    int sum = 0;
+    //printf("\n val=%d\n", root->val);
+    dfs(root, &sum, targetSum);
+    pathSum(root->left, targetSum);
+    pathSum(root->right, targetSum);
+    return g_count; 
+}
+```
