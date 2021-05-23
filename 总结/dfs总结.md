@@ -252,3 +252,32 @@ int findCircleNum(int** M, int MSize, int* MColSize){
     return count;
 }
 ```
+### leetcode 62
+#### 思路
+1. 注意2个地方：这个direct 数组取决与坐标系怎么建立， 目的地是右下角，所以坐标系向右表示x正，向下表示Y正； 还有 起始位置设置成（0,0）还是（1,1） 决定 退出的条件不同，当前我取的是(0,0)为起始条件，所以退出条件是下面这样的。
+2. 当前题目使用动态规划来做更省时间，dfs是超时的。
+#### 代码
+```
+int direct[2][2] = {{1,0}, {0,1}};
+void dfs(int m, int n, int curx, int cury, int* count)
+{
+    if (curx == m - 1 && cury == n - 1) {
+        (*count)++;
+        return;
+    }
+    for (int i = 0; i < 2; i++) {
+        int xx = curx + direct[i][0];
+        int yy = cury + direct[i][1];
+        if (xx >= m || yy >= n || xx < 0 || yy < 0) {
+            continue;
+        }
+        dfs(m, n, xx, yy, count);
+    }
+}
+
+int uniquePaths(int m, int n){
+    int res = 0;
+    dfs(m, n, 0, 0, &res);
+    return res;
+}
+```
