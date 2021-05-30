@@ -1,3 +1,125 @@
+### 手动实现hash的算法
+#### 代码
+1. 当前代码来自于leetcode_146
+```
+struct LinkListNode {
+    int key;
+    int val;
+    struct LinkListNode* pre;
+    struct LinkListNode* next;
+};
+
+#define HASH_SIZE 2048
+#define HASH_EMPTY -1
+#define HASH_KEY int
+#define HASH_VAL struct LinkListNode* // val的类型，双链表节点
+
+struct HashNode {
+    HASH_KEY key;
+    HASH_VAL val;
+    struct HashNode* next; // hash冲突解决
+};
+
+struct HashNode* Hash_CreateNode(HASH_KEY key, HASH_VAL val, struct HashNode* next)
+{
+    struct HashNode* obj = (struct HashNode*)malloc(sizeof(struct HashNode));
+    obj->key = key;
+    obj->val = val;
+    obj->next = next; // 头插法
+    return obj;
+}
+
+struct HashNode** Hash_InitObj(void)
+{
+    struct HashNode** obj = (struct HashNode**)malloc(sizeof(struct HashNode*) * HASH_SIZE);
+    for (int i = 0; i < HASH_SIZE; i++) {
+        obj[i] = Hash_CreateNode(HASH_EMPTY, 0, NULL);
+    }
+    return obj;
+}
+
+int Hash_CalcuSeed(HASH_KEY key)
+{
+    if (key == INT_MIN) {
+        key = INT_MAX;
+    } else if (key < 0 ) {
+        key = -key;
+    }
+    return key % HASH_SIZE;
+}
+
+bool Hash_PutNode(struct HashNode** obj, HASH_KEY key, HASH_VAL val)
+{
+    int hash = Hash_CalcuSeed(key);
+    struct HashNode* curNode = obj[hash];
+    if (curNode->key == HASH_EMPTY) { // 当前key在hash表中不存在，则直接添加。
+        curNode->key = key;
+        curNode->val = val;
+        return true;
+    }
+
+    while (true) {
+        if(curNode->key == key) { // 当前的key已经存在，则覆盖原有的数据， 返回false。
+            curNode->val = val;
+            return false;
+        }
+        if(curNode->next == NULL) {
+            break;
+        }
+        curNode = curNode->next;
+    }
+    curNode->next = Hash_CreateNode(key, val, NULL); // 找到结束的位置，然后把这个key添加进来。
+    return true;
+}
+
+bool Hash_GetNode(struct HashNode** obj, HASH_KEY key, HASH_VAL* result)
+{
+    int hash = Hash_CalcuSeed(key);
+    struct HashNode* curNode = obj[hash];
+    while (curNode != NULL && curNode->key != HASH_EMPTY) {
+        if (curNode->key == key) {
+            *result = curNode->val;
+            return true;
+        }
+        curNode = curNode->next;
+    }
+    result = NULL;
+    return false;
+}
+
+bool Hash_RemoveNode(struct HashNode** obj, HASH_KEY key)
+{
+    int hash = Hash_CalcuSeed(key);
+    struct HashNode* curNode = obj[hash];
+    if (curNode->key == key) {
+        if (curNode->next == NULL) { // 要删除下一个节点，当前节点的下一个节点不存在了，可以直接把当前节点的key设置成空
+            curNode->key = HASH_EMPTY;
+            curNode->val = 0;
+            return true;
+        } else {
+            struct HashNode* delNode = curNode->next; // 要删除的是当前节点的下一个。
+            curNode->val = curNode->next->val;
+            curNode->key = curNode->next->key;
+            curNode->next = curNode->next->next; // 这样就把delNode删除了
+            free(delNode);
+            return true;
+        }
+    }
+    // 当前key节点对应的hash值对应的节点中的key和这个参数key不一样，说明有冲突了，需要继续找。
+    while (curNode->next != NULL) {
+        struct HashNode* next = curNode->next;
+        if (next->key == key) {
+            curNode->next = next->next;
+            free(next);
+            return true;
+        }
+        curNode = curNode->next;
+    }
+    return false;
+}
+```
+
+
 ### 题目，leetcode 187
 
 题目要求重复的字符串。这个字符串的长度是10，在给定的字符串中有重复出现的。
