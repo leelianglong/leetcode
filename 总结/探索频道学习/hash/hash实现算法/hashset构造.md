@@ -4,7 +4,7 @@
 
 我们开辟一个大小为 base 的数组，数组的每个位置是一个链表。当计算出哈希值之后，就插入到对应位置的链表当中。
 
-由于我们使用整数除法作为哈希函数，为了尽可能避免冲突，应当将 base 取为一个质数。在这里，我们取 769
+由于我们使用整数除法作为哈希函数，为了尽可能避免冲突，应当将 base 取为一个质数。在这里，我们取 769。
 ### 代码
 ```
 struct List {
@@ -23,10 +23,10 @@ void ListPut(struct List* head, int x)
 void ListDelete(struct List* head, int x)
 {
     for (struct List* it = head; it->next; it = it->next) {
-        if (it->next->val == x) {
+        if (it->next->val == x) { // 单链表删除操作时，要使用 it->next->val 来遍历，这样才能保留要删除节点的父节点，这样才能删除。
             struct List* tmp = it->next;
             it->next = tmp->next;
-            free(tmp);
+            free(tmp);// 注意是否内存，并退出
             break;
         }
     }
@@ -76,7 +76,7 @@ MyHashSet* myHashSetCreate() {
 
 void myHashSetAdd(MyHashSet* obj, int key) {
     int h = hashCode(key);
-    if (!ListContains(&(obj->data[h]),key)) {
+    if (!ListContains(&(obj->data[h]),key)) { // 由于是hash set 只保留不重复的数据。
         ListPut(&(obj->data[h]), key);
     }
 }
