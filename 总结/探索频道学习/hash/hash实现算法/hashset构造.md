@@ -1,10 +1,10 @@
 ### 思路参考
 链地址法：
-设哈希表的大小为 base，则可以设计一个简单的哈希函数 hash(x)=x mod base。
+设哈希表的大小为 base，则可以设计一个简单的哈希函数 hash(x) = x mod base。
 
 我们开辟一个大小为 base 的数组，数组的每个位置是一个链表。当计算出哈希值之后，就插入到对应位置的链表当中。
 
-由于我们使用整数除法作为哈希函数，为了尽可能避免冲突，应当将 base 取为一个质数。在这里，我们取 769。
+由于我们使用整数除法作为哈希函数，为了尽可能避免冲突，应当将 base 取为一个质数,在这里我们取 769。
 ### 代码
 ```
 struct List {
@@ -16,7 +16,7 @@ void ListPut(struct List* head, int x)
 {
     struct List* tmp = (struct List*)malloc(sizeof(struct List));
     tmp->val = x;
-    tmp->next = head->next;
+    tmp->next = head->next; // 注意这里是头插法，每次都查到head后面，但是head始终在头部
     head->next = tmp;
 }
 
