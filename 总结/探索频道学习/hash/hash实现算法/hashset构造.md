@@ -98,16 +98,138 @@ void myHashSetFree(MyHashSet* obj) {
     }
     free(obj->data);
 }
+```
 
-/**
- * Your MyHashSet struct will be instantiated and called as such:
- * MyHashSet* obj = myHashSetCreate();
- * myHashSetAdd(obj, key);
- 
- * myHashSetRemove(obj, key);
- 
- * bool param_3 = myHashSetContains(obj, key);
- 
- * myHashSetFree(obj);
-*/
+
+
+## 上面的算法没有实现对hashset的搜索，下面补全。
+1. 注意当前的数据分布情况是，hashset是一个结构体，该结构体成员是一个指向链表的指针。
+2. 然后分配base个链表头节点，这些链表头节点是内存相邻的。
+3. 向hashset中添加元素时，根据key计算出hashcode，就是寻找是要放在那个头结点里面，然后再分配一个链表节点，接到head上。
+4. 遍历hashset时，是全遍历，针对base个head。 查看那个head->next不为空，则认为是有值的，拿出该值。
+#### 代码
+```
+struct list {
+    int val;
+    struct list* next;
+};
+
+void listPut(struct list* head, int x)
+{
+    struct list* tmp = (struct list*)malloc(sizeof(struct list));
+    tmp->val = x;
+    tmp->next = NULL;
+    tmp->next = head->next;
+    head->next = tmp;
+}
+
+bool listContains(struct list* head, int x)
+{
+    for (struct list* it = head; it->next; it = it->next) {
+        if (it->next->val == x) {
+            return true;
+        }
+    }
+    return false;
+}
+
+typedef struct {
+    struct list* data;
+    int size;
+} HashSet;
+
+const int base = 769;
+
+int hashCode(int key)
+{
+    return key % base >= 0 ? key % base : (key % base) + base;
+}
+
+HashSet* createHashSet(void)
+{
+    HashSet* obj = (HashSet*)malloc(sizeof(HashSet));
+    obj->data = (struct list*)malloc(sizeof(struct list) * base);
+    obj->size = 0;
+    for (int i = 0; i < base; i++) {
+        obj->data[i].val = INT_MIN;
+        obj->data[i].next = NULL;
+    }
+    return obj;
+}
+
+bool contiansElement(HashSet* obj, int x)
+{
+    int hash = hashCode(x);
+    return listContains(&(obj->data[hash]), x);
+}
+
+void addElement(HashSet* obj, int x)
+{
+    int hash = hashCode(x);
+    if (!listContains(&(obj->data[hash]), x)) {
+        listPut(&(obj->data[hash]), x);
+        obj->size++;
+    }
+}
+
+int getHashSetSize(HashSet* obj)
+{
+    return obj->size;
+}
+
+int* intersection(int* nums1, int nums1Size, int* nums2, int nums2Size, int* returnSize){
+    *returnSize = 0;
+    int length = nums1Size > nums2Size ? nums2Size : nums1Size;
+    if (length == 0) {
+        return NULL;
+    }
+    int* res = (int*)malloc(sizeof(int) * length);
+    memset(res, 0, sizeof(int) * length);
+    HashSet* obj1 = createHashSet();
+    for (int i = 0; i < nums1Size; i++) {
+        addElement(obj1, nums1[i]);
+    }
+    int hash1Size = getHashSetSize(obj1);
+
+
+    HashSet* obj2 = createHashSet();
+    for (int i = 0; i < nums2Size; i++) {
+        addElement(obj2, nums2[i]);
+    }
+    int hash2Size = getHashSetSize(obj2);
+
+    if (hash1Size > hash2Size) {
+        int count = 0;
+        for (int i = 0; i < base; i++) {
+            if(obj2->data[i].next) {
+                int num = obj2->data[i].next->val;
+                if (contiansElement(obj1, num)) {
+                    res[*returnSize] = num;
+                    (*returnSize)++;
+                }
+                count++;
+                if (count == hash2Size) {
+                    break;
+                }
+            }
+        }
+    } else {
+        int count = 0;
+        for (int i = 0; i < base; i++) {
+            if (obj1->data[i].next) {
+                int num = obj1->data[i].next->val;
+                if (contiansElement(obj2, num)) {
+                    res[*returnSize] = num;
+                    (*returnSize)++;
+                }
+                count++;
+                if (count == hash1Size) {
+                    break;;
+                }
+            }
+        }
+    }
+
+    return res;
+}
 ```
