@@ -138,7 +138,7 @@ typedef struct {
     int size;
 } HashSet;
 
-const int base = 769;
+const int base = 769;  // 该值应该还是选择的有问题，对于大量的数据，计算的结果不对
 
 int hashCode(int key)
 {
