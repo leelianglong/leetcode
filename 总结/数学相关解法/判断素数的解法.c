@@ -13,7 +13,7 @@ bool isPrime(int n)
     return 1;
 }
 
-下面的方法也可行，但是比较耗时
+//下面的方法也可行，但是比较耗时
 bool isPrimeSelf(int n)
 {
     int i;
