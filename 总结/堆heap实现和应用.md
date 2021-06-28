@@ -101,3 +101,75 @@ int main() {
 ```
 
 ## 应用
+### leetcode 378
+#### 代码
+```
+typedef struct {
+    int val;
+    int x;
+    int y;
+} point;
+
+bool cmp(point a, point b)
+{
+    return a.val >= b.val;
+}
+
+void swap(point* a, point* b)
+{
+    point t = *a;
+    *a = *b;
+    *b = t;
+}
+
+void push(point* heap, int* size, point* p)
+{
+    heap[++(*size)] = *p;
+    int s = *size;
+    while (s > 1) { // 堆中元素大于1个，把这个新进来的元素放在合适的位置。
+        if (cmp(heap[s], heap[s >> 1])) {
+            break;
+        }
+        swap(&heap[s], &heap[s >> 1]);
+        s >>= 1;
+    }
+}
+
+void pop(point* heap, int* size)
+{
+    heap[1] = heap[(*size)--];
+    int p = 1;
+    int s = 2;
+
+    while (s <= *size) {
+        if (s <*size && !cmp(heap[s + 1], heap[s])) {
+            s++;
+        }
+        if (cmp(heap[s], heap[p])) {
+            break;
+        }
+        swap(&heap[s], &heap[p]);
+        p = s;
+        s = p << 1;
+    }
+}
+
+int kthSmallest(int** matrix, int matrixSize, int* matrixColSize, int k){
+    point heap[matrixSize + 1];
+    int size = 0;
+    for (int i = 0; i < matrixSize; i++) {
+        point p = {matrix[i][0],i,0}; // 矩阵第i行首元素
+        push(heap, &size, &p);// 把第i行首元素入堆
+    }
+
+    for (int i = 0; i < k - 1; i++) {
+        point now = heap[1];
+        pop(heap, &size);
+        if (now.y != matrixSize - 1) {
+            point p = {matrix[now.x][now.y + 1], now.x, now.y + 1};
+            push(heap, &size, &p);
+        }
+    }
+    return heap[1].val;
+}
+```
