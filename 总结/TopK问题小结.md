@@ -323,6 +323,94 @@ int* topKFrequent(int* nums, int numsSize, int k, int* returnSize){
     return res;
 }
 ```
+### leetcode 692
+#### 思路
+1. 使用hash 思路，以字符串作为key,他们出现的频率设置为value。
+2. 先基于频率排序，在频率一样的情况下，再以字符顺序排序
+
+#### 代码
+```
+/**
+ * Note: The returned array must be malloced, assume caller calls free().
+ */
+#define COUNT 32
+typedef struct {
+    char* src;
+    int times;
+} Hash;
+
+int cmp(const void* a, const void* b)
+{
+    Hash* aa = (Hash*)a;
+    Hash* bb = (Hash*)b;
+    if (aa->times != bb->times) {
+        return bb->times - aa->times;
+    }
+    return strcmp(aa->src, bb->src);
+}
+
+void putItem(Hash* obj, int objSize, char* str)
+{
+    int i;
+    bool flag = false;
+    //printf("enter: %s\n", str);
+    for (i = 0; strlen(obj[i].src) > 0 && i < objSize; i++) {
+        //printf("enter for\n");
+        if (strcmp(obj[i].src, str) == 0) {
+            obj[i].times++;
+            //printf("find same\n");
+            flag = true;
+            break;
+        }
+    }
+    if (!flag) {
+        //printf("exit for\n");
+        strncpy(obj[i].src, str, strlen(str));
+        obj[i].times = 1;
+    }
+}
+
+void dbgPrint(Hash* obj, int size)
+{
+    printf("hash str:\n");
+    for (int i = 0; i < size; i++) {
+        printf("pos=%d, src=%s, times=%d\n", i, obj[i].src, obj[i].times);
+    }
+    printf("\n");
+}
+
+char ** topKFrequent(char ** words, int wordsSize, int k, int* returnSize){
+    char** res = (char**)malloc(sizeof(char*) * k);
+    for (int i = 0; i < k; i++) {
+        res[i] = (char*)malloc(sizeof(char) * COUNT);
+        memset(res[i], 0, COUNT);
+    }
+    *returnSize = 0;
+    if (wordsSize == k) {
+
+    }
+    Hash* obj = (Hash*)malloc(sizeof(Hash) * wordsSize);
+    for (int i = 0; i < wordsSize; i++) {
+        obj[i].src = (char*)malloc(sizeof(char) * COUNT);
+        memset(obj[i].src, 0, sizeof(char) * COUNT);
+        obj[i].times = 0;
+    }
+
+    for (int i = 0; i < wordsSize; i++) {
+        //printf("%s\n", words[i]);
+        putItem(obj, wordsSize, words[i]);
+    }
+    //dbgPrint(obj, wordsSize);
+    qsort(obj, wordsSize, sizeof(obj[0]), cmp);
+    dbgPrint(obj, wordsSize);
+    for (int i = 0; i < k; i++) {
+        strcpy(res[i], obj[i].src);
+    }
+    *returnSize = k;
+    return res;
+}
+```
+
 
 ### leetcode 251
 1. 手写快速排序的思路，找到第k个索引即可。
