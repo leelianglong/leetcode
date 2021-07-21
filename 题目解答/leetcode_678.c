@@ -85,7 +85,7 @@ bool checkValidString(char * s){
     }
     // 遍历完字符串了，分析2个栈中的数据，要求左括号要在右括号的左边，所以逐个取出栈顶元素进行比较。
     while(!IsEmpty(charStack) && !IsEmpty(starStack)) {
-        if (GetTop(charStack) > GetTop(starStack)) { /
+        if (GetTop(charStack) > GetTop(starStack)) { 
             return false;
         }
         int element = 0;
