@@ -489,3 +489,65 @@ int numSquares(int n){
     return -1;
 }
 ```
+
+### leetcode 841
+#### 思路
+1. 目前这个题目还有用例不过。
+2. 通过这个题目，练习在使用队列时，可以直接将数组二维数组这样的形式写进队列里去，明白各个参数的含义。
+
+#### 代码
+```
+#define COUNT 10000
+typedef struct {
+    int* data;
+    int size;
+} Queue;
+
+bool canVisitAllRooms(int** rooms, int roomsSize, int* roomsColSize){
+    bool visit[roomsSize];
+    memset(visit, 0, sizeof(visit));
+    Queue* obj = (Queue*)malloc(sizeof(Queue) * COUNT);
+    int front = 0;
+    int rear = 0;
+    visit[0] = true;
+    int first;
+    for (first = 0; first < roomsSize; first++) {
+        if (roomsColSize[first] == 0) {
+            continue;
+        }
+        printf("first=%d\n", first);
+        visit[first] = true;
+        break;
+    }
+    obj[rear].data = (int*)malloc(sizeof(int) * roomsColSize[first]);
+    memcpy(obj[rear].data, rooms[first], sizeof(int) * roomsColSize[first]);
+    obj[rear].size = roomsColSize[first];
+    rear++;
+
+    while (front != rear) {
+        int size = rear - front;
+        for (int i = 0; i < size; i++) {
+            Queue curNode = obj[front];
+            front++;
+            for (int col = 0; col < curNode.size; col++) {
+                int nextroom = curNode.data[col];
+                if (!visit[nextroom]) {
+                    visit[nextroom] = true;
+                    obj[rear].data = (int*)malloc(sizeof(int) * roomsColSize[nextroom]);
+                    memcpy(obj[rear].data, rooms[nextroom], sizeof(int) * roomsColSize[nextroom]);
+                    obj[rear].size = roomsColSize[nextroom];
+                    rear++;
+                }
+            }
+        }
+    }
+    printf("exit\n");
+    for (int j = 1; j < roomsSize; j++) {
+        if (!visit[j]) {
+            printf("no in %d", j);
+            return false;
+        }
+    }
+    return true;
+}
+```

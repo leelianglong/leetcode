@@ -45,7 +45,7 @@ int* prisonAfterNDays(int* cells, int cellsSize, int N,
         }
 
         if (i == 1) {
-            memcpy(firstOne, cells, sizeof(int) * 8); // 记录第一天的状态
+            memcpy(firstOne, cells, sizeof(int) * 8); 
         }
         Print(i, cells);
         if (i > 1 && JudgeSame(firstOne, cells)) {
