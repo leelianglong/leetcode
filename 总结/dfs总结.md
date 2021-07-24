@@ -85,7 +85,7 @@ int findTargetSumWays(int* nums, int numsSize, int S){
 2. 遇到1就对其上下左右进行搜索，直到搜索到边界， 每搜索到一个1，就把记录个数count增加并且标记访问过vist置1。
 3. 使用一个标记位visit记录是否访问过，否则会出现无限次循环访问导致leetcode的堆栈溢出。
 4. 对所有点进行遍历，遇到1，调用上面的dfs.注意counter从1开始，因为遇到1，才调用dfs的。
-
+5. dfs还要避免走回头路
 这里是最简单最典型的dfs题目
 ```
 int row;
@@ -134,7 +134,6 @@ int maxAreaOfIsland(int** grid, int gridSize, int* gridColSize){
     return res == INT_MIN ? 0 : res;
 }
 ```
-
 
 ### 题目 leetcode 322  零钱兑换
 思路：详见代码注释
