@@ -341,3 +341,61 @@ int pathSum(struct TreeNode* root, int targetSum){
     return g_count; 
 }
 ```
+
+### leetcode 1267
+#### 思路
+1. 当前题目要求，求同一行或者同一列上的元素。 这个和之前常用的上下左右相邻，不同，不要思维定式。
+2. 要求行 和 列2个方向，就用2个for循环，分别遍历
+3. 注意避免不能走回头路
+4. 注意dfs中有行列2个for循环，如果某个位置上有元素的话，它会被计算2次。
+
+#### 代码
+```
+
+int cnt;
+void dfs(int** grid, int row, int col, int x, int y, int* vis)
+{
+    if (x < 0 || y < 0 || x >= row || y >= col) {
+        return;
+    }
+    if (grid[x][y] == 0) {
+        return;
+    }
+    if (vis[x * col + y]) {
+        return;
+    }
+    cnt++;
+    vis[x * col + y] = 1;
+    for (int i = 0; i < row; i++) {
+        dfs(grid, row, col, i, y, vis);
+    }
+
+    for (int j = 0; j < col; j++) {
+        dfs(grid, row, col, x, j, vis);
+    }
+}
+
+
+int countServers(int** grid, int gridSize, int* gridColSize){
+    cnt = 0;
+    int row = gridSize;
+    int col = gridColSize[0];
+    int* vis = (int*)malloc(sizeof(int) * row * col);
+    memset(vis, 0, sizeof(int) * row * col);
+
+    int res = 0;
+    for (int i = 0; i < row; i++) {
+        for (int j = 0; j < col; j++) {
+            if (grid[i][j] == 0) {
+                continue;
+            }
+            cnt = 0;
+            dfs(grid, row, col, i, j, vis);
+            if (cnt > 1) {
+                res += cnt;
+            }
+        }
+    }
+    return res;
+}
+```
