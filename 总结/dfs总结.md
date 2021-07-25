@@ -391,8 +391,78 @@ int countServers(int** grid, int gridSize, int* gridColSize){
             }
             cnt = 0;
             dfs(grid, row, col, i, j, vis);
-            if (cnt > 1) {
+            if (cnt > 1) { // 这里一定要是大于1的，应为要计算行，列 会计算2次。
                 res += cnt;
+            }
+        }
+    }
+    return res;
+}
+```
+
+### leetcode 419
+#### 思路
+1. 常规dfs思路。注意避免走回头路，把无效的X换成. 最后在统计 X的个数。
+#### 代码
+```
+const int direct[4][2] = {{1,0}, {0,1}, {-1,0}, {0, -1}};
+
+void dfs(char** board, int row, int col, int x, int y, int* vis)
+{
+    for (int i = 0; i < 4; i++) {
+        int dx = x + direct[i][0];
+        int dy = y + direct[i][1];
+        if (dx < 0 || dx >= row || dy < 0 || dy >= col) {
+            continue;
+        }
+        if (board[dx][dy] == '.') {
+            continue;
+        }
+        if (vis[dx * col + dy]) {
+            continue;
+        }
+        vis[dx * col + dy] = 1;
+        board[dx][dy] = '.';
+        dfs(board, row, col, dx, dy, vis);
+    }
+}
+
+int countBattleships(char** board, int boardSize, int* boardColSize){
+    int row = boardSize;
+    int col = boardColSize[0];
+    int* vis = (int*)malloc(sizeof(int) * row * col);
+    memset(vis, 0, sizeof(int) * row * col);
+
+    for (int i = 0; i < row; i++) {
+        for (int j = 0; j < col; j++) {
+            if (board[i][j] == '.') {
+                continue;
+            }
+            vis[i * col + j] = 1;
+            dfs(board, row, col, i,j,vis);
+        }
+    }
+    int res = 0;
+    for (int i = 0; i < row; i++) {
+        for (int j = 0; j < col; j++) {
+            if (board[i][j] == 'X') {
+                res += 1;
+            }
+        }
+    }
+    return res;
+}
+```
+#### 迭代一次遍历版本
+```
+int countBattleships(char** board, int boardSize, int* boardColSize){
+    int row = boardSize;
+    int col = boardColSize[0];
+    int res = 0;
+    for (int i = 0; i < row; i++) {
+        for (int j = 0; j < col; j++) {
+            if (board[i][j] == 'X' && (i <= 0 || board[i - 1][j] == '.') && (j <=0 || board[i][j - 1] == '.')) { // 左上角为空时，这个就是有效战舰。
+                res += 1;
             }
         }
     }
