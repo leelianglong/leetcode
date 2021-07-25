@@ -469,3 +469,28 @@ int countBattleships(char** board, int boardSize, int* boardColSize){
     return res;
 }
 ```
+
+### leetcode 1262
+当前算法会超时，有动态规划的方案。
+#### 代码
+```
+#define MAX(a, b) ((a) > (b) ? (a) : (b))
+int res;
+void dfs(int* nums, int numsSize, int pos, int sum)
+{
+    if (pos == numsSize) { // 已经遍历了整个数组
+        if (sum % 3 == 0) {
+            res = MAX(res, sum);
+        }
+    } else {
+        dfs(nums, numsSize, pos + 1, sum); // 下一步，不选择 nums[pos];
+        dfs(nums, numsSize, pos + 1, sum + nums[pos]); //下一步选择nums[pos]
+    }
+}
+
+int maxSumDivThree(int* nums, int numsSize){
+    res = 0;
+    dfs(nums, numsSize, 0, 0);
+    return res;
+}
+```
