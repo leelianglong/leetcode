@@ -551,3 +551,81 @@ bool canVisitAllRooms(int** rooms, int roomsSize, int* roomsColSize){
     return true;
 }
 ```
+
+### leetcode 1162
+#### 思路
+1. 最短距离使用BFS。
+2. 对整个矩阵进行遍历，当遇到海洋时，就使用BFS，以其为中心，不断扩展开来。没增加圈，距离就加1，当找到一个1就直接退出。
+3. 在找的时候注意边界和避免重复访问。
+4. 最外层每找到一个海洋时，就需要把队列和防重复变量进行恢复。
+
+#### 代码
+```
+const int direct[4][2] = {{1,0}, {0,1}, {-1, 0}, {0,-1}};
+int res;
+int row;
+int col;
+#define MAX(a, b) ((a) > (b) ? (a) : (b))
+typedef struct {
+    int x;
+    int y;
+}Obj;
+#define CNT 10001
+Obj queue[CNT];
+
+int bfs(int** grid, int startX, int startY, int* visit)
+{
+    int dis = 0;
+    int front = 0;
+    int rear = 0;
+    Obj tmp = {startX, startY};
+    queue[rear++] = tmp;
+    while (front < rear) {
+        int size = rear - front;
+        for (int i = 0; i < size; i++) {
+            Obj cur = queue[front++];
+            for (int i = 0; i < 4; i++) {
+                int xx = cur.x + direct[i][0];
+                int yy = cur.y + direct[i][1];
+                if (xx < 0 || xx > row - 1 || yy < 0 || yy > col - 1) {
+                    continue;
+                }
+                if (grid[xx][yy] == 1) {
+                    return dis + 1;
+                } else {
+                    if (!visit[xx * col + yy]) {
+                        Obj add = {xx, yy};
+                        queue[rear++] = add;
+                        visit[xx * col + yy] = 1;
+                    }
+                }
+            }
+        }
+        dis++;
+    }
+    return -1;
+}
+
+int maxDistance(int** grid, int gridSize, int* gridColSize){
+    res = 0;
+    row = gridSize;
+    col = gridColSize[0];
+    bool sea = false;
+    bool land =  false;
+    int* vis = (int*)malloc(sizeof(int) * row * col);
+    for (int i = 0; i < row; i++) {
+        for (int j = 0; j < col; j++) {
+            if (grid[i][j] == 1) {
+                land = true;
+                continue;
+            }
+            sea = true;
+            memset(queue, 0, sizeof(queue));
+            memset(vis, 0, sizeof(int) * row * col);
+            int tmpCnt = bfs(grid, i, j, vis);
+            res = MAX(res, tmpCnt);
+        }
+    }
+    return sea && land ?  res : -1;
+}
+```
