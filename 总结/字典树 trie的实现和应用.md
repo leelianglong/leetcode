@@ -231,3 +231,90 @@ char * longestWord(char ** words, int wordsSize){
     return res;
 }
 ```
+
+### leetcode 820
+#### 思路
+1. 字典树的数据结构实现，并且知道插入，查询，创建基本操作
+2. 把字符串逆序以后，在按照字典序的降序，长度的降序排列后，依次把字符串加入到字典树，再加的时候，查询一下当前字符有没有在字典树上有。如果有就下一个，如果没有，就把当前字符串的长度 + 1， 然后累加，得到最终的结果。
+3. 这里排序的方法很重要，如果不是上述排序，是不能使用find的。 这里也就巧妙的使用排序来去重了，避免使用hash。
+
+#### 代码
+```
+void reserve(char* words)
+{
+    int left = 0;
+    int right = strlen(words) - 1;
+    while (left < right) {
+        char tmp = words[left];
+        words[left] = words[right];
+        words[right] = tmp;
+        left++;
+        right--;
+    }
+}
+
+int cmp(const void* a, const void* b)
+{
+    char* aa = *(char** )a;
+    char* bb = *(char** )b;
+    return strcmp(bb, aa);
+}
+
+#define CNT 26
+
+typedef struct Node {
+    char ch;
+    struct Node* child[CNT];
+} Trie;
+
+Trie* CreateTrie(char ch)
+{
+    Trie* obj = (Trie* )malloc(sizeof(Trie));
+    obj->ch = ch;
+    for (int i = 0; i < CNT; i++) {
+        obj->child[i] = NULL;
+    }
+    return  obj;
+}
+
+bool Find(Trie* root, char* words)
+{
+    Trie* obj = root;
+    for (int i = 0; i < strlen(words); i++) {
+        if (obj->child[words[i] - 'a'] == NULL) {
+            return false;
+        }
+        obj = obj->child[words[i] - 'a'];
+    }
+    return true;
+}
+
+void Insert(Trie* obj, char* words)
+{
+    for (int i = 0; i < strlen(words); i++) {
+        if (obj->child[words[i] - 'a'] == NULL) {
+            obj->child[words[i] - 'a'] = CreateTrie(words[i]);
+        }
+        obj = obj->child[words[i] - 'a'];
+    }
+}
+
+int minimumLengthEncoding(char ** words, int wordsSize){
+    for (int i = 0; i < wordsSize; i++) {
+        reserve(words[i]);
+    }
+    qsort(words, wordsSize, sizeof(words[0]), cmp);
+    for (int i = 0; i < wordsSize; i++) {
+                printf("%s \n", words[i]);
+    }
+    Trie* obj = CreateTrie('\0');
+    int res = 0;
+    for (int i = 0; i < wordsSize; i++) {
+        if (!Find(obj, words[i])) { // 只有在前面降序排列后（并且是长度的降序排列），这里才可以使用find找，对于字典树，先把长的字符串插入到字典树，后面遇到短的，就可以直接找，是否在字典树上存在。
+            Insert(obj, words[i]);
+            res += strlen(words[i]) + 1;
+        }
+    }
+    return res;
+}
+```
