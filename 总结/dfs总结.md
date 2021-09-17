@@ -494,3 +494,63 @@ int maxSumDivThree(int* nums, int numsSize){
     return res;
 }
 ```
+
+### leetcode 784
+#### 思路
+1. 注意回溯和dfs的区别。
+2. dfs是考虑的可能性，无需回来，但是回溯需要回来。
+#### 代码
+```
+/**
+ * Note: The returned array must be malloced, assume caller calls free().
+ */
+
+const int gap = 'a' - 'A';
+char** res;
+int g_returnSize;
+
+static bool isSmall(char a)
+{
+    return a >= 'a' && a <= 'z';
+}
+
+static bool isBig(char a)
+{
+    return a >= 'A' && a <= 'Z';
+}
+static bool isNum(char a)
+{
+    return a >= '0' && a <= '9';
+}
+
+void backtrace(char* s, int length, int idx)
+{
+    if (idx == length) {
+        res[g_returnSize] = (char*)malloc(length + 1);
+        memset(res[g_returnSize], 0, length + 1);
+        strcpy(res[g_returnSize], s);
+        printf("%s g=%d\n", res[g_returnSize], g_returnSize);
+        g_returnSize++;
+        return;
+    }
+    if (isNum(s[idx])) {
+        backtrace(s, length, idx + 1);
+    } else {
+        s[idx] = isSmall(s[idx]) ? s[idx] - gap : s[idx]; //  这里是核心， 对于任何一个字符都有2种选择，即保持原样以及进行大小写转换，所以这里不能使用if else 这样来判断，他们不是非此即彼的，而是2种都要。
+        backtrace(s, length, idx + 1);
+
+        s[idx] = isBig(s[idx]) ? s[idx] + gap : s[idx];
+        backtrace(s, length, idx + 1);
+    }
+}
+
+#define CNT 10000
+char ** letterCasePermutation(char * s, int* returnSize){
+    res = (char**)malloc(sizeof(char*) * CNT);
+    g_returnSize = 0;
+    *returnSize = 0;
+    backtrace(s, strlen(s), 0);
+    *returnSize = g_returnSize;
+    return res;
+}
+```
