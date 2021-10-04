@@ -40,6 +40,62 @@ int* getLeastNumbers(int* arr, int arrSize, int k, int* returnSize)
 	return res;
 }
 ```
+### 题目，给定一个数组，请返回第K小的数据
+#### 思路
+#### 代码
+```
+void swap(int *arr, int l, int r)
+{
+    int tmp = arr[l];
+    arr[l] = arr[r];
+    arr[r] = tmp;
+}
+
+int *partion(int *arr, int L, int R, int pivot)
+{
+    int less = L - 1;
+    int more = R + 1;
+    int cur = L;
+
+    while (cur < L) {
+        if (arr[cur] < pivot) {
+            swap(arr, ++less, cur);
+        } else if (arr[cur] > pivot) {
+            swap(arr, cur, --more);
+        } else {
+            cur++;
+        }
+    }
+    int *res = (int *)malloc(sizeof(int) * 2);
+    res[0] = less + 1;
+    res[1] = more - 1;
+    return res;
+}
+
+// arr 数组，在L 和 R的范围内，如果排序的话，找index 位置的数据。
+int KSmallest(int *arr, int L, int R, int index)
+{
+    if (L == R) {
+        return arr[L];
+    }
+    int pivot = arr[L + (int)rand() * (R - L + 1) % (R - L + 1)];
+    int *range = partion(arr, L, R, pivot); // range[0] range[1] 分别表示 pivot把原来划分数组划分c成3等分，小于pivot 大于pivot的， 其中partion返回的值就是等于pivot的左边界和右边界序号。
+    if (index >= range[0] && index <= range[1]) {
+        return arr[index];
+    } else if (index < range[0]) { // 在左边界左边进行递归
+        return KSmallest(arr, L, range[0] - 1, index);
+    }
+    return KSmallest(arr, range[1] + 1, R, index);
+}
+
+int main() {
+    printf("Hello, World!\n");
+    int test[] = {1,100,4,56,6,7,8,9};
+    int result = KSmallest(test, 0, sizeof(test) / sizeof(test[0]) - 1, 7);
+    printf("result = %d", result);
+    return 0;
+}
+```
 ### leetcode 451
 #### 思路
 1. 题目的意思是按照字符出现的频率，从大到小的重新输出字符串。
