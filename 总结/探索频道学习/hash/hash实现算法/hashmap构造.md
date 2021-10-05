@@ -69,7 +69,7 @@ typedef struct {
 
 int hashCode(int key)
 {
-    return key % base;
+    return key % base; // 这个hash函数需要注意，如果key是负数的话，那么返回值也就是负数了，这里是要作为数组下标的，需要处理。
 }
 
 MyHashMap* myHashMapCreate() {
