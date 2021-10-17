@@ -41,3 +41,8 @@ gcc / gdb 的简单使用方法如下：
 
 3、在需要添加的地方使用 ！[图片名称] (图片URL)
 
+
+github push 超时OpenSSL SSL_read: Connection was reset, errno 10054，可以使用下面命令解决
+git config --global http.sslVerify "false" ----可以成功。
+或者
+ipconfig /flushdns  --- 当前方案我没有使用过
