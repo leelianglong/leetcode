@@ -122,6 +122,16 @@ char *** partition(char * s, int* returnSize, int** returnColumnSizes){
 }
 ```
 
+```
+三级指针的应用：
+int ***res = (int ***)malloc(sizeof(int**) * CNT);
+这里 res是三级指针，那么res[i] 就是二级指针。
+res[i] = (int**)malloc(sizeof(int*) * CNT);
+res[i][j] 就是一维指针。
+res[i][j] = (int*)malloc(sizeof(int) * CNT);
+
+```
+
 13. 关于变量的定义需要注意，像下面的2段代码对应定义的变量含义是不一样的。
 ```
 for (int i = 1; i < heightSize - 1; i++) {
