@@ -554,3 +554,89 @@ char ** letterCasePermutation(char * s, int* returnSize){
     return res;
 }
 ```
+### 剑指 Offer II 049. 从根节点到叶节点的路径数字之和
+#### 思路
+1. 简单的深度优先搜索
+2. 每搜索到一个节点，把这个节点保存下来，然后组合后计算数值。
+3. 关键点在于保存数字的个数，使用全局变量还是函数参数。如果是全局变量的话，需要关注回溯点在哪里。
+#### 代码
+```
+int* gTmpSave;
+int gRet;
+
+int calc(int* data, int size)
+{
+    int sum = 0;
+    for (int i = 0; i < size; i++) {
+        sum = sum * 10 + data[i];
+    }
+    return sum;
+}
+
+void backtrace(struct TreeNode* root, int cnt) {
+    gTmpSave[cnt++] = root->val;
+    if (root->left == NULL && root->right == NULL) {
+        // 到达叶子节点
+        int tmpSum = calc(gTmpSave, cnt);
+        gRet += tmpSum;
+        return;
+    }
+    if (root->left) {
+        backtrace(root->left, cnt);
+    }
+    if (root->right) {
+        backtrace(root->right, cnt);
+    }
+}
+
+#define CNT 11
+int sumNumbers(struct TreeNode* root){
+    gRet = 0;
+    gTmpSave = (int*)malloc(sizeof(int) * CNT);
+    memset(gTmpSave, 0, sizeof(int) * CNT);
+    backtrace(root, 0);
+    return gRet;
+}
+
+----使用全局变量的方法
+int* gTmpSave;
+int gRet;
+int gCurCnt;
+
+int calc(int* data, int size)
+{
+    int sum = 0;
+    for (int i = 0; i < size; i++) {
+        sum = sum * 10 + data[i];
+    }
+    return sum;
+}
+
+void backtrace(struct TreeNode* root) {
+    gTmpSave[gCurCnt++] = root->val;
+    if (root->left == NULL && root->right == NULL) {
+        // 到达叶子节点
+        int tmpSum = calc(gTmpSave, gCurCnt);
+        gRet += tmpSum;
+        return;
+    }
+    if (root->left) {
+        backtrace(root->left);
+        gCurCnt--;
+    }
+    if (root->right) {
+        backtrace(root->right);
+        gCurCnt--;
+    }
+}
+
+#define CNT 11
+int sumNumbers(struct TreeNode* root){
+    gCurCnt = 0;
+    gRet = 0;
+    gTmpSave = (int*)malloc(sizeof(int) * CNT);
+    memset(gTmpSave, 0, sizeof(int) * CNT);
+    backtrace(root);
+    return gRet;
+}
+```
