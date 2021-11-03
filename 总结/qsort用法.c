@@ -46,6 +46,32 @@ int CmpTwoLevelPoint(const void* a, const void* b)
 	}
 }
 
+char 类型的3级指针的排序
+tickets = [["MUC","LHR"],["JFK","MUC"],["SFO","SJC"],["LHR","SFO"]]
+
+int cmp(const void* a, const void* b)
+{
+    const char** aa = *(char***)a; // 注意这里的指针转换
+    const char** bb = *(char***)b;
+    int ret = strcmp(aa[0], bb[0]);
+    if (ret == 0) {
+        return strcmp(aa[1], bb[1]);
+    }
+    return ret;
+}
+
+char ** findItinerary(char *** tickets, int ticketsSize, int* ticketsColSize, int* returnSize){
+    char **ret = (char**)malloc(sizeof(int) * (ticketsSize + 1));
+    *returnSize = 0;
+    *ticketsColSize = 3;
+    qsort(tickets, ticketsSize, sizeof(tickets[0]), cmp);
+    for (int i = 0; i < ticketsSize; i++) {
+        printf("%s, %s\n", tickets[i][0], tickets[i][1]);
+    }
+    return ret;
+}
+
+
 /*
 	qsort小结：
 	该函数需要4个参数。
