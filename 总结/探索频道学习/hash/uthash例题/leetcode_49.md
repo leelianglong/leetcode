@@ -96,3 +96,69 @@ char *** groupAnagrams(char ** strs, int strsSize, int* returnSize, int** return
     return result;
 }
 ```
+### 再次重写
+1. 注意在查找和添加时，要使用key 来存储key. 使用其他值，uthash报错。注意key 和 data的规划。
+```
+#define KEY_LEN 101
+#define COUNT 10000
+
+typedef struct {
+    int pos[KEY_LEN];
+    int curCnt;
+} HashData;
+
+typedef struct {
+    char key[KEY_LEN];
+    HashData data;
+    UT_hash_handle hh;
+} HashObj;
+
+int cmp(const void* a, const void* b)
+{
+    return *(char*)a - *(char*)b;
+}
+
+char *** groupAnagrams(char ** strs, int strsSize, int* returnSize, int** returnColumnSizes){
+    char*** res = (char***)malloc(sizeof(char**) * COUNT);
+    *returnSize = 0;
+    *returnColumnSizes = (int*)malloc(sizeof(int) * COUNT);
+    memset(*returnColumnSizes, 0, sizeof(int) * COUNT);
+    HashObj* user = NULL;
+
+    char tmpSave[KEY_LEN] = {0};
+    for (int i = 0; i < strsSize; i++) {
+        memset(tmpSave, 0, sizeof(tmpSave));
+        strcpy(tmpSave, strs[i]);
+        qsort(tmpSave, strlen(strs[i]), sizeof(strs[i][0]), cmp);
+        HashObj* find = NULL;
+        char key[KEY_LEN] = {0};
+        strcpy(key, tmpSave);
+        HASH_FIND_STR(user, key, find);
+        if (find == NULL) {
+            HashObj* add = (HashObj*)malloc(sizeof(HashObj));
+            strcpy(add->key, tmpSave);
+            add->data.curCnt = 0;
+            add->data.pos[add->data.curCnt] = i;
+            HASH_ADD_STR(user, key, add);
+        } else {
+            find->data.curCnt++;
+            find->data.pos[find->data.curCnt] = i;
+        }
+    }
+    HashObj* tmp;
+    HashObj* cur;
+    HASH_ITER(hh, user, cur, tmp) {
+        (*returnColumnSizes)[*returnSize] = (cur->data.curCnt + 1);
+        res[*returnSize] = (char**)malloc(sizeof(char**) * (cur->data.curCnt + 1));
+        for (int i = 0; i <= cur->data.curCnt; i++) {
+            res[*returnSize][i] = (char*)malloc(strlen(cur->key) + 1);
+            memset(res[*returnSize][i], 0, (strlen(cur->key) + 1));
+            strcpy(res[*returnSize][i], strs[cur->data.pos[i]]);
+        }
+        (*returnSize)++;
+        HASH_DEL(user, cur);
+        free(cur);
+    }
+    return res;
+}
+```
