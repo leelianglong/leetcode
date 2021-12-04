@@ -178,3 +178,110 @@ int kthSmallest(int** matrix, int matrixSize, int* matrixColSize, int k){
     return heap[1].val;
 }
 ```
+
+
+### 剑指 Offer II 059. 数据流的第 K 大数值
+#### 思路
+1. 维护一个长度为k的优先队列，最小的元素在队头。
+2. 这个优先队列使用堆来实现。
+#### 代码
+```
+struct Heap {
+    int heapSize; // 表示当前堆中已经收集的元素个数。
+    int* heap; // 存储元素
+    bool (*cmp)(int, int); // 比较指针，在往堆中添加元素或者删除元素时，用于调整。
+};
+
+void init(struct Heap* obj, int n, bool (*cmp)(int,int))
+{
+    obj->heap = (int*)malloc(sizeof(int) * (n + 1));
+    obj->heapSize = 0;
+    obj->cmp = cmp;
+}
+
+bool cmp(int a, int b)
+{
+    return a > b;
+}
+
+void swap(int* a, int* b)
+{
+    int tmp = *a;
+    *a = *b;
+    *b = tmp;
+}
+
+// 需要把x添加到堆中。添加的时候，是先填到最后面，然后从下往上看，逐渐找到它应该的位置。
+void push(struct Heap* obj, int x)
+{
+    int p = ++(obj->heapSize); // 当前heapsize先加1。可见在0位置是没有存储节点。这个heapsize就是从1开始来计算的。
+    int q = p >> 1; // q实际上就是p父节点的位置。
+    obj->heap[p] = x; // 先存储x到p位置，然后在当前位置往上看，看它与父亲节点的大小关系，再根据大小根堆，左不同的处理。
+    while (q) { // 父节点位置，如果为0了，也说明到顶了，不需要交换了。
+        if (!obj->cmp(obj->heap[q], obj->heap[p])) {
+            break; // 表示 父节点小于当前节点，则停下来，这里创建的是小根堆。
+        }
+        swap(&obj->heap[q], &obj->heap[p]); // 当前节点和父节点交换。
+        p = q; // 然后当前节点来到父节点
+        q = p >> 1; // 继续计算父节点。
+    }
+}
+
+// 删除的时候，实际上删除的是对顶元素，然后，把堆最后的元素，从上往下计算找到合适的位置。
+void pop(struct Heap* obj) {
+    swap(&obj->heap[1], &obj->heap[(obj->heapSize)--]); 
+    int p = 1; // 当前节点
+    int q = p << 1; // 是p的孩子节点
+    while (q <= obj->heapSize) { // 在该孩子节点位置小于堆中元素的情况下
+        if (q + 1 <= obj->heapSize) { // 这个表示p的右孩子也有的情况下。
+            if (obj->cmp(obj->heap[q], obj->heap[q + 1])) {
+                q++; // 如果左孩子比有孩子还大，孩子节点就走到右孩子节点上。
+            }
+        }
+        // 当前q是孩子节点中较大的。
+        if (!obj->cmp(obj->heap[p], obj->heap[q])) {
+            break; // 如果父亲节点p 不大于 孩子节点 q， 就停止
+        }
+        swap(&obj->heap[q], &obj->heap[p]); // 这里是把父亲节点p 和 较大的孩子节点进行交换
+        p = q; // 重新下移。
+        q = p << 1;
+    }
+}
+
+int top(struct Heap *obj)
+{
+    return obj->heap[1]; // 堆顶元素是位置1上的值。
+}
+
+typedef struct {
+    struct Heap* heap;
+    int maxSize;
+} KthLargest;
+
+KthLargest* kthLargestCreate(int k, int* nums, int numsSize) {
+    KthLargest* obj = (KthLargest*)malloc(sizeof(KthLargest));
+    memset(obj, 0, sizeof(KthLargest));
+    obj->heap = (int*)malloc(sizeof(struct Heap));
+    init(obj->heap, k + 1, cmp);
+    obj->maxSize = k;
+    for (int i = 0; i < numsSize; i++) {
+        kthLargestAdd(obj, nums[i]);
+    }
+    return obj;
+}
+
+int kthLargestAdd(KthLargest* obj, int val) {
+    push(obj->heap, val);
+    if (obj->heap->heapSize > obj->maxSize) {
+        pop(obj->heap);
+    }
+    return top(obj->heap);
+}
+
+
+void kthLargestFree(KthLargest* obj) {
+    free(obj->heap->heap);
+    free(obj->heap);
+    free(obj);
+}
+```

@@ -212,5 +212,25 @@ int* splitIntoFibonacci(char * S, int* returnSize){
 ```
 注意这里的 >= 和上面的最大值是不一样的。
 
+18. 一维重叠判断和二维重叠的判断
+```
+剑指 Offer II 058. 日程表 关键代码如下：
+bool valid(int tarS, int tarE, int srcS, int srcE)
+{
+    if (srcS <= tarS && srcE > tarS) {
+        return false;
+    }
+    if (tarE > srcS && tarE < srcE) {
+        return false;
+    }
+    if (tarS <= srcS && tarE >= srcE) {
+        return false;
+    }
+    return true;
+}
+二维重叠区域的去重，考试中遇到，要注意画图来判断
+
+```
+
 
 
