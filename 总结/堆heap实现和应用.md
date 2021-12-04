@@ -258,10 +258,14 @@ typedef struct {
     int maxSize;
 } KthLargest;
 
+void kthLargestFree(KthLargest* obj);
+int kthLargestAdd(KthLargest* obj, int val);
+KthLargest* kthLargestCreate(int k, int* nums, int numsSize);
+
 KthLargest* kthLargestCreate(int k, int* nums, int numsSize) {
     KthLargest* obj = (KthLargest*)malloc(sizeof(KthLargest));
     memset(obj, 0, sizeof(KthLargest));
-    obj->heap = (int*)malloc(sizeof(struct Heap));
+    obj->heap = (struct Heap*)malloc(sizeof(struct Heap));
     init(obj->heap, k + 1, cmp);
     obj->maxSize = k;
     for (int i = 0; i < numsSize; i++) {
@@ -278,10 +282,149 @@ int kthLargestAdd(KthLargest* obj, int val) {
     return top(obj->heap);
 }
 
-
 void kthLargestFree(KthLargest* obj) {
     free(obj->heap->heap);
     free(obj->heap);
     free(obj);
+}
+
+```
+
+### 剑指 Offer II 061. 和最小的 k 个数对
+#### 思路
+1. 把每个数值对看成堆中的元素存起来。
+2. 这里求最小的K个元素对，所以要使用大根堆。
+3. 往堆中添加元素时，如果当前元素比它的父节点大，则需要把它和它的父节点进行交换，直到没有父节点或者不在比父节点大的时候
+4. 堆的删除都是删除堆顶元素，把最后一个元素拿上来，清除了堆顶的元素，然后把这个元素逐步下沉，当前这个元素作为父节点，然后往下看，查看它的左右孩子是否有比他大的，如果有的话，需要把它和它较大的孩子节点进行交换。交换完了，再继续下沉。上一步如果没有孩子节点比它大，就直接停止。
+5. 在调试堆的代码时，可以把堆顶元素打印出来，然后添加或删除时，都查看一下堆顶元素，看看是否符合预期
+6. 堆的数据结构中，要保存元素外，还需要保存当前堆中的元素个数。
+7. 堆中的元素是从位置1开始放的。注意初始化堆的大小以及何时进行删除堆顶的操作
+#### 代码
+```
+/**
+ * Return an array of arrays of size *returnSize.
+ * The sizes of the arrays are returned as *returnColumnSizes array.
+ * Note: Both returned array and *columnSizes array must be malloced, assume caller calls free().
+ */
+
+typedef struct {
+    int x;
+    int y;
+} Pos;
+
+typedef struct {
+    int heapSize;
+    Pos* pos;
+    bool (*cmp)(int, int);
+} Heap;
+
+bool cmp(int a, int b)
+{
+    return a > b;
+}
+
+void swap(Pos* a, Pos* b)
+{
+    Pos tmp = *a;
+    *a = *b;
+    *b = tmp;
+}
+
+void init(Heap* obj, int size, bool (*cmp)(int, int))
+{
+    obj->pos = (Pos*)malloc(sizeof(Pos) * (size + 1));
+    memset(obj->pos, 0, sizeof(Pos) * (size + 1));
+    obj->heapSize = 0; // 当前没有元素
+    obj->cmp = cmp;
+}
+
+// 下堆中添加一个元素。自底向上
+void push(Heap* obj, int x, int y)
+{
+    int child = ++obj->heapSize; // 这个要先++。
+    int parent = child >> 1;
+    obj->pos[child].x = x;
+    obj->pos[child].y = y;
+    while (parent) {
+        int valP = obj->pos[parent].x + obj->pos[parent].y;
+        int valC = obj->pos[child].x + obj->pos[child].y;
+        if (!obj->cmp(valC, valP)) {
+            break;
+        }
+        swap(&obj->pos[child], &obj->pos[parent]);
+        child = parent;
+        parent = child >> 1;
+    }
+}
+
+// 删除堆顶元素，自上而下。
+void pop(Heap* obj)
+{
+    swap(&obj->pos[1], &obj->pos[obj->heapSize--]);
+    int parent = 1;
+    int child = parent << 1;
+
+    while (child <= obj->heapSize) {
+        if (child + 1 <= obj->heapSize) {
+            int valLchild = obj->pos[child].x + obj->pos[child].y;
+            int valRchild = obj->pos[child + 1].x + obj->pos[child + 1].y;
+            if (obj->cmp(valRchild, valLchild)) {
+                child++;
+            }
+        }
+        int valP = obj->pos[parent].x + obj->pos[parent].y;
+        int valC = obj->pos[child].x + obj->pos[child].y;
+        if (!obj->cmp(valC, valP)) {
+            break;
+        }
+        swap(&obj->pos[child], &obj->pos[parent]);
+        parent = child;
+        child = parent << 1;
+    }
+}
+
+typedef struct {
+    Heap* heap;
+    int maxSize;
+} KSmallest;
+
+int getTop(Heap* obj)
+{
+    return obj->pos[1].x + obj->pos[1].y;
+}
+
+int** kSmallestPairs(int* nums1, int nums1Size, int* nums2, int nums2Size, int k, int* returnSize, int** returnColumnSizes){
+    *returnSize = 0;
+    *returnColumnSizes = (int*)malloc(sizeof(int) * k);
+    memset((*returnColumnSizes), 0, sizeof(int) * k);
+    for (int i = 0; i < k; i++) {
+        (*returnColumnSizes)[i] = 2;
+    }
+    int** res = (int**)malloc(sizeof(int*) * k);
+    for (int i = 0; i < k; i++) {
+        res[i] = (int*)malloc(sizeof(int) * 2);
+        memset(res[i], 0, sizeof(int) * 2);
+    }
+
+    KSmallest* obj = (KSmallest*)malloc(sizeof(KSmallest));
+    obj->maxSize = k;
+    obj->heap = (Heap*)malloc(sizeof(Heap));
+    init(obj->heap, k + 1, cmp);
+    for (int i = 0; i < nums1Size; i++) {
+        for (int j = 0; j < nums2Size; j++) {
+            push(obj->heap, nums1[i], nums2[j]);
+            if (obj->heap->heapSize > obj->maxSize) { // 当元素大于需要的k个时，就需要删除了
+                pop(obj->heap);
+            }
+        }
+    }
+
+    for (int i = 1; i <= obj->heap->heapSize; i++) {
+        res[*returnSize][0] = obj->heap->pos[i].x;
+        res[*returnSize][1] = obj->heap->pos[i].y;
+        (*returnSize)++;
+    }
+
+    return res;
 }
 ```
