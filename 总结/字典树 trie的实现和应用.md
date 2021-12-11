@@ -5,7 +5,8 @@
 1. 字典树节点本身不存储完整单词，只存储当前节点到下一个节点的关系
 2. 从跟节点到某一个节点的整个路径上经过的字符链接起来，是该节点对应的字符串
 3. 每个节点到它的所有子节点路径代表的字符都不相同
-4. 这里实际上是26叉树，每个节点的子节点都有26个。
+4. 实际上这里的next数组可以是128，即所有可显示字符都可以作为trie的元素。可以把每一层都看成有128个子树。每个子树下面又是trie结构
+5. 在插入过程中，注意要先使用临时变量tmp 来保存 真正的根节点 obj, 然后基于tmp来遍历插入，查询操作。
 
 ## 实现
 1. 这里要注意，在遍历下一个节点时，要使用临时变量tmp, 创建初期的obj，不要去改动，就像链表head一样，一般不要动，遍历链表时，都是要设置一个临时变量。
@@ -315,6 +316,86 @@ int minimumLengthEncoding(char ** words, int wordsSize){
             res += strlen(words[i]) + 1;
         }
     }
+    return res;
+}
+```
+### 剑指 Offer II 065. 最短的单词编码
+#### 思路
+1. 主要还是使用trie 数据结构，把字符串插入到trie的结构中，然后使用前缀搜索，如果搜索不到就把这个字符串的长度加1，累加到最终的结果上。如果找的到，则不做任何处理。
+2. 由于上面使用前缀搜索，所以要把字符串最长的先插入到trie的结构中。所以这里需要先对字符串的长度进行排序。从长到短。
+3. 从题意来看，需要计算词根，词根又在字符串的末尾，所以就需要先把字符串逆序。
+#### 代码
+```
+void reverse(char* a)
+{
+    int l = 0;
+    int r = strlen(a) - 1;
+    for (int i = l, j = r; i < j; i++, j--) {
+        char c = a[i];
+        a[i] = a[j];
+        a[j] = c;
+    }
+}
+
+int cmp(const void* a, const void* b)
+{
+    char* aa = *(char**)a;
+    char* bb = *(char**)b;
+    return strlen(aa) < strlen(bb);
+}
+
+#define CNT 26
+typedef struct __Trie {
+    bool isEnd;
+    struct __Trie* next[CNT];
+} Trie;
+
+Trie* createTrieNode(void) {
+    Trie* obj = (Trie*)malloc(sizeof(Trie));
+    obj->isEnd = false;
+    memset(obj->next, 0, sizeof(obj->next));
+    return obj;
+}
+
+void Insert(Trie* obj, char* c)
+{
+    Trie* tmp = obj;
+    for (int i = 0; i < strlen(c); i++) {
+        if (tmp->next[c[i] - 'a'] == NULL) {
+            tmp->next[c[i] - 'a'] = createTrieNode();
+        }
+        tmp = tmp->next[c[i] - 'a'];
+    }
+    tmp->isEnd = true;
+}
+
+bool searchPre(Trie* obj, char* str)
+{
+    Trie* tmp = obj;
+    for (int i = 0; i < strlen(str); i++) {
+        if (tmp->next[str[i] - 'a'] == NULL) {
+            return false;
+        }
+        tmp = tmp->next[str[i] - 'a'];
+    }
+    return true;
+}
+
+int minimumLengthEncoding(char ** words, int wordsSize){
+    qsort(words, wordsSize, sizeof(words[0]), cmp);
+    for (int i = 0; i < wordsSize; i++) {
+        reverse(words[i]);
+    }
+    int res = 0;
+    Trie* obj = createTrieNode();
+    for (int i = 0; i < wordsSize; i++) {
+        if (searchPre(obj, words[i])) {
+            continue;
+        }
+        res += (strlen(words[i]) + 1);
+        Insert(obj, words[i]);
+    }
+
     return res;
 }
 ```
