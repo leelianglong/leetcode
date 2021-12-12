@@ -105,6 +105,347 @@ int main() {
 
 ```
 
+### 堆的另一种实现
+#### 思路
+1. 堆中的元素从位置1开始放，0位置不放元素。这样我们计算已知父亲节点的位置，计算孩子节点的位置使用位运算符，parent << 1(左孩子位置), (parent<< 1  | 1), 这就是右孩子的位置。 如果知道孩子节点位置，计算父亲节点位置 child >> 1.
+2. 给元素往堆中插入时，先把heapSize++， 就放在堆的最末尾，然后，就从最末尾往上看，笔记它根自己父节点的大小关系，再根据大小根堆，来判断是否调整
+3. 删除一个元素时，总是从根节点删除，可以把堆最默认的元素拿去顶替根节点元素，并把堆大小heapsize的计数减1，然后把该元素逐步下沉，找到合适位置(这里合适的位置一定是较大孩子的位置)。
+4. 注意每次插入 和 删除操作，都涉及到对堆内的元素重新排布使其成为堆。 所以要获取堆顶元素时，不能硬编码，需要使用gettop()接口来获取。
+#### 代码
+```
+typedef struct {
+    int heapSize; // 表示当前堆中元素大小
+    int* buff;
+    bool (*cmp)(int, int);
+} Heap;
+
+typedef struct {
+    Heap* heap;
+    int maxSize; // 表示只用关注的堆中的最多的元素个数
+}KSmallest;
+
+bool cmp(int a, int b)
+{
+    return a > b;
+}
+
+void initHeap(Heap* obj, int k, bool (*cmp)(int, int))
+{
+    obj->buff = (int*)malloc(sizeof(int) * (k + 1)); // 堆中的元素从1位置开始放起。
+    memset(obj->buff, 0, sizeof(int) * (k + 1));
+    obj->heapSize = 0;
+    obj->cmp = cmp;
+}
+
+void swap(int* a, int* b)
+{
+    int tmp = *a;
+    *a = *b;
+    *b = tmp;
+}
+
+// 把一个元素添加到堆中，使其堆结构保持正确(当前是大根堆）
+void push(Heap* obj, int x)
+{
+    obj->heapSize++;
+    obj->buff[obj->heapSize] = x;
+    int child = obj->heapSize;
+    int parent = child >> 1; // 这里准备上浮
+    while (parent) { //  表示 还没有到达堆顶 parent = 0。
+        if (obj->cmp(obj->buff[parent], obj->buff[child])) { // 当父亲节点大于孩子节点时就停止交换。
+            break;
+        }
+        swap(&obj->buff[parent], &obj->buff[child]);
+        child = parent;// 继续向上推进
+        parent = child >> 1;
+    }
+}
+
+// 删除根节点元素，使其剩余元素保持堆结构正确
+void pop(Heap* obj)
+{
+    swap(&obj->buff[1], &obj->buff[obj->heapSize]); // 这里把堆顶元素和最后一个元素交换
+    obj->heapSize--; // 堆中元素减1表示，上面交换到堆尾部的元素已经无效了
+    int parent = 1;
+    int child = parent << 1; // 这里准备下沉
+    while (child <= obj->heapSize) { // 当前孩子节点还没有到堆的尾部
+        if (child + 1 <= obj->heapSize) {
+            if (obj->cmp(obj->buff[child + 1], obj->buff[child])) { // 找一下有没有更大的孩子节点
+                child += 1;
+            }
+        }
+        if (obj->cmp(obj->buff[parent], obj->buff[child])) {
+            break;
+        }
+        swap(&obj->buff[parent], &obj->buff[child]);
+        parent = child;
+        child = parent << 1; // 这里继续下沉
+    }
+}
+
+int getTop(Heap* obj) {
+    return obj->buff[1];
+}
+
+int print(int* buff, int size)
+{
+    for (int i = 1; i <= size; i++) {
+        printf("%d ", buff[i]);
+    }
+}
+
+int main(void)
+{
+    printf("hello world\n");
+    int test[] = {1,2,3,4,5,6,7,8,9,10};
+    int k = 5;
+    KSmallest* obj = (KSmallest*)malloc(sizeof(KSmallest));
+    obj->maxSize = k;
+    obj->heap = (Heap*)malloc(sizeof(Heap));
+    initHeap(obj->heap, k + 1, cmp);
+    for (int i = 0; i < sizeof(test) / sizeof(test[0]); i++) {
+        push(obj->heap, test[i]);
+        printf("top=%u\n", getTop(obj->heap));
+        print(obj->heap->buff, obj->heap->heapSize);
+        printf("\n");
+        if (obj->heap->heapSize > obj->maxSize) {
+            printf("enter %d\n", test[i]);
+            pop(obj->heap);
+        }
+        printf("real content:\n");
+        print(obj->heap->buff, obj->heap->heapSize);
+        printf("\n");
+    }
+    system("pause");
+    return 0;
+}
+```
+### 1046. 最后一块石头的重量
+#### 思路
+1. 建立大根堆，然后每次取出堆顶2个元素，然后，使其做差值，再添加到堆中。 最后判断堆中元素是否1，如果是1，则直接返回堆顶元素，否则返回0
+2. 在取出元素时，要先获取堆顶元素后，执行 pop()接口，然后在获取堆顶元素 再执行pop（）， 不能直接硬编码成获取堆中前2个元素。 
+#### 代码
+1. 正确解法
+```
+typedef struct {
+    int heapSize;
+    int* buff;
+    bool (*cmp)(int, int);
+} Heap;
+
+typedef struct {
+    Heap* heap;
+    int maxSize;
+} KSmallest;
+
+bool cmp(int a, int b)
+{
+    return a > b;
+}
+
+void swap(int* a, int* b)
+{
+    int tmp = *a;
+    *a = *b;
+    *b = tmp;
+}
+
+void init (Heap* obj, int k, bool (*cmp)(int, int))
+{
+    obj->buff = (int*)malloc(sizeof(int) * (k + 1));
+    memset(obj->buff, 0, sizeof(int) * (k + 1));
+    obj->heapSize = 0;
+    obj->cmp = cmp;
+}
+
+void push(Heap* obj, int x)
+{
+    obj->heapSize++;
+    obj->buff[obj->heapSize] = x;
+    int child = obj->heapSize;
+    int parent = child >> 1;
+
+    while (parent) {
+        if (obj->cmp(obj->buff[parent], obj->buff[child])) {
+            break;
+        }
+        swap(&obj->buff[parent], &obj->buff[child]);
+        child = parent;
+        parent = child >> 1;
+    }
+}
+
+void pop(Heap* obj)
+{
+    swap(&obj->buff[1], &obj->buff[obj->heapSize]);
+    obj->heapSize--;
+    int parent = 1;
+    int child = parent << 1;
+    while (child <= obj->heapSize) {
+        if (child + 1 <= obj->heapSize) {
+            if (obj->cmp(obj->buff[child + 1], obj->buff[child])) {
+                child += 1;
+            }
+        }
+        if (obj->cmp(obj->buff[parent], obj->buff[child])) {
+            break;
+        }
+        swap(&obj->buff[parent], &obj->buff[child]);
+        parent = child;
+        child = parent << 1;
+    }
+}
+
+int getTop(Heap* obj)
+{
+    return obj->buff[1];
+}
+
+void print(Heap* obj)
+{
+    for (int i = 1; i <= obj->heapSize; i++) {
+        printf("%d ", obj->buff[i]);
+    }
+}
+
+int lastStoneWeight(int* stones, int stonesSize){
+    if (stonesSize < 2) {
+        return stones[0];
+    }
+    if (stonesSize < 3) {
+        return abs(stones[1] - stones[0]);
+    }
+    KSmallest* obj = (KSmallest*)malloc(sizeof(KSmallest));
+    obj->heap = (Heap* )malloc(sizeof(Heap));
+    obj->maxSize = stonesSize;
+
+    init(obj->heap, stonesSize + 1, cmp);
+    for (int i = 0; i < stonesSize; i++) {
+        push(obj->heap, stones[i]);
+    }
+    while (obj->heap->heapSize > 1) {
+        int a1 = getTop(obj->heap);
+        pop(obj->heap);
+        int a2 = getTop(obj->heap);
+        pop(obj->heap);
+        int diff = a1 - a2;
+        if (diff > 0) {
+            push(obj->heap, diff);
+        }
+    }
+    return obj->heap->heapSize == 1 ? obj->heap->buff[1] : 0;
+}
+```
+2. 不正确解法
+```
+typedef struct {
+    int heapSize;
+    int* buff;
+    bool (*cmp)(int, int);
+} Heap;
+
+typedef struct {
+    Heap* heap;
+    int maxSize;
+} KSmallest;
+
+bool cmp(int a, int b)
+{
+    return a > b;
+}
+
+void swap(int* a, int* b)
+{
+    int tmp = *a;
+    *a = *b;
+    *b = tmp;
+}
+
+void init (Heap* obj, int k, bool (*cmp)(int, int))
+{
+    obj->buff = (int*)malloc(sizeof(int) * (k + 1));
+    memset(obj->buff, 0, sizeof(int) * (k + 1));
+    obj->heapSize = 0;
+    obj->cmp = cmp;
+}
+
+void push(Heap* obj, int x)
+{
+    obj->heapSize++;
+    obj->buff[obj->heapSize] = x;
+    int child = obj->heapSize;
+    int parent = child >> 1;
+
+    while (parent) {
+        if (obj->cmp(obj->buff[parent], obj->buff[child])) {
+            break;
+        }
+        swap(&obj->buff[parent], &obj->buff[child]);
+        child = parent;
+        parent = child >> 1;
+    }
+}
+
+void pop(Heap* obj)
+{
+    swap(&obj->buff[1], &obj->buff[obj->heapSize]);
+    obj->heapSize--;
+    int parent = 1;
+    int child = parent << 1;
+    while (child <= obj->heapSize) {
+        if (child + 1 <= obj->heapSize) {
+            if (obj->cmp(obj->buff[child + 1], obj->buff[child])) {
+                child += 1;
+            }
+        }
+        if (obj->cmp(obj->buff[parent], obj->buff[child])) {
+            break;
+        }
+        swap(&obj->buff[parent], &obj->buff[child]);
+        parent = child;
+        child = parent << 1;
+    }
+}
+
+void print(Heap* obj)
+{
+    for (int i = 1; i <= obj->heapSize; i++) {
+        printf("%d ", obj->buff[i]);
+    }
+}
+
+int lastStoneWeight(int* stones, int stonesSize){
+    if (stonesSize < 2) {
+        return stones[0];
+    }
+    if (stonesSize < 3) {
+        return abs(stones[1] - stones[0]);
+    }
+    KSmallest* obj = (KSmallest*)malloc(sizeof(KSmallest));
+    obj->heap = (Heap* )malloc(sizeof(Heap));
+    obj->maxSize = stonesSize;
+
+    init(obj->heap, stonesSize + 1, cmp);
+    for (int i = 0; i < stonesSize; i++) {
+        push(obj->heap, stones[i]);
+    }
+
+    while (obj->heap->heapSize > 1) {
+        int a1 = obj->heap->buff[1];
+        int a2 = obj->heap->buff[2];  // 这里是硬编码了。。。 [7,5,8]这样的用例就有问题
+        int diff = a1 - a2;
+        pop(obj->heap);
+        pop(obj->heap);
+        if (diff > 0) {
+            push(obj->heap, diff);
+        }
+    }
+    return obj->heap->heapSize == 1 ? obj->heap->buff[1] : 0;
+}
+```
+
+
+
 ## 应用
 ### leetcode 378
 #### 代码
