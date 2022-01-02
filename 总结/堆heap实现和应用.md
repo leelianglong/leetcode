@@ -202,7 +202,7 @@ int main(void)
     KSmallest* obj = (KSmallest*)malloc(sizeof(KSmallest));
     obj->maxSize = k;
     obj->heap = (Heap*)malloc(sizeof(Heap));
-    initHeap(obj->heap, k + 1, cmp);
+    initHeap(obj->heap, k + 1, cmp); //  注意这里也要是 k + 1
     for (int i = 0; i < sizeof(test) / sizeof(test[0]); i++) {
         push(obj->heap, test[i]);
         printf("top=%u\n", getTop(obj->heap));
