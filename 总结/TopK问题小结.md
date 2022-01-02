@@ -1,10 +1,57 @@
-例如题目：
+### 例如题目：
 1、最小的K个数：
 输入整数数组 arr ，找出其中最小的 k 个数。例如，输入4、5、1、6、2、7、3、8这8个数字，则最小的4个数字是1、2、3、4。
 
-方案一： 排序 qsort
+#### 方案一： 快速排序的手动实现。
+#### 思路
+1. 快排的思路是先随机选择一个元素作为基准，然后把比它大的元素放在该基准的左边，比它小的元素放在该基准的右边。
+2. 该基准的选择最好是随机的。
+3. 这里需要一个额外的变量 big,记录最后一个比基准大的元素的位置。每次遍历的时候，它需要赋值成 start - 1. 然后在[start, end]，范围内查找有比基准大的元素，如果有，就先把big++,然后交换他们。最后，再把big++,然后把基准和big对应的元素交换一下。
+4. 返回big，这个值就是本次基准在最终排好序的队列中的位置。
 
-方案二：
+#### 代码
+当前题目是 offer 76
+```
+void swap(int* a, int* b)
+{
+    int tmp = *a;
+    *a = *b;
+    *b = tmp;
+}
+
+int partion(int* nums, int start, int end)
+{
+    int rad = rand() % (end - start + 1) + start;
+    swap(&nums[rad], &nums[end]);
+    int big = start - 1; // 要放在 start前面，用于跟踪比选定元素小的最后一个元素位置。
+    for (int j = start; j < end; j++) {
+        if (nums[j] > nums[end]) { // 找到有比选定元素还大的元素，此时需要交换。刚开始的big是0，找到一个后，自增，然后和当前元素进行调换。
+            big++;
+            swap(&nums[big], &nums[j]); // 范围[0,big)之间的元素都是大于选定元素的。但是他们自身没有顺序。
+        }
+    }
+    big++;// 遍历完之后，把big自增后，再和最后的元素调换一下，就把选定的元素接到比它都大的元素后面，这样选定的元素在整个数组中的位置就确定了。
+    swap(&nums[big], &nums[end]);
+    return big; // 确定选定元素在排序后的位置。
+}
+
+int findKthLargest(int* nums, int numsSize, int k){
+    int start = 0;
+    int end = numsSize - 1;
+    int check = partion(nums, start, end);
+    while (check != k - 1) {
+        if (check < k - 1) {
+            start += 1; // 如果确定的位置比与其的要小，说明预期的元素在该区域的后半部分，所以把start + 1. 反之，则把该end -1.
+        } else { 
+            end -= 1;
+        }
+        check = partion(nums, start, end);
+    }
+    return nums[check];
+}
+```
+
+### 方案二：
 对于n个数，我们可以统计每个数出现的次数，借助hash思路，那么从hash table中的数据的意义 hash[data],表示 data在整个输入的数据中出现的次数。
 如果从头遍历hash[]则相当于把整个输入的数据排好序了。
 这个方案使用于数据量已知，并且不太巨大的情况。
