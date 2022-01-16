@@ -641,3 +641,40 @@ int sumNumbers(struct TreeNode* root){
     return gRet;
 }
 ```
+
+### 剑指 Offer II 110. 所有路径
+### 思路
+1. 当前题目返回的序列的索引
+2. 需要使用一个数组来缓存走过的序号，使用数组来模拟栈的形式存储。
+3. 这里使用if () {} else {} ,所以if 这个分支这里没有return，实际上也就是返回了
+### 代码
+```
+void backtrace(int** graph, int graphSize, int* graphColSize, int** res, int* returnSize, int** returnColumnSizes, int* tmp, int cnt, int index)
+{
+    tmp[cnt++] = index;
+    //printf("idx=%d\n", index);
+    if (index == graphSize - 1) {
+        res[*returnSize] = (int*)malloc(sizeof(int) * cnt);
+        memset(res[*returnSize], 0, sizeof(int) * cnt);
+        memcpy(res[*returnSize], tmp, sizeof(int) * cnt);
+        (*returnColumnSizes)[*returnSize] = cnt;
+        (*returnSize)++;
+    } else {
+        for (int i = 0; i < graphColSize[index]; i++) {
+           // printf("%u,data=%u\n", index, graph[index][i]);
+            backtrace(graph, graphSize, graphColSize, res, returnSize, returnColumnSizes, tmp, cnt, graph[index][i]);
+        }
+    }
+}
+#define RETURN_SIZE 10000
+int** allPathsSourceTarget(int** graph, int graphSize, int* graphColSize, int* returnSize, int** returnColumnSizes){
+    int** res = (int**)malloc(sizeof(int*) * RETURN_SIZE);
+    (*returnColumnSizes) = (int*)malloc(sizeof(int) * RETURN_SIZE);
+    memset(*returnColumnSizes, 0, sizeof(int) * RETURN_SIZE);
+    *returnSize = 0;
+    int* tmp = (int*)malloc(sizeof(int) * 16);
+    memset(tmp, 0, sizeof(int) * 16);
+    backtrace(graph, graphSize, graphColSize, res, returnSize, returnColumnSizes, tmp, 0, 0);
+    return res;
+}
+```
