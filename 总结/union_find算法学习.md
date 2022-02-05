@@ -485,3 +485,111 @@ int removeStones(int** stones, int stonesSize, int* stonesColSize){
     return stonesSize - obj->count; // 用总的石子数，减去并查集中剩余的石子数，就是移除的石子数
 }
 ```
+
+### 剑指 Offer II 111. 计算除法
+### 思路
+1. 通过已知的表达式推导出其他表达式的值。这种适合并查集。这里涉及到权重(weight),不同于一般的并查集。
+2. 表达式的值就是这个weight。注意需要通过不同的换算得到具体的值。
+3. 注意这里weight的计算：
+ g_save[x].weight = g_save[x].weight * g_save[orign].weight
+ 
+ g_save[rootx].weight = g_save[y].weight * values / g_save[x].weight
+
+### 代码
+```
+#define STR_LEN 6
+typedef struct {
+    char keyName[STR_LEN];
+    int parentId;
+    double weight;
+}Union;
+
+#define  NODE_MAX_COUNT 40
+Union g_save[NODE_MAX_COUNT];
+int g_nodeCnt;
+
+int findRoot(int x)
+{
+    if (x != g_save[x].parentId) {
+        int orign = g_save[x].parentId;
+        g_save[x].parentId = findRoot(orign);
+        g_save[x].weight = g_save[x].weight * g_save[orign].weight;
+    }
+    return g_save[x].parentId;
+}
+
+void UnionFind(int x, int y, double values)
+{
+    int rootx = findRoot(x);
+    int rooty = findRoot(y);
+    if (rootx != rooty) {
+        g_save[rootx].parentId = rooty;
+        g_save[rootx].weight = g_save[y].weight * values / g_save[x].weight;
+    }
+}
+
+int findStr(char* str)
+{
+    for (int i = 0; i < g_nodeCnt; i++) {
+        if (strcmp(g_save[i].keyName, str) == 0) {
+            return i;
+        }
+    }
+    return -1;
+}
+
+double getResult(const char* str1, const char* str2)
+{
+    int key1 = findStr(str1);
+    if (key1 == -1) {
+        return -1.0;
+    }
+
+    int key2 = findStr(str2);
+    if (key2 == -1) {
+        return -1.0;
+    }
+
+    int rootx = findRoot(key1);
+    int rooty = findRoot(key2);
+    if (rootx == rooty) {
+        return g_save[key1].weight / g_save[key2].weight;
+    }
+    return -1.0;
+}
+double* calcEquation(char *** equations, int equationsSize, int* equationsColSize, double* values, int valuesSize, char *** queries, int queriesSize, int* queriesColSize, int* returnSize){
+    g_nodeCnt = 0;
+    for (int i = 0; i < NODE_MAX_COUNT; i++) {
+        g_save[i].parentId = i;
+        g_save[i].weight = 1.0;
+        memset(g_save[i].keyName, 0, STR_LEN);
+    }
+
+    for (int i = 0; i < equationsSize; i++) {
+        char* name1 = equations[i][0];
+        char* name2 = equations[i][1];
+        int keyIdx1 = findStr(name1);
+        if (keyIdx1 == -1) {
+            keyIdx1 = g_nodeCnt;
+            strncpy(g_save[keyIdx1].keyName, name1, strlen(name1));
+            g_nodeCnt++;
+        }
+        int keyIdx2 = findStr(name2);
+        if (keyIdx2 == -1) {
+            keyIdx2 = g_nodeCnt;
+            strncpy(g_save[keyIdx2].keyName, name2, strlen(name2));
+            g_nodeCnt++;
+        }
+        UnionFind(keyIdx1, keyIdx2, values[i]);
+    }
+    double* res = (double*)malloc(sizeof(double) * queriesSize);
+    memset(res, 0, sizeof(double) * queriesSize);
+    for (int i = 0; i < queriesSize; i++) {
+        char* str1 = queries[i][0];
+        char* str2 = queries[i][1];
+        res[i] = getResult(str1, str2);
+    }
+    *returnSize = queriesSize;
+    return res;
+}
+```
