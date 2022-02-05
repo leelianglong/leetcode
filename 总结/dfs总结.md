@@ -678,3 +678,31 @@ int** allPathsSourceTarget(int** graph, int graphSize, int* graphColSize, int* r
     return res;
 }
 ```
+
+### 剑指 Offer II 102. 加减的目标值
+### 思路
+1. 主要是转换思路，这里需要把+ -想象成正负即可。在使用一个临时变量存储已经加的值的和。
+2. 这里就2种选择即加上当前的数或者减去当前的数。
+3. 结束的条件时，已经遍历到原序列的末尾并且临时变量的和已经和target一样大了。
+### 代码
+```
+int g_res;
+
+void dfs(int* nums, int numsSize, int tmpSum, int idx, int target)
+{
+    if (idx == numsSize) {
+        if (tmpSum == target) {
+            g_res++;
+        }
+        return;
+    }
+    dfs(nums, numsSize, tmpSum + nums[idx], idx + 1, target);
+    dfs(nums, numsSize, tmpSum - nums[idx], idx + 1, target);
+}
+
+int findTargetSumWays(int* nums, int numsSize, int target){
+    g_res = 0;
+    dfs(nums, numsSize, 0, 0, target);
+    return g_res;
+}
+```
