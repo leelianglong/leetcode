@@ -684,6 +684,7 @@ int** allPathsSourceTarget(int** graph, int graphSize, int* graphColSize, int* r
 1. 主要是转换思路，这里需要把+ -想象成正负即可。在使用一个临时变量存储已经加的值的和。
 2. 这里就2种选择即加上当前的数或者减去当前的数。
 3. 结束的条件时，已经遍历到原序列的末尾并且临时变量的和已经和target一样大了。
+4. 注意这里使用递归，无需回溯，回溯是dfs的一种特例。
 ### 代码
 ```
 int g_res;

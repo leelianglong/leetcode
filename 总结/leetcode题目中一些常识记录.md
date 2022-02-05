@@ -231,6 +231,7 @@ bool valid(int tarS, int tarE, int srcS, int srcE)
 二维重叠区域的去重，考试中遇到，要注意画图来判断
 
 ```
+19. dfs和回溯的差异，什么时候用回溯，什么时候用dfs？
 
 
 
