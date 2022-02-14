@@ -144,7 +144,7 @@ int openLock(char ** deadends, int deadendsSize, char * target){
                 //printf("\n T: %s", curNode);
                 char* up = UpWheelChangeStr(curNode, k);
                 //printf("\n U:%s", up);
-                if (!visited[atoi(up)]) {
+                if (!visited[atoi(up)]) { // 这里不能用 continue提前退出，这样的话，会导致向下拨轮的字符串被摒弃。
                     //printf("\nU: %s", up);
                     strcpy(queue[rear++], up);
                     visited[atoi(up)] = true;
