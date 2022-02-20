@@ -333,6 +333,48 @@ int pathSum(struct TreeNode* root, int targetSum){
     }
     return dfs(root, targetSum) + pathSum(root->left, targetSum) + pathSum(root->right, targetSum);  // 后面2个是对原二叉树的左子树和右子树的遍历。这里的顺序很重要不能交换。后面这2个也不可或缺。
 }
+
+针对上面的dfs()具体实现如下：
+int dfs(struct TreeNode* root, int targetSum)
+{
+    int pathCnt = 0;
+    if (targetSum < 0) { // 错误3
+        return 0;
+    }
+    if (targetSum == 0) {
+        pathCnt++;
+        return pathCnt;
+    } 
+    if (root->left) {
+        return dfs(root->left, targetSum - root->val); //这里就相当于直接先返回左子树上满足条件的个数
+    }
+    if (root->right) {
+        return dfs(root->right, targetSum - root->val); // 这里返回右子树上满足条件的个数。
+    }
+    return pathCnt; // 这里返回的意义不明确？？？？
+}
+它错误的地方见上面注释：
+1. 当前题意是要返回所有路劲上满足和是targetsum的，上面这种直接返回的就不违背题意。所以按照正确版本，要把左右子树上满足的都加起来。
+2.在判断是否OK的2个条件 targetSum = 0 和 targetSum - root->val 的前后顺序也要明确。一定是相减在前，然后让targetSum 和 0 比较。否则比较条件就应该换成 targetSum == root->val.
+3. 当前targetSum是有正负的。所以这个过滤条件就不正确。
+基于上面这种写法的正确版本：
+int dfs(struct TreeNode* root, int targetSum)
+{
+    int pathCnt = 0;
+    targetSum -= root->val;
+    if (targetSum == 0) {
+        pathCnt++;
+    } 
+    int leftCnt = 0;
+    int rightCnt = 0;
+    if (root->left) {
+        pathCnt += dfs(root->left, targetSum);
+    }
+    if (root->right) {
+        pathCnt +=  dfs(root->right, targetSum);
+    }
+    return pathCnt;
+}
 ```
 #### 代码2
 1. 这种方法不好，c语言中使用了全局变量。第一个用例使用过了之后，后面这个全局变量不会再被初始化，导致题目解答异常。
