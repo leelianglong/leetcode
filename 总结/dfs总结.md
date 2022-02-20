@@ -1,16 +1,12 @@
 ### 题目 生命的游戏
-思路：
-
-1、在DFS中需要访问4个方向时，可以是direction[4][2] = {{1,0}, {0, 1}, {-1, 0}, {0, -1}};归一化处理。
-
-2、 把A[m][n] 这样的二维坐标转换成 一维坐标的小技巧  对于 [i][j]   对应的一维坐标是 i * n + j.
-
+### 思路：
+1. 在DFS中需要访问8个方向时，可以是direction[4][2] = {{-1,-1}, {-1,0}, {-1,1}, {0, 1},{1, 1}, {1, 0}, {1, -1}, {0, -1}};归一化处理。
+2. 把A[m][n] 这样的二维坐标转换成 一维坐标的小技巧  对于 [i][j]   对应的一维坐标是 i * n + j.
+3. 常规方法是把原矩阵拷贝一份，然后遍历原矩阵计算后，更新到拷贝的矩阵，然后再把拷贝的矩阵更新到原矩阵。
+4. 下面方法使用位运算进行优化，实现原地修改。
+---
 ### 代码
 ```
-/*
-下面介绍一种二维数组可以避免边界点的算法，通过定义direction来处理。
-下面的题目是生命的游戏
-*/
 int** gameoflife(int** board, int boardSize, int* boardColumSize)
 {
     int row;
@@ -23,7 +19,7 @@ int** gameoflife(int** board, int boardSize, int* boardColumSize)
                                   };
             for (int k = 0; k < 8; k++) {
                 int x = row + direction[k][0];
-                int y = column + direction[1];
+                int y = column + direction[k][1];
                 if (x >= 0 && x < row   &&  y >= 0 && y < column && board[row][column] == 1) {
                     cnt++;
                 }
@@ -44,16 +40,16 @@ int** gameoflife(int** board, int boardSize, int* boardColumSize)
 
 ### 题目 目标和
 
-思路：
+### 思路：
+1. 使用dfs，需要构造的参数有： nums, numssize ,target这3个是必须的，另外，我们要遍历序列，那么需要一个变量来标记遍历到哪里 所以需要curpos. 另外每执行一步，需要记录当前的和. 还有题目要求有多少种组合方式，所以还需要一个变量来记录找到的组合个数，由于是出参，所以需要设置成指针型
+2. 我们每一步有2种做法，即在cursum上加上当前的遍历的数值，或者在cursum上减去当前遍历的数值。
+3. 在边界条件判断的地方使用 curPos == numssize 而不是 curPos == numssize - 1, 是因为该算法是以 curPos + 1 作为下次比较的curPos的，所以这里应该是前者。
+4. 注意这种在数组或字符串中逐个遍历的最佳实践
+*** dfs(nums, numsSize, curPos + 1, curSum + nums[curPos], target, counter); ***
+要用成 curPos + 1, 不能使用成 curPos++, nums[curPos++] 这种形式。后面这些算法会导致在计算参数 curPos后， curPos的值就变化导致
+在计算curSum + nums[curPos]的值时候，curPos值已经不和当前递归需要的值不一样了。
 
-1、使用dfs，需要构造的参数有： nums, numssize ,target这3个是必须的，另外，我们要遍历序列，那么需要一个变量来标记遍历到哪里 所以需要curpos. 另外
-
-每执行一步，需要记录当前的和. 还有题目要求有多少种组合方式，所以还需要一个变量来记录找到的组合个数，由于是出参，所以需要设置成指针型
-
-2、我们每一步有2种做法，即在cursum上加上当前的遍历的数值，或者在cursum上减去当前遍历的数值。
-
-注意：在边界条件判断的地方使用 curPos == numssize 而不是 curPos == numssize - 1, 是因为该算法是以 curPos + 1 作为下次比较的curPos的，所以这里应该是前者。
-
+---
 
 ### 代码
 ```
