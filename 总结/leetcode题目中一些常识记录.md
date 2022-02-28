@@ -233,5 +233,44 @@ bool valid(int tarS, int tarE, int srcS, int srcE)
 ```
 19. dfs和回溯的差异，什么时候用回溯，什么时候用dfs？
 
+20. 一般自定义变量用来计算字符串的长度，不能在for循环中计算字符串长度
+```
+#define CNT 26
+int minSteps(char * s, char * t){
+    int map1[CNT] = {0};
+    int st1 = strlen(s); // 这里计算一次
+    for (int i = 0; i < st1; i++) {
+        map1[s[i] - 'a']++;
+    }
+    int st2 = strlen(t);// 这里计算一次
+    for (int i = 0; i < st2; i++) {
+        map1[t[i] - 'a']--;
+    }
+    
+    int steps = 0;
+    for (int i = 0; i < CNT; i++) {
+        steps += abs(map1[i]);
+    }
+    return steps;
+}
+这种写法就超时了
+#define CNT 26
+int minSteps(char * s, char * t){
+    int map1[CNT] = {0};
+    for (int i = 0; i < strlen(s); i++) { // 这里每次循环都会计算一次strlen.
+        map1[s[i] - 'a']++;
+    }
+    
+    for (int i = 0; i < strlen(t); i++) {
+        map1[t[i] - 'a']--;
+    }
+    
+    int steps = 0;
+    for (int i = 0; i < CNT; i++) {
+        steps += abs(map1[i]);
+    }
+    return steps;
+}
+```
 
 
