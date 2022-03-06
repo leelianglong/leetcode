@@ -233,7 +233,8 @@ bool valid(int tarS, int tarE, int srcS, int srcE)
 ```
 19. dfs和回溯的差异，什么时候用回溯，什么时候用dfs？
 
-20. 一般自定义变量用来计算字符串的长度，不能在for循环中计算字符串长度
+
+21. 一般自定义变量用来计算字符串的长度，不能在for循环中计算字符串长度
 ```
 #define CNT 26
 int minSteps(char * s, char * t){
@@ -271,6 +272,10 @@ int minSteps(char * s, char * t){
     }
     return steps;
 }
+
+22. 安全函数与非安全函数对别
+```
+sprintf_s(buff, length, "格式", "内容"）     ----> sprintf(buff, "格式"， "内容")
 ```
 
 
