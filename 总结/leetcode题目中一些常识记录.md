@@ -233,5 +233,9 @@ bool valid(int tarS, int tarE, int srcS, int srcE)
 ```
 19. dfs和回溯的差异，什么时候用回溯，什么时候用dfs？
 
+20. 安全函数与非安全函数对别
+```
+sprintf_s(buff, length, "格式", "内容"）     ----> sprintf(buff, "格式"， "内容")
+```
 
 
