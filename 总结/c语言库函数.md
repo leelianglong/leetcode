@@ -88,7 +88,15 @@ strtok的参数一定要是字符串数组，不能是字符串常量指针。�
         res = strtok(NULL, " ");
     }
 ```
-
+### strtok的安全函数 strtok_s 具体使用方法如下,第三个参数是二级指针
+```
+    char *connext = NULL;
+    char *right = NULL;
+    char *left = strtok_s(area, ":", &connext);
+    if (left != NULL) {
+        right = strtok_s(NULL, ":", &connext);
+    }
+```
 ### strstr()
 
 1. strstr(a,b) 在a中查找是否包含b,如果找到返回找到的位置，返回的是char*.
