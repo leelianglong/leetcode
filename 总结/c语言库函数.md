@@ -178,3 +178,28 @@ int main ()
   return 0;
 }
 ```
+### 返回字符c在字符串str中首次出现的地址
+char * strchr ( const char *, int )
+---
+注意虽然第二个参数是int，实际上表示具体的字符
+```
+int main ()
+{
+  char str[] = "This is a sample string";
+  char * pch;
+  printf ("Looking for the 's' character in \"%s\"...\n",str);
+  pch=strchr(str,'s');
+  while (pch!=NULL)
+  {
+    printf ("found at %d\n",pch-str+1);
+    pch=strchr(pch+1,'s');
+  }
+  return 0;
+}
+输出：
+Looking for the 's' character in "This is a sample string"...
+found at 4
+found at 7
+found at 11
+found at 18
+```
