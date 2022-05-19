@@ -285,9 +285,9 @@ sprintf_s(buff, length, "格式", "内容"）     ----> sprintf(buff, "格式"�
 ```
 
 24. UT_hash 当作链表使用
+
 ```
 在于一些需要动态插入，删除，查询的题目，存储数据的数据结构应该考虑使用链表，但是我们无需自己构造一个链表接口查询或删除接口，可以直接使用UT_hash来实现，UT_hash即有hash的功能，又有链表的功能，详见leetcode 729 日程安排
-
 typedef struct {
     int s;
     int e;
@@ -313,7 +313,7 @@ MyCalendar* myCalendarCreate() {
 bool myCalendarBook(MyCalendar* obj, int start, int end) {
     bool repeat = false;
     struct Hash* cur, *tmp;
-    HASH_ITER(hh, obj->hash, cur, tmp) { // 这里一维去重的写法要注意
+    HASH_ITER(hh, obj->hash, cur, tmp) {
         if (cur->key.s <= start && cur->key.e > start 
             || end > cur->key.s && end < cur->key.e 
             ||  start <= cur->key.s && end >= cur->key.e){
@@ -342,7 +342,6 @@ void myCalendarFree(MyCalendar* obj) {
     }
     free(obj);
 }
-
 ```
 
 
