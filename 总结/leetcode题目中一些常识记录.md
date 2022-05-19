@@ -284,8 +284,9 @@ sprintf_s(buff, length, "格式", "内容"）     ----> sprintf(buff, "格式"�
 
 ```
 
-24、在于一些需要动态插入，删除，查询的题目，存储数据的数据结构应该考虑使用链表，但是我们无需自己构造一个链表接口查询或删除接口，可以直接使用UT_hash来实现，UT_hash即有hash的功能，又有链表的功能，详见leetcode 729 日程安排。
+24. UT_hash 当作链表使用
 ```
+在于一些需要动态插入，删除，查询的题目，存储数据的数据结构应该考虑使用链表，但是我们无需自己构造一个链表接口查询或删除接口，可以直接使用UT_hash来实现，UT_hash即有hash的功能，又有链表的功能，详见leetcode 729 日程安排
 
 typedef struct {
     int s;
@@ -342,13 +343,6 @@ void myCalendarFree(MyCalendar* obj) {
     free(obj);
 }
 
-/**
- * Your MyCalendar struct will be instantiated and called as such:
- * MyCalendar* obj = myCalendarCreate();
- * bool param_1 = myCalendarBook(obj, start, end);
- 
- * myCalendarFree(obj);
-*/
 ```
 
 
