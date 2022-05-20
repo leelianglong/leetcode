@@ -278,11 +278,12 @@ int minSteps(char * s, char * t){
 ```
 sprintf_s(buff, length, "格式", "内容"）     ----> sprintf(buff, "格式"， "内容")
 ```
+
 23. 内存分配注意事项
+
 ```
 对于 int** res = (int**)calloc(cnt, sizeof(int*)); 这个表示已分配cnt个存储int* 指针的内存空间给res.
 在对于二级指针分配内存时，如果 res[i] = (int*)calloc(len, sizeof(int)); 中的i > cnt,那么就是内存访问错误问题了。
-
 ```
 
 24. UT_hash 当作链表使用,在于一些需要动态插入，删除，查询的题目，存储数据的数据结构应该考虑使用链表。参考题目 731 ，732的解答
