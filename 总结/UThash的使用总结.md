@@ -147,6 +147,10 @@ HASH_ITER(hh, users, cur, tmp) {
      HASH_DEL(users, cur);
      free(cur);
 }
+
+HASH_CLEAR(hh, users);
+当前接口一次删除所有的节点
+
 ```
 
 ### 10、hash表的迭代接口
