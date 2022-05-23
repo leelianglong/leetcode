@@ -69,7 +69,7 @@ void Push(Heap* obj, int value)
         return;
     }
     obj->data[obj->curSize] = value;
-    InitHeap(obj, obj->curSize);
+    InsertHeap(obj, obj->curSize);    // 这里有问题，为什么每次进来都需要重新初始化一下。应该是InsertHeap(),而不是之前的InitHeap
     obj->curSize++;
 }
 
