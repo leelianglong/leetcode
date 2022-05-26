@@ -313,4 +313,20 @@ if (total == 0) {
 2. 进站时保存相关信息，出站时，先在基于ID，找到进站名，然后在把出站名组装成 第二个hash表的key, 在hash表中添加或查找
 3. 最终出站hash表中存储的信息，就能够帮忙我们计算 从 A - B站的平均时间。 用总时间/总人数
 ```
+27. 简单的两两交换不要写错了
+```
+void swap(int a, int b)
+{
+    int tmp = a;
+    a = b;
+    b = tmp;
+}
+
+void swap(int* a, int* b)
+{
+    int tmp = *a;
+    *a = *b;
+    *b = tmp;
+}
+```
 
