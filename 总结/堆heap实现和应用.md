@@ -169,7 +169,7 @@ void pop(Heap* obj)
     int parent = 1;
     int child = parent << 1; // 这里准备下沉
     while (child <= obj->heapSize) { // 当前孩子节点还没有到堆的尾部
-        if (child + 1 <= obj->heapSize) {
+        if (child + 1 <= obj->heapSize) { // 这个判断条件很关键， 避免没有有效的右孩子。
             if (obj->cmp(obj->buff[child + 1], obj->buff[child])) { // 找一下有没有更大的孩子节点
                 child += 1;
             }
