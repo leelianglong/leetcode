@@ -330,3 +330,21 @@ void swap(int* a, int* b)
 }
 ```
 
+28. 要注意大量的内存分配和初始化也是比较耗时的。对于要存储很多返回结果的题目，最好按需分配内存，不能一次在开始全部分配完成。
+```
+    res = (int*)calloc(CNT, sizeof(int*));
+    for (int i = 0; i < CNT; i++) {
+        res[i] = (int*)calloc(HIGH, sizeof(int));
+    }
+```
+应该像下面，在需要的时候分配
+```
+    if (curSum == g_target && root->left == NULL && root->right == NULL) {
+        res[g_returnSize] = (int*)calloc(cnt, sizeof(int));
+        memcpy(res[g_returnSize], tmpSave, sizeof(int) * cnt);
+        columnSizes[g_returnSize] = cnt;
+        g_returnSize++;
+        return;
+    }
+```
+
