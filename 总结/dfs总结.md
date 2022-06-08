@@ -777,3 +777,64 @@ int findTargetSumWays(int* nums, int numsSize, int target){
     return g_res;
 }
 ```
+
+### leetcode 582
+### 思路
+### 代码
+```
+#define CNT 50000
+struct HashObj {
+    int parent;
+    int child[CNT];
+    int childIdx;
+    UT_hash_handle hh;
+};
+
+struct HashObj* users;
+
+void dfs(int kill, int* res, int* returnSize)
+{
+    res[(*returnSize)++] = kill;
+    struct HashObj* find;
+    int  parent = kill;
+    HASH_FIND_INT(users, &parent, find);
+    if (find == NULL) {
+        return;
+    }
+    #if 0
+    if (users->childIdx == 0) { // 这个users是全局的链表头节点，我们需要的是某个节点，所以这里直接使用users->childIdx 不合适。
+        return; // 没有孩子节点了
+    }
+    #endif
+    for (int i = 0; i < find->childIdx; i++) {
+        dfs(find->child[i], res, returnSize);
+    }
+}
+
+
+int* killProcess(int* pid, int pidSize, int* ppid, int ppidSize, int kill, int* returnSize){
+    users = NULL;
+    for (int i = 0; i <ppidSize; i++) {
+        struct HashObj* find;
+        int parent = ppid[i];
+        HASH_FIND_INT(users, &parent, find);
+        if (find == NULL) {
+            struct HashObj* add = (struct HashObj*)calloc(1, sizeof(struct HashObj));
+            add->parent = parent;
+            add->child[add->childIdx++] = pid[i];
+            HASH_ADD_INT(users, parent, add);
+        } else {
+            find->child[find->childIdx++] = pid[i];
+        }
+    }
+    *returnSize = 0;
+    int* res = (int*)calloc(CNT, sizeof(int));
+    dfs(kill, res, returnSize);
+    struct HashObj* cur, *tmp;
+    HASH_ITER(hh, users, cur, tmp) {
+        HASH_DEL(users, cur);
+        free(cur);
+    }
+    return res;
+}
+```
