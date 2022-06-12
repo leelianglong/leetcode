@@ -769,3 +769,111 @@ int** kSmallestPairs(int* nums1, int nums1Size, int* nums2, int nums2Size, int k
     return res;
 }
 ```
+### leetcode 253
+### 思路
+1. 给出了若干个会议时间段，需要计算能够有多少个会议室，才能满足需求
+2. 起初想到合并区间，发现这个思路完全错误（2个会议有交集时，会议室就需要有2个，而不是1个）。使用什么数据结构来承载？
+3. 参考题解，采用堆。堆中只用存储会议结束的时间。然后把所有会议时间按照开始时间排序。首先把第一个会议结束时间入堆，然后遍历所有会议的开始时间。
+4. 如果堆顶元素的时间小于当前会议的开始时间，那么意味着堆顶的这个会议室可以被使用，即首先先出堆，然后把当前这个会议的结束时间入堆
+5. 如果堆顶元素的时间大于当前会议的开始时间，那么就直接把当前会议的结束时间入堆，因为当前没有空闲的会议室
+6. 最后返回堆中的元素个数，就是所需要的最少会议室。
+### 代码
+```
+int cmp(const void* a, const void* b)
+{
+    int* aa = *(int**)a;
+    int* bb = *(int**)b;
+    return aa[0] - bb[0];
+}
+
+typedef struct {
+    int* buff;
+    int curSize;
+    bool (*cmp)(int a, int b);
+} Heap;
+
+#define CNT 10000
+
+bool HeapCmp(int a, int b)
+{
+    return a > b;
+}
+
+Heap* Init(void)
+{
+    Heap* obj = (Heap*)calloc(1, sizeof(Heap));
+    obj->buff = (int*)calloc(CNT, sizeof(int));
+    obj->cmp = HeapCmp;
+    obj->curSize = 0;
+    return obj;
+}
+
+void swap(int* a, int* b)
+{
+    int tmp = *a;
+    *a = *b;
+    *b = tmp;
+}
+
+void Push(Heap* obj, int data)
+{
+    obj->curSize++;
+    obj->buff[obj->curSize] = data;
+    int child = obj->curSize;
+    int parent = child >> 1;
+    while (parent > 0) {
+        if (!obj->cmp(obj->buff[parent], obj->buff[child])) {
+            break;
+        }
+        swap(&obj->buff[parent], &obj->buff[child]);
+        child = parent;
+        parent = child >> 1;
+    }
+}
+
+void Pop(Heap* obj)
+{
+    swap(&obj->buff[1], &obj->buff[obj->curSize]);
+    obj->curSize--;
+    int parent = 1;
+    int child = parent << 1;
+    while (child <= obj->curSize) {
+        if (child + 1 <= obj->curSize) {
+            if (obj->cmp(obj->buff[child], obj->buff[child + 1])) {
+                child = child + 1;
+            }
+        }
+        if (!obj->cmp(obj->buff[parent], obj->buff[child])) {
+            break;
+        }
+        swap(&obj->buff[parent], &obj->buff[child]);
+        parent = child;
+        child = parent << 1;
+    }
+}
+
+int GetTop(Heap* obj)
+{
+    return obj->buff[1];
+}
+
+int minMeetingRooms(int** intervals, int intervalsSize, int* intervalsColSize){
+    qsort(intervals, intervalsSize, sizeof(intervals[0]), cmp);
+    Heap* obj = Init();
+    Push(obj, intervals[0][1]);
+    for (int i = 1; i < intervalsSize; i++) {
+        int top = GetTop(obj);
+        //printf("top=%d, end=%d\n", top, intervals[i][1]);
+        if (top > intervals[i][0]) { // 最开始时，我这里和会议结束时间在比较，这个是错误的
+            Push(obj, intervals[i][1]);
+        } else {
+            Pop(obj); //先删除堆顶元素，再把这个放进来
+            Push(obj, intervals[i][1]);
+        }
+    }
+
+    return obj->curSize;
+}
+```
+
+
