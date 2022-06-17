@@ -67,3 +67,47 @@ int countComponents(int n, int** edges, int edgesSize, int* edgesColSize){
     return obj->cnt;
 }
 ```
+
+
+### 一个BFS的解答
+```
+#define MAX_NUM 50000
+int countComponents(int n, int** edges, int edgesSize, int* edgesColSize){
+    int head = 0;
+    int rear = 0;
+    int res = 0; //代表bfs的每层循环，也表示连通的个数
+    int queue[MAX_NUM]; 
+
+    //定义是否被访问的visit数组
+    int visited[MAX_NUM];
+    memset(visited, 0, sizeof(int) * MAX_NUM); //注意：一定要初始化为0
+    for (int i = 0; i < n; i++) {
+        //如果被连通过，那么直接返回，作用是为了防止重复添加
+        if (visited[i]) {
+            continue;
+        }
+        queue[rear++] = i;
+        visited[i] = 1;
+        while (head < rear) {
+            int size = rear - head;
+            //将与之关联的点都加入到队列中
+            for (int j = 0; j < size; j++) { // j控制出队
+                for (int k = 0; k < edgesSize; k++) {
+                    //防止重复添加结点到队列中
+                    if (queue[head] == edges[k][0] && !visited[edges[k][1]]) {
+                        visited[edges[k][1]] = 1;
+                        queue[rear++] = edges[k][1];
+                    } else if (queue[head] == edges[k][1] && !visited[edges[k][0]]) {
+                        visited[edges[k][0]] = 1;
+                        queue[rear++] = edges[k][0];
+                    }
+                }
+                head++;
+            }
+        }
+        res++;
+    }
+    return res;
+}
+
+```
