@@ -15,7 +15,8 @@
 2.在获取路径上的最小值时，是和上次的值进行比较，选择较小的传递下去。
 3.在终点选择所有路径中的最大值。
 ### 代码
-···
+```
+当前解法超时
 int g_res;
 int g_R;
 int g_C;
@@ -52,4 +53,4 @@ int maximumMinimumPath(int** grid, int gridSize, int* gridColSize){
     dfs(grid, 0, 0, grid[0][0], vis);
     return g_res;
 }
-···
+```
