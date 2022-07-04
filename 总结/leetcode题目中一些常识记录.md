@@ -6,8 +6,29 @@ int** res = (int**)malloc(sizeof(int*) * num); // 这里一定是 sizeof(int*)
 对此，一般首先会把*returnSize = 0;
 *returnColSize = (int*)malloc(sizeof(int) * num);  // 这里分配内存的时候，只要使用sizeof(int) 即可
 ```
+2. 要使用UT_hash，只要确定下key之后，关于data，如果有多个，可以直接写到hash结构里面，也可以搞个结构体，先写在一起，再放到hash结构里。
+```
+struct HashObj {
+    int key;
+    int a1;
+    int a2;
+    ...
+    UT_hash_handle hh;
+}; 以及下面这种写法
 
-2. 对于入参是二维指针时，对入参的判断使用下面的几个条件就够
+typedef struct {
+    int a1;
+    int a2;
+} VAL;
+struct HashObj {
+    int key;
+    VAL val;
+    UT_hash_handle hh;
+};
+```
+
+
+4. 对于入参是二维指针时，对入参的判断使用下面的几个条件就够
 ```
 int** merge(int** intervals, int intervalsSize, int* intervalsColSize, int* returnSize, int** returnColumnSizes){
     int i;
