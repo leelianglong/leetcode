@@ -202,7 +202,7 @@ int* splitIntoFibonacci(char * S, int* returnSize){
 }
 ```
 
-16. 计算数组上连续k个数的和的最大值的最佳实践
+16. 计算数组上连续k个数的和的最大值的最佳实践。 注意这里两个指针都是从0开始的。
 ```
     int extra = 0;
     int cur = 0;
