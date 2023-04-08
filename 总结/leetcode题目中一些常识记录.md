@@ -410,3 +410,4 @@ for (int i = 0; i < peopleSize; i++) {
     people[pos] = tmp;
 }
 ```
+36. 注意memset用来初始化内存时只能用来初始化成0，如果需要初始化成其他值，则需要通过for循环来逐个遍历数组成员来初始化。例如代码：int rate[10]; memset(rate, 1, sizeof(rate)); 这个与预期的rate[0] = 1,是不一样的。 memset或者memcpy这些都是按照字节来初始化和拷贝的，对于int型变量占据4个字节。这里相当于是吧4个byte的位置上都初始化成1了。
