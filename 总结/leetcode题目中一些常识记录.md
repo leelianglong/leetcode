@@ -44,11 +44,12 @@ sleetcode平台上 sizeof(int) 和 sizeof(int) 大小是不一样的。前者是
    在DFS相关的题目中，把需要记录的数据都使用指针的形式放在函数参数中，不要定义成全局变量，否则会导致有些用例不过.
 2. 在LeetCode中要使用全局变量的话，可以先定义，但是不要初始化，在使用的主函数中初始化成0, 这样就能避免多次用例执行时的相互影响。另外，全局变量的命名不要和函数参数命名一样。
 3. 返回空字符串的方法：
-
+   ```
     char* result = (char*)malloc(sizeof(char) * 100);
     result[0] = '\0';
     return result; // 这样就返回空字符串
     对于返回字符串时，一定要在结尾处赋值'\0'
+   ```
 
 1. 二分查找类以及2数之和的移动过程，应该把相等的条件放在前面，然后每个else if 分支里面明确做一件事。把所有的情况都用elseif分支确定下来。
 
@@ -76,7 +77,7 @@ sleetcode平台上 sizeof(int) 和 sizeof(int) 大小是不一样的。前者是
     在最终返回的结果的地方，再把这个临时的二维指针赋给res, 如下：
     res[returnSize] = (int**)malloc(sizeof(int) * COUNT); res本身是3级指针，res[*returnSize] 就变成二维的了，根据二维指针的个数，这里可以直接把临时的二维指针赋值给res, 完整的代码如下：
     
-    
+    ```
     void dfs(char* s, char*** res, int* returnSize, char** save, int count, int** returnColumnSizes, int startIdx)
     {
         if (startIdx == strlen(s)) {
@@ -119,7 +120,7 @@ sleetcode平台上 sizeof(int) 和 sizeof(int) 大小是不一样的。前者是
         dfs(s, res, returnSize, save, count, returnColumnSizes, 0);
         return res;
     }
-
+```
     三级指针的应用：
     int ***res = (int ***)malloc(sizeof(int**) * CNT);
     这里 res是三级指针，那么res[i] 就是二级指针。
@@ -129,7 +130,7 @@ sleetcode平台上 sizeof(int) 和 sizeof(int) 大小是不一样的。前者是
     
 
 1. 关于变量的定义需要注意，像下面的2段代码对应定义的变量含义是不一样的。
-
+```
     for (int i = 1; i < heightSize - 1; i++) {
         int maxLeft = 0;
         int maxRight = 0;
@@ -159,9 +160,9 @@ sleetcode平台上 sizeof(int) 和 sizeof(int) 大小是不一样的。前者是
     第一种，maxRight,maxLeft这2个变量定义在for循环的里面，每次执行for循环的时候，这2个值都是重新被定义的，相当于是局部变量了。后面这种，在for循环的外面定义一次，后面for循环中改变了这2个值后，
     下次执行for循环的时候，就是基于变化后的值。
     */
-
+```
 1. 如果暂存的类型是 long* 的，但是返回的值需要的是int, 那么一定要把这个long类型的转换成 int 之后，再返回，否则有问题。例如，暂存的数据存储在 res， 但是它是long 的，返回的值需要int，所以下面需要类型转换一下。
-
+```
     int* splitIntoFibonacci(char * S, int* returnSize){
         long* res = (long*)malloc(sizeof(long) * RET_COUNT);
         memset(res, 0, sizeof(long) * RET_COUNT);
@@ -176,9 +177,9 @@ sleetcode平台上 sizeof(int) 和 sizeof(int) 大小是不一样的。前者是
         }
         return resultBuf;
     }
-
+```
 1. 计算数组上连续k个数的和的最大值的最佳实践。 注意这里两个指针都是从0开始的。
-
+```
         int extra = 0;
         int cur = 0;
         for (left = 0, right = 0; right < customersSize; right++) {
@@ -189,9 +190,9 @@ sleetcode平台上 sizeof(int) 和 sizeof(int) 大小是不一样的。前者是
             }
             extra = MAX(extra, cur);
         }
-
+```
 1. 数组上固定窗口最小值的最佳实践
-
+```
         int min = INT_MAX;
         int cur = 0;
         for (int i = 0, j = 0; j < cardPointsSize; j++) {
@@ -203,9 +204,9 @@ sleetcode平台上 sizeof(int) 和 sizeof(int) 大小是不一样的。前者是
         }
 
 注意这里的 >= 和上面的最大值是不一样的。
-
+```
 1. 一维重叠判断和二维重叠的判断
-
+```
     剑指 Offer II 058. 日程表 关键代码如下：
     bool valid(int tarS, int tarE, int srcS, int srcE)
     {
@@ -221,14 +222,14 @@ sleetcode平台上 sizeof(int) 和 sizeof(int) 大小是不一样的。前者是
         return true;
     }
     二维重叠区域的去重，考试中遇到，要注意画图来判断
-    
+``` 
 
 1. dfs和回溯的差异，什么时候用回溯，什么时候用dfs？
 
     回溯是要遍历所有情况，在所有情况的基础上，选择结果。例如题目1102，得分最高的路径，要使用深度优先搜索，找到1条路上最小的值。然后在回溯回来，遍历所有的路径，找到所有路径上的最大值。
 
 1. 一般自定义变量用来计算字符串的长度，不能在for循环中计算字符串长度
-
+```
     #define CNT 26
     int minSteps(char * s, char * t){
         int map1[CNT] = {0};
@@ -265,21 +266,19 @@ sleetcode平台上 sizeof(int) 和 sizeof(int) 大小是不一样的。前者是
         }
         return steps;
     }
-
+```
 1. 安全函数与非安全函数对别
-
+```
     sprintf_s(buff, length, "格式", "内容"）     ----> sprintf(buff, "格式"， "内容")
-
+```
 1. 内存分配注意事项
-
+```
     对于 int** res = (int**)calloc(cnt, sizeof(int*)); 这个表示已分配cnt个存储int* 指针的内存空间给res.
     在对于二级指针分配内存时，如果 res[i] = (int*)calloc(len, sizeof(int)); 中的i > cnt,那么就是内存访问错误问题了。
-
+```
 1. UT_hash 当作链表使用,在于一些需要动态插入，删除，查询的题目，存储数据的数据结构应该考虑使用链表。参考题目 731 ，732的解答
 2. 对于兑零钱的题目，可以这样来设计数据结构，最佳实际如下
-
 ---
-
     int notes[4] = {10,20,50,100}; //这个数组设置面值
     int count[4] = {0,1,2,0}; // 这个设置面值对应的张数
     int total = 660; // 要换的前 （优先使用最大面值的）
@@ -293,17 +292,15 @@ sleetcode平台上 sizeof(int) 和 sizeof(int) 大小是不一样的。前者是
     if (total == 0) {
         // 判断是否兑换成功
     }
-
+```
 1. 找数据之间的关系，巧妙应用UT_hash 解决 leetcode 1396 地铁设计系统。
-
 ---
-
     1. 设计一个hash表存储进站数据，key=ID, val(站名，进站时间)，再设计一个hash表存储出站数据，key=(进站名-出站名的字符串)， val(总人数， 总时间)。
     2. 进站时保存相关信息，出站时，先在基于ID，找到进站名，然后在把出站名组装成 第二个hash表的key, 在hash表中添加或查找
     3. 最终出站hash表中存储的信息，就能够帮忙我们计算 从 A - B站的平均时间。 用总时间/总人数
-
+```
 1. 简单的两两交换不要写错了
-
+```
     void swap(int a, int b)
     {
         int tmp = a;
@@ -317,14 +314,13 @@ sleetcode平台上 sizeof(int) 和 sizeof(int) 大小是不一样的。前者是
         *a = *b;
         *b = tmp;
     }
-
+```
 1. 要注意大量的内存分配和初始化也是比较耗时的。对于要存储很多返回结果的题目，最好按需分配内存，不能一次在开始全部分配完成。
-
+```
         res = (int*)calloc(CNT, sizeof(int*));
         for (int i = 0; i < CNT; i++) {
             res[i] = (int*)calloc(HIGH, sizeof(int));
         }
-
 应该像下面，在需要的时候分配
 
         if (curSum == g_target && root->left == NULL && root->right == NULL) {
@@ -334,7 +330,7 @@ sleetcode平台上 sizeof(int) 和 sizeof(int) 大小是不一样的。前者是
             g_returnSize++;
             return;
         }
-
+```
 1. 二叉树的序列化：要求二叉树上重复的子树 652
 
     如何在二叉树上找重复的子树，关键要把二叉树序列化后，即把二叉树转成字符串，这样根据hash就能够找到是否有重复的字符，进而判断是否有重复的子树。参考题解652
@@ -358,31 +354,35 @@ sleetcode平台上 sizeof(int) 和 sizeof(int) 大小是不一样的。前者是
 3. 在题目中使用全局变量后，切记不能在函数参数中，再使用同名的参数。 这样会导致这个全局变量不其作用，它里面根本不能保存你在函数中对这个形参的任何操作。
 4. 对于换行符\n 制表符 \t 这种是一个字符， 不要当成2个字符。
 5. 对于二维数组的插入操作，我们可以之间转换成1维数组的赋值。实例代码如下
-
+```
     void MoveBack(int** people, int start, int end)
     {
         for (int i = end; i > start; i--) {
             people[i] = people[i-1]; // 这里就是一维数组的直接赋值操作
         }
     }
-
+```
 当我们需要在一个二维数组中插入一个元素时，可以先找到要插入的位置pos，使用一个临时变量保存下要插入的数值，然后把二维数组中，从POS到结束位置都向后移动一个位置，然后把要插入的数值放进来，实例代码如下
-
+```
     for (int i = 0; i < peopleSize; i++) {
         int pos = people[i][1];
         int* tmp = people[i];// 这里不能是people[pos]....
         MoveBack(people, pos, i);
         people[pos] = tmp;
     }
-
-1. 注意memset用来初始化内存时只能用来初始化成0，如果需要初始化成其他值，则需要通过for循环来逐个遍历数组成员来初始化。例如代码：int rate[10]; memset(rate, 1, sizeof(rate)); 这个与预期的rate[0] = 1,是不一样的。 memset或者memcpy这些都是按照字节来初始化和拷贝的，对于int型变量占据4个字节。这里相当于是吧4个byte的位置上都初始化成1了。
+```
+1. 注意memset用来初始化内存时只能用来初始化成0，如果需要初始化成其他值，则需要通过for循环来逐个遍历数组成员来初始化。例如代码：
+ int rate[10]; memset(rate, 1, sizeof(rate)); 这个与预期的rate[0] = 1,是不一样的。
+ memset或者memcpy这些都是按照字节来初始化和拷贝的，对于int型变量占据4个字节。这里相当于是吧4个byte的位置上都初始化成1了。
 2. 在C语言格式化话的时候，%[xxx] 这种形式就是按照正则表达式来解析，其中[xx]就是正则表达式的内容。例如
+```
            if (scanf_s("%d %[^)]) %[^)])", &processes->id, occupied, sizeof(occupied), requested, sizeof(requested)) != 3) {
                return false;
            }
-   
+```
 3. 在使用strtok分割字符串时，一定要对字符串数组进行分割，不能对字符串指针进行分割，否则会报错。
 4. ilearning平台考试注意事项
+```
        1. 使用strlen()库函数时，要强制转换成int类型，strlen()本身是unsigned long 类型的。例如int len = (int)strlen("hello world");
        2. 使用移位运算符时 << >> 它们的右操作符要求是无符号数，因此需要强转一下。
        3. for循环中的局部变量的命名不同的for循环要使用不同的。
@@ -431,14 +431,18 @@ sleetcode平台上 sizeof(int) 和 sizeof(int) 大小是不一样的。前者是
            return key;
        }
        24. 如何判断在哪种场景下使用二分法：一方面要求使数据有序，其二就是要求一个达到目标值的最大/最小值, 这个最小/最大值跟目标值有一定的单调关系。
+```
 5. 对于合并区间的题目，判断区间有没有重叠采用的方式是preNode->endAddr + 1 > curNode->startAddr,如果这个成立的话，就是没有重叠，不需要合并。
 6. 对于数据量不大的场景，需要使用双端队列或者双向链表的情况，可以直接使用数组（空间是所需要的2倍），再配合双指针来实现数据的添加/删除或者访问
 7. 对于上下左右遍历的场景，如果需要在计算次数，而不是收集可能的结果的话，就不要是有for 循环来遍历，就直接把函数显示调用4次，在进来的时候，对各种需要退出的场景进行罗列。
 8. 把2层for循环改成1层for循环的技巧
+```
        for (int k = 0; k < rows * cols; k++) {
             backtrace(rows, cols, charMatrix, k / cols, k % cols, i, 0, words[i]);
        }
+```
 9. 在遍历二维矩阵时，分别计算行或列的写法
+```
            for (int i = 0; i < n; i++) {
                int rowRights = 0;
                int colRights = 0;
@@ -450,21 +454,21 @@ sleetcode平台上 sizeof(int) 和 sizeof(int) 大小是不一样的。前者是
                    return true;
                }
            }
+```
 10. 对于类似树形结构的题目，在定义结构时，参考二叉树的定义，其成员部分，要定义成结构体指针
+```
         struct treeNode {
             int val;
             struct treeNode* left;
             struct treeNode* right; // 这里定义成指针。
         };
-        
-    
+```
 11. 公司C语言库函数的使用小结
 
     对于VoSVector的数据结构的标准API，其实就是一种数组，使用VOS_VectorPushBack()接口把元素添加到数组的结尾，可以基于索引访问，VOS_VectorAt(),能够清除指定节点的数据 VOS_VectorErase(index),还有排序功能VOS_VectorSort（）。
-    
-    
 
 1. 二进制和十进制之间的转换代码
+```
        /*二进制字符串转换成十进制*/
        static int BinaryToTen(const char *da, int size)
        {
@@ -518,9 +522,9 @@ sleetcode平台上 sizeof(int) 和 sizeof(int) 大小是不一样的。前者是
        // 输出信息如下：
        The decimal equivalents are: 2001, 6340800, -3624224 and 7340031
        // 当前接口的原型：long int strtol (const char* str, char** endptr, int base); 它会基于base来获取尽可能多的字符串来转换成数字，
-       
-   
+```
 2. 二进制和十六进制之间的转换
+```
        void BinaryToHex(char* buf, int size, char* outPut, int* resSize)
        {
            int cnt = 0;
@@ -535,10 +539,10 @@ sleetcode平台上 sizeof(int) 和 sizeof(int) 大小是不一样的。前者是
            *resSize = cnt;
            ReverseStr(outPut, cnt);
        }
-       
-       
+```
    
    1. 十六进制字符串转换成十进制数，可以使用库函数sscanf直接转换成数值
+```
            unsigned int dataB[arrayASize];
            for (int i = 0; i < arrayBSize; i++) {
                (void)sscanf_s(arrayB[i], "%x", &dataB[i]);
@@ -550,14 +554,16 @@ sleetcode平台上 sizeof(int) 和 sizeof(int) 大小是不一样的。前者是
            iRet = sscanf_s( tokenstring, "%127s", s, BUFFER_SIZE );
            printf("String  iRet = %d, %s\n", iRet, s);
        
-       
+```
    1. 如果想把十六进制数值转换成字符串存储，则可以使用库函数sprintf_s()实例代码如下
+```
            for (unsigned int i = 0; i < resCnt; i++) {
                (void)sprintf_s(outBuf[i], STR_LEN, "%08X", res[i]);
            }
-       
+```
    
    1. 多叉树的构造和遍历
+```
        struct Tree {
            int level;
            char name[LINE_BUF_LEN];
@@ -627,10 +633,10 @@ sleetcode平台上 sizeof(int) 和 sizeof(int) 大小是不一样的。前者是
                outBuf[ressize] = '\0';
            }
        }
-       
+```  
    
 3. 在使用优先级队列时，对于排序函数要注意
-
+```
     int Cmp(uintptr_t data1, uintptr_t data2)
     {
         return data1 > data2; // 采用大顶堆。可以理解成倒序排列。官方文档上是return （data1 - data2)// 是大顶堆。
@@ -654,15 +660,15 @@ sleetcode平台上 sizeof(int) 和 sizeof(int) 大小是不一样的。前者是
         dupFunc, free
     }
     正确的使用方法：VOS_PriQueCreate（Cmp, &dupFreeFunc);
-
+```
 1. 对于二维数组的qsort排序，Cmp函数的写法
-
+```
     int Cmp(const void* a, const void* b)
     {
         return ((int*)a)[0] - ((int*)b)[0]; // 注意这里要转成一维数组。
     }
     int abc1[3][2] = {{10,45}, {1,0},{30,22}};
     qsort(abc1, 3, sizeof(abc1[0]), Cmp);
-    
+```
 
 1. hash和map都是以key-value形式来存储数据的，只不过hash的底层是通过hash表来存储，map则是红黑树。他们时间复杂度不一样，前者O(1)后者是O(logN)
